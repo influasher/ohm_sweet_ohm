@@ -10,14 +10,14 @@ const Topbar: React.FC = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     <div className="flex-shrink-0">
-                        <Link href="/" className="text-xl font-semibold text-[#65558F] hover:text-gray-600 transition-colors duration-200">
+                        <Link href="/" className="text-xl font-semibold text-dark-purple hover:text-gray-600 transition-colors duration-200">
                             ohmsweetohm
                         </Link>
                     </div>
                     <div className="md:hidden">
                         <button
                             type="button"
-                            className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+                            className="inline-flex items-center justify-center p-2 rounded-md text-black hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
                         >
                             <span className="sr-only">Open main menu</span>
