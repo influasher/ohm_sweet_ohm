@@ -12,7 +12,7 @@ const EnergyUsageCard: React.FC = () => {
                 <span className="text-7xl sm:text-8xl">👀</span>
                 <span className="text-yellow-400 text-7xl sm:text-3xl">⚡</span>
             </div>
-            <h2 className="text-5xl font-medium sm:text-2xl mb-3 pb-3 sm:mb-4 text-black">Curious about your home's energy usage?</h2>
+            <h2 className="text-5xl font-thin text-black sm:text-2xl mb-3 pb-3 sm:mb-4">Curious about your home's energy usage?</h2>
             <p className="text-lg sm:text-base font-Montserrat text-black mb-4">
                 Flip the switch and light up the details on your appliances' energy usage and likely bills!
             </p>
