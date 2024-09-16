@@ -15,6 +15,9 @@ const config: Config = {
         'light-purple': '#D0BCFF',
         'selection-purple': '#E8DEF8',
       },
+      fontFamily: {
+        Montserrat: ['Montserrat', 'sans-serif'],
+      }
     },
   },
   plugins: [],
