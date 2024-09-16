@@ -26,3 +26,14 @@ body {
     text-wrap: balance;
   }
 }
+
+
+.custom-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  background: #7e22ce; /* This is Tailwind's purple-700 */
+  cursor: pointer;
+  border-radius: 50%;
+}
