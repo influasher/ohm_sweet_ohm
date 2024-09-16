@@ -7,7 +7,7 @@ const EnergyUsageCard: React.FC = () => {
         <>
         <Topbar/>
             <div className="bg-white flex items-stretch justify-evenly h-screen pt-8">
-        <div className="bg-white p-6 sm:p-6 w-full my-3 ">
+        <div className="bg-white p-6 sm:p-6 w-full my-0 ">
             <div className="flex items-center mb-4 pb-5">
                 <span className="text-7xl sm:text-8xl">👀</span>
                 <span className="text-yellow-400 text-7xl sm:text-3xl">⚡</span>
