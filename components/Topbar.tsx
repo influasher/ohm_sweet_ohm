@@ -10,7 +10,7 @@ const Topbar: React.FC = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     <div className="flex-shrink-0">
-                        <Link href="/" className="text-xl font-semibold text-dark-purple  transition-colors duration-200">
+                        <Link href="/" className="font-Monserrat text-xl font-black text-dark-purple  transition-colors duration-200">
                             ohmsweetohm
                         </Link>
                     </div>
