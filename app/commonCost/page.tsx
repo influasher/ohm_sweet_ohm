@@ -62,6 +62,7 @@ const EnergyBillsPage = () => {
 
   return (
     <div className="font-montserrat bg-purple-100 min-h-screen">
+      <Topbar />
       <div className="bg-dark-purple text-white p-4 flex items-center">
         <ArrowLeft className="mr-4" />
         <h1 className="text-lg font-montserrat flex-grow">
@@ -69,7 +70,7 @@ const EnergyBillsPage = () => {
         </h1>
         <MoreVertical />
       </div>
-      <Topbar />
+
       <div className="p-4">
         <div className="bg-white rounded-lg shadow-md p-4 mb-4">
           <div className="flex border-b">
