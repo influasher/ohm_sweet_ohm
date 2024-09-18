@@ -17,7 +17,7 @@ const EnergyDashboard = () => {
 
     const COLORS = ['#d8b4fe', '#f0abfc'];
 
-    const Tab = ({ id, label, isActive, onClick }) => (
+    const Tab = ({ id , label, isActive, onClick }) => (
         <button
             onClick={() => onClick(id)}
             className={`px-4 py-2 font-semibold ${isActive ? 'text-purple-700 border-b-2 border-purple-700' : 'text-black'}`}

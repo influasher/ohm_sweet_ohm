@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { ArrowLeft, Camera } from "lucide-react";
 import Topbar from "@/components/Topbar";
-
+import {useRouter} from "next/navigation"
 const CreateAppliancePage: React.FC = () => {
   const [formData, setFormData] = useState({
     appliance: "",
@@ -19,6 +19,7 @@ const CreateAppliancePage: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const router = useRouter();
   return (
     <div className="font-montserrat bg-purple-100 min-h-screen">
       <Topbar />
@@ -29,7 +30,7 @@ const CreateAppliancePage: React.FC = () => {
             Create new appliances
           </h1>
         </div>
-        <button className="text-sm">Save</button>
+        <button className="text-sm" type="button" onClick={() => router.push('./estimate')}>Save</button>
       </div>
 
       <div className="p-4 space-y-4">
