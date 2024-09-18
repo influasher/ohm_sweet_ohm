@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { ArrowLeft, MoreVertical, Save, CirclePlus } from "lucide-react";
 import Topbar from "@/components/Topbar";
