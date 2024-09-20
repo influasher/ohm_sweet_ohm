@@ -27,8 +27,9 @@ def analyse_image(image_path):
                     {
                         "type": "text",
                         "text": "For the appliance in this image, extract the appliance, brand name, model, \
-                                and estimate/calculate the electricity consumption in kWh per month. Return the output to me in JSON format, \
-                                e.g.: {\"appliance\": \"Kettle 1.5L\", \"brand\": \"Meyer\", \"Model\": \"MMEK1500D\", \"kWh\": \"100\"}. \
+                                and estimate/calculate the electricity consumption in Wh per month. Extract the following information and return it strictly \
+                                with no additional text: \
+                                e.g.: {\"appliance\": \"Kettle 1.5L\", \"brand\": \"Meyer\", \"model\": \"MMEK1500D\", \"Wh\": \"100\"}. \
                                 If unable to identify any fields, change that field to \"Unidentified\""
                     },
                     {
@@ -49,7 +50,7 @@ def analyse_image(image_path):
         headers=headers,
         json=payload
     )
-    
+
     if response.status_code == 200:
         reply = response.json()['choices'][0]['message']['content'].strip()
         return reply

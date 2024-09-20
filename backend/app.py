@@ -17,7 +17,9 @@ def analyse():
     image.save(image_path)
 
     try:
-        reply = analyse_image(image_path)
+        # set reply to either the hardcode (for TEST) or analyse_image (for PROD)
+        # reply = analyse_image(image_path)
+        reply = "{\"appliance\": \"Kettle 1.5L\", \"brand\": \"Meyer\", \"model\": \"MMEK1500D\", \"Wh\": \"100\"}"
         print(reply)    # for debugging
         return reply
     except Exception as e:
