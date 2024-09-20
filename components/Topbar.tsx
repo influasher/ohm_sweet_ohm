@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 
+
 const Topbar: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -10,7 +11,7 @@ const Topbar: React.FC = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     <div className="flex-shrink-0">
-                        <Link href="/" className="font-Monserrat text-xl font-black text-dark-purple  transition-colors duration-200">
+                        <Link href="/home/" className="font-Monserrat text-xl font-black text-dark-purple  transition-colors duration-200">
                             ohmsweetohm
                         </Link>
                     </div>
@@ -38,7 +39,7 @@ const Topbar: React.FC = () => {
                 <div className="md:hidden">
                     <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                         {/* Add your mobile menu items here */}
-                        <a href="#" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Home</a>
+                        <Link href="/home/" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Home</Link>
                         <a href="#" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">About</a>
                         <a href="#" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Contact</a>
                     </div>

@@ -40,7 +40,7 @@ const SingleRoomList = () => {
       <div className="border border-light-purple"> </div>
 
       <div className="px-4 pt-2 pb-8">
-        <Link href="home/" className="font-Montserrat text-dark-purple">
+        <Link href="create/" className="font-Montserrat text-dark-purple">
           ADD APPLIANCE
         </Link>
       </div>
