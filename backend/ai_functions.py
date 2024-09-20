@@ -49,7 +49,7 @@ def analyse_image(image_path):
         headers=headers,
         json=payload
     )
-
+    
     if response.status_code == 200:
         reply = response.json()['choices'][0]['message']['content'].strip()
         return reply
