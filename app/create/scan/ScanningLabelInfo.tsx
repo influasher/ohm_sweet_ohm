@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { X, AlertTriangle } from "lucide-react";
+import Image from 'next/image'
+import kettlePic from './model_kettle.png'
 
 const ScanningLabelInfo = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -50,8 +52,10 @@ const ScanningLabelInfo = () => {
                 <li>In user manuals and online catalogues</li>
               </ol>
               {/* Image is bugging out, tofix */}
-              <img
-                src="model_kettle.png"
+              <Image
+                src={kettlePic}
+                width={500}
+                height={500}
                 alt="product label on bottom of kettle"
                 className="mt-4 rounded-lg"
               />

@@ -94,6 +94,7 @@ const CreateAppliancePage: React.FC = () => {
           type="button"
           onClick={() => {
             console.log(formData);
+            // @ts-expect-error formdata will be an empty array anyway
             const dataToSave = localData.concat(formData)
             localStorage.setItem('storedData', JSON.stringify(dataToSave));
             router.push("./estimate")
