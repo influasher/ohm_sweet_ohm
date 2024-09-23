@@ -17,7 +17,7 @@ const AddAppliancePage = () => {
         frequencyOfUse: number;
         numberOfAppliance: number;
     }
-
+    
     //data processing function
     function parseData(jsonData: any): Appliance[] {
         return jsonData.map((item: any) => ({
