@@ -52,6 +52,10 @@ useEffect(() => {
                   <MoreVertical/>
               </div>
           </div>
+          <div className="justify-center items-center flex text-dark-purple py-3"
+               onClick={() => router.push('create/')}><CirclePlus/>
+              <div className="pl-1 font-semibold"> Add Appliance</div>
+          </div>
           {newUser ? null :
               dataSet.map((appliance, index) => (
                   <ApplianceCardComponent
@@ -61,9 +65,7 @@ useEffect(() => {
                       costPerMonth={appliance.powerUsage}
                   />))}
 
-          <div className="justify-center items-center flex text-dark-purple py-3" onClick={() => router.push('create/')}><CirclePlus/>
-              <div className="pl-1 font-semibold"> Add Appliance</div>
-          </div>
+
           <div className="text-dark-purple font-normal text-sm mx-4">
               Calculation is based on 30days/month and tariff rates of $0.31/kWh, based on rates in Jul – Sep 2024.
               Tariff rates are updated every quarter.
