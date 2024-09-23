@@ -1,10 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { ArrowLeft, Camera } from "lucide-react";
 import Topbar from "@/components/Topbar";
 import { useRouter } from "next/navigation";
-
+type Appliance = {
+  appliance: string;
+  powerUsage: number;
+  brandName: string;
+  model: string;
+  frequencyOfUse: number;
+  numberOfAppliance: number;
+}
 const CreateAppliancePage: React.FC = () => {
   const [formData, setFormData] = useState({
     appliance: "",
@@ -61,6 +68,16 @@ const CreateAppliancePage: React.FC = () => {
     }
   };
 
+  //use effect to handle update in local storage
+  const [localData, setLocalData] = useState<Appliance[]>()
+  useEffect(() => {
+    const data = localStorage.getItem('storedData');
+    if (data) {
+      const parsedData = JSON.parse(data);
+      setLocalData(parsedData);
+    }
+  }, [])
+
   const router = useRouter();
   return (
     <div className="font-montserrat bg-white min-h-screen">
@@ -75,7 +92,12 @@ const CreateAppliancePage: React.FC = () => {
         <button
           className="text-sm"
           type="button"
-          onClick={() => router.push("./estimate")}
+          onClick={() => {
+            const dataToSave = localData?.concat(formData)
+            localStorage.setItem('storedData', JSON.stringify(dataToSave));
+            router.push("./estimate")
+          }
+        }
         >
           Next
         </button>
