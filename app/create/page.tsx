@@ -69,7 +69,7 @@ const CreateAppliancePage: React.FC = () => {
   };
 
   //use effect to handle update in local storage
-  const [localData, setLocalData] = useState<Appliance[]>()
+  const [localData, setLocalData] = useState<Appliance[]>([])
   useEffect(() => {
     const data = localStorage.getItem('storedData');
     if (data) {
@@ -93,7 +93,8 @@ const CreateAppliancePage: React.FC = () => {
           className="text-sm"
           type="button"
           onClick={() => {
-            const dataToSave = localData?.concat(formData)
+            console.log(formData);
+            const dataToSave = localData.concat(formData)
             localStorage.setItem('storedData', JSON.stringify(dataToSave));
             router.push("./estimate")
           }
@@ -166,7 +167,7 @@ const CreateAppliancePage: React.FC = () => {
               </div>
               <input
                 type="text"
-                name="appliance"
+                name="powerUsage"
                 placeholder="Enter Watts"
                 className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
                 value={formData.powerUsage}
@@ -184,7 +185,7 @@ const CreateAppliancePage: React.FC = () => {
               </div>
               <input
                 type="text"
-                name="appliance"
+                name="brand"
                 placeholder="Optional"
                 className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
                 value={formData.brand}
@@ -202,7 +203,7 @@ const CreateAppliancePage: React.FC = () => {
               </div>
               <input
                 type="text"
-                name="appliance"
+                name="model"
                 placeholder="Optional"
                 className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
                 value={formData.model}

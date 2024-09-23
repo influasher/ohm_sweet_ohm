@@ -42,7 +42,7 @@ useEffect(() => {
 },[]);
     const router = useRouter();
   return (
-      <div className="bg-white h-screen font-Montserrat">
+      <div className="bg-white min-h-screen font-Montserrat">
           <Topbar/>
           <div className="bg-dark-purple text-white p-4 flex items-center">
               <ArrowLeft className="mr-4"/>
