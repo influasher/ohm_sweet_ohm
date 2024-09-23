@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import { ArrowLeft, Camera } from "lucide-react";
 import Topbar from "@/components/Topbar";
-import {useRouter} from "next/navigation"
+import { useRouter } from "next/navigation";
+
 const CreateAppliancePage: React.FC = () => {
   const [formData, setFormData] = useState({
     appliance: "",
@@ -14,9 +15,51 @@ const CreateAppliancePage: React.FC = () => {
     quantity: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const selectedFile = e.target.files[0];
+      setLoading(true);
+
+      // Prepare the form data to send to the API
+      const formData = new FormData();
+      formData.append("image", selectedFile);
+
+      try {
+        const response = await fetch("http://localhost:5000/analyse", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        console.log(data)
+
+        // Assuming API returns a JSON with {appliance, brand, model, Wh}
+        if (data) {
+          setFormData((prev) => ({
+            ...prev,
+            appliance: data.appliance || "Unidentified",
+            brand: data.brand || "Unidentified",
+            model: data.model || "Unidentified",
+            wattage: data.Wh || "Unidentified",
+          }));
+        } else {
+          alert("Could not extract data from the image.");
+        }
+      } catch (error) {
+        console.error("Error scanning the label:", error);
+        alert("An error occurred while scanning the label.");
+      } finally {
+        setLoading(false);
+      }
+    }
   };
 
   const router = useRouter();
@@ -30,13 +73,28 @@ const CreateAppliancePage: React.FC = () => {
             Create new appliances
           </h1>
         </div>
-        <button className="text-sm" type="button" onClick={() => router.push('./estimate')}>Save</button>
+        <button className="text-sm" type="button" onClick={() => router.push('./estimate')}>
+          Save
+        </button>
       </div>
 
       <div className="p-4 space-y-4">
-        <button className="w-full py-2 px-4 border border-purple-300 rounded-md flex items-center justify-center text-dark-purple">
+        {/* Hidden file input */}
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          id="file-input"
+          style={{ display: "none" }}
+        />
+        
+        {/* Button to trigger file upload */}
+        <button
+          className="w-full py-2 px-4 border border-purple-300 rounded-md flex items-center justify-center text-dark-purple"
+          onClick={() => document.getElementById('file-input')?.click()}
+        >
           <Camera className="mr-2" />
-          Scan label
+          {loading ? "Scanning..." : "Scan label"}
         </button>
 
         <div className="space-y-4">
