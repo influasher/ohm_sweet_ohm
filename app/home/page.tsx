@@ -1,19 +1,12 @@
 "use client";
-import React, {useEffect} from 'react';
+import React from 'react';
 import Topbar from "@/components/Topbar";
 import {useRouter} from "next/navigation";
 
 const EnergyUsageCard: React.FC = () => {
     const router = useRouter();
-    let routeTo: string = "estimate/"
+    const routeTo: string = "estimate/";
 
-    useEffect(() => {
-        if (!(localStorage.getItem("storedData"))) {
-            routeTo = "estimate/selectCreate/"
-        }
-        }, []
-
-    )
     return (
         <>
         <Topbar/>
