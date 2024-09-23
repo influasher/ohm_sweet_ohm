@@ -1,5 +1,5 @@
-
 import { useState } from "react";
+import { X, AlertTriangle } from "lucide-react";
 
 const ScanningLabelInfo = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,11 +31,14 @@ const ScanningLabelInfo = () => {
               <h2 className="text-lg font-bold text-dark-purple">
                 Specification Label Information
               </h2>
-              <div className="bg-purple-100 rounded-lg p-4 mb-4 text-dark-purple">
-                <p>
-                  Make sure the{" "}
-                  <b>Watts (W), kiloWatts (kW) or Volts (V) and Current (A)</b>{" "}
-                  are clearly visible.
+              <div className="bg-purple-100 rounded-lg p-3 mb-4 flex items-start">
+                <AlertTriangle
+                  className="text-yellow-500 mr-2 flex-shrink-0"
+                  size={24}
+                />
+                <p className="text-dark-purple">
+                  Make sure the <strong>Wattage (W)</strong> or{" "}
+                  <strong>Voltage (V) + Current (A)</strong> is clearly visible.
                 </p>
               </div>
               <p className="font-bold text-dark-purple">
