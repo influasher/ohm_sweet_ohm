@@ -62,7 +62,7 @@ useEffect(() => {
                       key={index}
                       applianceName={appliance.appliance}
                       modelNumber={appliance.model}
-                      costPerMonth={appliance.powerUsage}
+                      powerUsage={appliance.powerUsage}
                   />))}
 
 
