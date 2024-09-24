@@ -1,28 +1,42 @@
-import { useState, FC } from "react";
+import { useState, FC, useEffect } from "react";
 
 // Define the props interface
 interface ApplianceCardProps {
   applianceName: string;
   modelNumber: string;
-  costPerMonth: number;
+  powerUsage: number;
 }
 
-const tariff: Number = 32.57;
+const tariff: number = 32.57;
+
+function calcCost(
+  frequencyOfUse: number,
+  powerUsage: number,
+  numberOfAppliance: number
+) {
+  const hoursPerMonth = frequencyOfUse * 31;
+  return hoursPerMonth * powerUsage * tariff * numberOfAppliance;
+}
 
 // Functional component with props
 const ApplianceCardComponent: FC<ApplianceCardProps> = ({
   applianceName,
   modelNumber,
-  costPerMonth,
+  powerUsage,
 }) => {
   // State to track user input
-  const [frequencyOfUse, setFrequencyOfUse] = useState<string>("Always on (24hrs/day)");
+  const [frequencyOfUse, setFrequencyOfUse] = useState<number>(24);
   const [numberOfAppliances, setNumberOfAppliances] = useState<number>(1);
+  const [costPerMonth, setCostPerMonth] = useState<number>(0);
+
+  useEffect(() => {
+    setCostPerMonth(calcCost(frequencyOfUse, powerUsage, numberOfAppliances));
+  }, [frequencyOfUse, numberOfAppliances]);
 
   // Handlers
-  const handleFrequencyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setFrequencyOfUse(event.target.value);
-  };
+  // const handleFrequencyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  //   setFrequencyOfUse(event.target.value);
+  // };
 
   const handleNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNumberOfAppliances(parseInt(event.target.value));
@@ -34,7 +48,9 @@ const ApplianceCardComponent: FC<ApplianceCardProps> = ({
       <div className="flex justify-between items-center">
         {/* Appliance Name and Model */}
         <div>
-          <h3 className="text-lg font-montserrat font-semibold">{applianceName}</h3>
+          <h3 className="text-lg font-montserrat font-semibold">
+            {applianceName}
+          </h3>
           <p className="text-gray-500">{modelNumber}</p>
         </div>
 
@@ -50,12 +66,14 @@ const ApplianceCardComponent: FC<ApplianceCardProps> = ({
         <label className="text-sm text-gray-500">Frequency of use</label>
         <select
           value={frequencyOfUse}
-          onChange={handleFrequencyChange}
+          onChange={(e) => {
+            setFrequencyOfUse(Number(e.target.value));
+          }}
           className="w-full mt-1 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          <option>Always on (24hrs/day)</option>
-          <option>12 hrs/day</option>
-          <option>6 hrs/day</option>
+          <option value={24}>Always on (24hrs/day)</option>
+          <option value={12}>12 hrs/day</option>
+          <option value={6}>6 hrs/day</option>
         </select>
       </div>
 

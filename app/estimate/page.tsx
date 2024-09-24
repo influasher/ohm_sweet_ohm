@@ -58,7 +58,7 @@ useEffect(() => {
                       key={index}
                       applianceName={appliance.appliance}
                       modelNumber={appliance.model}
-                      costPerMonth={appliance.powerUsage}
+                      powerUsage={appliance.powerUsage}
                   />))}
 
           <div className="justify-center items-center flex text-dark-purple py-3" onClick={() => router.push('create/')}><CirclePlus/>
