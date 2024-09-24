@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { ArrowLeft, Camera } from "lucide-react";
 import Topbar from "@/components/Topbar";
 import { useRouter } from "next/navigation";
@@ -11,7 +11,7 @@ type Appliance = {
   model: string;
   frequencyOfUse: number;
   numberOfAppliance: number;
-}
+};
 const CreateAppliancePage: React.FC = () => {
   const [formData, setFormData] = useState({
     appliance: "",
@@ -19,9 +19,13 @@ const CreateAppliancePage: React.FC = () => {
     brand: "",
     model: "",
   });
-  const [powerUsageType, setPowerUsageType] = useState("wattage");
+  const [powerUsageType, setPowerUsageType] = useState("");
 
   const [loading, setLoading] = useState(false);
+
+  const [voltage, setVoltage] = useState<string>();
+
+  const [current, setCurrent] = useState<string>();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -69,14 +73,14 @@ const CreateAppliancePage: React.FC = () => {
   };
 
   //use effect to handle update in local storage
-  const [localData, setLocalData] = useState<Appliance[]>([])
+  const [localData, setLocalData] = useState<Appliance[]>([]);
   useEffect(() => {
-    const data = localStorage.getItem('storedData');
+    const data = localStorage.getItem("storedData");
     if (data) {
       const parsedData = JSON.parse(data);
       setLocalData(parsedData);
     }
-  }, [])
+  }, []);
 
   const router = useRouter();
   return (
@@ -95,11 +99,10 @@ const CreateAppliancePage: React.FC = () => {
           onClick={() => {
             console.log(formData);
             // @ts-expect-error formdata will be an empty array anyway
-            const dataToSave = localData.concat(formData)
-            localStorage.setItem('storedData', JSON.stringify(dataToSave));
-            router.push("./estimate")
-          }
-        }
+            const dataToSave = localData.concat(formData);
+            localStorage.setItem("storedData", JSON.stringify(dataToSave));
+            router.push("./estimate");
+          }}
         >
           Next
         </button>
@@ -158,22 +161,55 @@ const CreateAppliancePage: React.FC = () => {
                   id=""
                   className="text-xs text-gray-500 mt-1"
                   value={powerUsageType}
-                  onChange={(e) => setPowerUsageType(e.target.value)}
+                  onChange={(e) => {
+                    setPowerUsageType(e.target.value);
+                    console.log(powerUsageType);
+                  }}
                 >
-                  <option value="wattage">Wattage (W)</option>
+                  <option value="wattage">Watts (W)</option>
+                  <option value="kiloWatts">kiloWatts (kW)</option>
                   <option value="voltage_current">
                     Voltage (V) + Current (A)
                   </option>
                 </select>
               </div>
-              <input
+              {/* <input
                 type="text"
                 name="powerUsage"
                 placeholder="Enter Watts"
                 className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
                 value={formData.powerUsage}
                 onChange={handleInputChange}
-              />
+              /> */}
+              {powerUsageType == "wattage" || powerUsageType == "kiloWatts" ? (
+                <input
+                  type="text"
+                  name="powerUsage"
+                  placeholder="Enter Watts"
+                  className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
+                  value={formData.powerUsage}
+                  onChange={handleInputChange}
+                />
+              ) : (
+                <div className="flex flex-col">
+                  <input
+                    type="number"
+                    name="voltage"
+                    placeholder="Enter Volts"
+                    className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
+                    value={voltage}
+                    onChange={(e) => setVoltage(e.target.value)}
+                  />
+                  <input
+                    type="number"
+                    name="current"
+                    placeholder="Enter Amps"
+                    className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
+                    value={current}
+                    onChange={(e) => setCurrent(e.target.value)}
+                  />
+                </div>
+              )}
             </div>
           </div>
 

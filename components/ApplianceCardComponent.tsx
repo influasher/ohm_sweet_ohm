@@ -7,6 +7,8 @@ interface ApplianceCardProps {
   costPerMonth: number;
 }
 
+const tariff: Number = 32.57;
+
 // Functional component with props
 const ApplianceCardComponent: FC<ApplianceCardProps> = ({
   applianceName,
