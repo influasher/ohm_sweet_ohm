@@ -15,17 +15,17 @@ type Appliance = {
 const CreateAppliancePage: React.FC = () => {
   const [formData, setFormData] = useState({
     appliance: "",
-    powerUsage: "",
+    powerUsage: 0,
     brand: "",
     model: "",
   });
-  const [powerUsageType, setPowerUsageType] = useState("");
+  const [powerUsageType, setPowerUsageType] = useState("watts");
 
   const [loading, setLoading] = useState(false);
 
-  const [voltage, setVoltage] = useState<string>();
+  const [voltage, setVoltage] = useState<number>();
 
-  const [current, setCurrent] = useState<string>();
+  const [current, setCurrent] = useState<number>();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -97,11 +97,24 @@ const CreateAppliancePage: React.FC = () => {
           className="text-sm"
           type="button"
           onClick={() => {
-            console.log(formData);
-            // @ts-expect-error formdata will be an empty array anyway
-            const dataToSave = localData.concat(formData);
-            localStorage.setItem("storedData", JSON.stringify(dataToSave));
-            router.push("./estimate");
+            setFormData((prevFormData) => {
+              let updatedFormData = { ...prevFormData };
+
+              if (powerUsageType === "watts") {
+                updatedFormData.powerUsage =
+                  Number(prevFormData.powerUsage) / 1000;
+              }
+
+              console.log(updatedFormData);
+
+              const dataToSave = localData.concat(updatedFormData);
+              localStorage.setItem("storedData", JSON.stringify(dataToSave));
+
+              // Move the router.push here if you want it to happen after the state update
+              router.push("./estimate");
+
+              return updatedFormData;
+            });
           }}
         >
           Next
@@ -166,7 +179,7 @@ const CreateAppliancePage: React.FC = () => {
                     console.log(powerUsageType);
                   }}
                 >
-                  <option value="wattage">Watts (W)</option>
+                  <option value="watts">Watts (W)</option>
                   <option value="kiloWatts">kiloWatts (kW)</option>
                   <option value="voltage_current">
                     Voltage (V) + Current (A)
@@ -181,11 +194,20 @@ const CreateAppliancePage: React.FC = () => {
                 value={formData.powerUsage}
                 onChange={handleInputChange}
               /> */}
-              {powerUsageType == "wattage" || powerUsageType == "kiloWatts" ? (
+              {powerUsageType == "watts" ? (
                 <input
                   type="text"
                   name="powerUsage"
                   placeholder="Enter Watts"
+                  className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
+                  value={formData.powerUsage}
+                  onChange={handleInputChange}
+                />
+              ) : powerUsageType == "kiloWatts" ? (
+                <input
+                  type="text"
+                  name="powerUsage"
+                  placeholder="Enter kiloWatts"
                   className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
                   value={formData.powerUsage}
                   onChange={handleInputChange}
@@ -198,7 +220,7 @@ const CreateAppliancePage: React.FC = () => {
                     placeholder="Enter Volts"
                     className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
                     value={voltage}
-                    onChange={(e) => setVoltage(e.target.value)}
+                    onChange={(e) => setVoltage(Number(e.target.value))}
                   />
                   <input
                     type="number"
@@ -206,7 +228,7 @@ const CreateAppliancePage: React.FC = () => {
                     placeholder="Enter Amps"
                     className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
                     value={current}
-                    onChange={(e) => setCurrent(e.target.value)}
+                    onChange={(e) => setCurrent(Number(e.target.value))}
                   />
                 </div>
               )}
