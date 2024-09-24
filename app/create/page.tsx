@@ -103,6 +103,8 @@ const CreateAppliancePage: React.FC = () => {
               if (powerUsageType === "watts") {
                 updatedFormData.powerUsage =
                   Number(prevFormData.powerUsage) / 1000;
+              } else if (powerUsageType == "voltage_current") {
+                updatedFormData.powerUsage = (voltage * current) / 1000;
               }
 
               console.log(updatedFormData);
