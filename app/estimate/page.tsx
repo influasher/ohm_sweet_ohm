@@ -45,7 +45,7 @@ useEffect(() => {
       <div className="bg-white min-h-screen font-Montserrat">
           <Topbar/>
           <div className="bg-dark-purple text-white p-4 flex items-center">
-              <ArrowLeft className="mr-4"/>
+              <ArrowLeft className="mr-4" onClick={() => router.push("home/")}/>
               <h1 className="text-lg font-montserrat flex-grow">Estimate bills</h1>
               <div className="flex">
                   <Save className="mr-3"/>

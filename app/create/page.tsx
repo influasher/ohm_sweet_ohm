@@ -89,7 +89,7 @@ const CreateAppliancePage: React.FC = () => {
       <Topbar />
       <div className="bg-dark-purple text-white p-4 flex items-center justify-between">
         <div className="flex items-center">
-          <ArrowLeft className="mr-4" />
+          <ArrowLeft className="mr-4" onClick={() => router.back()} />
           <h1 className="text-lg font-montserrat flex-grow">
             Enter Product Details
           </h1>
@@ -99,7 +99,7 @@ const CreateAppliancePage: React.FC = () => {
           type="button"
           onClick={() => {
             setFormData((prevFormData) => {
-              let updatedFormData = { ...prevFormData };
+              const updatedFormData = { ...prevFormData };
 
               if (powerUsageType === "watts") {
                 updatedFormData.powerUsage =
