@@ -50,14 +50,14 @@ const ApplianceCardComponent: FC<ApplianceCardProps> = ({
     const storedData = JSON.parse(localStorage.getItem("storedData") || "[]");
     const updatedData = storedData.map((item: Appliance) => {
       if (item.appliance === applianceName) {
-        return { ...item, totalCost: newCost };
+        return { ...item, totalCost: newCost , frequencyOfUse: frequencyOfUse, numberOfAppliance: numberOfAppliances};
       }
       return item;
     });
 
     // If the appliance doesn't exist, add it
     if (!updatedData.some((item: Appliance) => item.appliance === applianceName)) {
-      updatedData.push({ applianceName, totalCost: newCost });
+      updatedData.push({ applianceName, totalCost: newCost , frequencyOfUse: frequencyOfUse, numberOfAppliances: numberOfAppliances});
     }
 
     localStorage.setItem("storedData", JSON.stringify(updatedData));

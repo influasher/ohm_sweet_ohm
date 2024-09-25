@@ -9,7 +9,7 @@ import {useRouter} from 'next/navigation';
 const AddAppliancePage = () => {
     const [newUser, setNewUser] = useState(true)
     const [dataSet, setDataSet] = useState<Appliance[]>()
-    type Appliance = {
+    interface Appliance {
         appliance: string;
         powerUsage: number;
         brandName: string;
