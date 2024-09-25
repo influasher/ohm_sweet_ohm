@@ -29,9 +29,32 @@ const ApplianceCardComponent: FC<ApplianceCardProps> = ({
   const [numberOfAppliances, setNumberOfAppliances] = useState<number>(1);
   const [costPerMonth, setCostPerMonth] = useState<number>(0);
 
+  // useEffect(() => {
+  //   setCostPerMonth(calcCost(frequencyOfUse, powerUsage, numberOfAppliances));
+  // }, [frequencyOfUse, numberOfAppliances]);
+
   useEffect(() => {
-    setCostPerMonth(calcCost(frequencyOfUse, powerUsage, numberOfAppliances));
-  }, [frequencyOfUse, numberOfAppliances]);
+    const newCost = calcCost(frequencyOfUse, powerUsage, numberOfAppliances);
+    setCostPerMonth(newCost);
+
+    // Update localStorage
+    const storedData = JSON.parse(localStorage.getItem("storedData") || "[]");
+    const updatedData = storedData.map((item: any) => {
+      if (item.appliance === applianceName) {
+        return { ...item, totalCost: newCost };
+      }
+      return item;
+    });
+
+    // If the appliance doesn't exist, add it
+    if (!updatedData.some((item: any) => item.appliance === applianceName)) {
+      updatedData.push({ applianceName, totalCost: newCost });
+    }
+
+    localStorage.setItem("storedData", JSON.stringify(updatedData));
+  }, [frequencyOfUse, numberOfAppliances, applianceName, powerUsage]);
+
+
 
   // Handlers
   // const handleFrequencyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
