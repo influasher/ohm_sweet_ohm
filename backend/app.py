@@ -65,24 +65,52 @@ with app.app_context():
 
 @app.route('/scan', methods=['POST'])
 def scan():
-    if 'image' not in request.files:
-        return jsonify({'error': 'No image file provided.'}), 400
+    if 'images' not in request.files:
+        return jsonify({'error': 'No image files provided.'}), 400
 
-    image = request.files['image']
-    image_path = os.path.join('temp', image.filename)
+    images = request.files.getlist('images')  # Retrieve all images from the request
+    print(images) # debug
+    image_responses = []
+
     os.makedirs('temp', exist_ok=True)
-    image.save(image_path)
 
     try:
-        # set reply to either the hardcode (for TEST) or analyse_image (for PROD)
-        # reply = scan_image(image_path)
-        reply = "{\"appliance\": \"Kettle 1.5L\", \"power_usage\": \"100\", \"brand\": \"Meyer\", \"model\": \"MMEK1500D\"}"
-        print(reply)    # for debugging
-        return reply
+        for image in images:
+            image_path = os.path.join('temp', image.filename)
+            image.save(image_path)
+
+            # reply = scan_image(image_path)
+            reply = "{\"appliance\": \"Kettle 1.5L\", \"power_usage\": \"100\", \"brand\": \"Meyer\", \"model\": \"MMEK1500D\"}" # for test
+            image_responses.append(reply)
+
+            # Clean up the saved image
+            os.remove(image_path)
+
+        # Return all replies as a JSON response
+        print(image_responses) # debug
+        return jsonify(image_responses)
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    finally:
-        os.remove(image_path)
+# def scan():
+#     if 'image' not in request.files:
+#         return jsonify({'error': 'No image file provided.'}), 400
+
+#     image = request.files['image']
+#     image_path = os.path.join('temp', image.filename)
+#     os.makedirs('temp', exist_ok=True)
+#     image.save(image_path)
+
+#     try:
+#         # set reply to either the hardcode (for TEST) or analyse_image (for PROD)
+#         reply = scan_image(image_path)
+#         # reply = "{\"appliance\": \"Kettle 1.5L\", \"power_usage\": \"100\", \"brand\": \"Meyer\", \"model\": \"MMEK1500D\"}"
+#         print(reply)    # for debugging
+#         return reply
+#     except Exception as e:
+#         return jsonify({'error': str(e)}), 500
+#     finally:
+#         os.remove(image_path)
 
 
 # Endpoint to retrieve all appliances from the database

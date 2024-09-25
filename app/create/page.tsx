@@ -6,20 +6,21 @@ import Topbar from "@/components/Topbar";
 import { useRouter } from "next/navigation";
 type Appliance = {
   appliance: string;
-  powerUsage: number;
-  brandName: string;
+  power_usage: number;
+  brand: string;
   model: string;
-  frequencyOfUse: number;
-  numberOfAppliance: number;
+  frequency_of_use: number;
+  number_of_appliance: number;
+  total_cost: number;
 };
 const CreateAppliancePage: React.FC = () => {
   const [formData, setFormData] = useState({
     appliance: "",
-    powerUsage: 0,
+    power_usage: 0,
     brand: "",
     model: "",
   });
-  const [powerUsageType, setPowerUsageType] = useState("watts");
+  const [power_usageType, setPower_usageType] = useState("watts");
 
   const [loading, setLoading] = useState(false);
 
@@ -59,7 +60,7 @@ const CreateAppliancePage: React.FC = () => {
             appliance: data.appliance || "Unidentified",
             brand: data.brand || "Unidentified",
             model: data.model || "Unidentified",
-            wattage: data.Wh || "Unidentified",
+            power_usage: data.power_usage || "Unidentified",
           }));
         } else {
           alert("Could not extract data from the image.");
@@ -101,11 +102,11 @@ const CreateAppliancePage: React.FC = () => {
             setFormData((prevFormData) => {
               const updatedFormData = { ...prevFormData };
 
-              if (powerUsageType === "watts") {
-                updatedFormData.powerUsage =
-                  Number(prevFormData.powerUsage) / 1000;
-              } else if (powerUsageType == "voltage_current") {
-                updatedFormData.powerUsage = (voltage * current) / 1000;
+              if (power_usageType === "watts") {
+                updatedFormData.power_usage =
+                  Number(prevFormData.power_usage) / 1000;
+              } else if (power_usageType == "voltage_current") {
+                updatedFormData.power_usage = (voltage * current) / 1000;
               }
 
               console.log(updatedFormData);
@@ -176,10 +177,10 @@ const CreateAppliancePage: React.FC = () => {
                   name=""
                   id=""
                   className="text-xs text-gray-500 mt-1"
-                  value={powerUsageType}
+                  value={power_usageType}
                   onChange={(e) => {
-                    setPowerUsageType(e.target.value);
-                    console.log(powerUsageType);
+                    setPower_usageType(e.target.value);
+                    console.log(power_usageType);
                   }}
                 >
                   <option value="watts">Watts (W)</option>
@@ -191,28 +192,28 @@ const CreateAppliancePage: React.FC = () => {
               </div>
               {/* <input
                 type="text"
-                name="powerUsage"
+                name="power_usage"
                 placeholder="Enter Watts"
                 className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
-                value={formData.powerUsage}
+                value={formData.power_usage}
                 onChange={handleInputChange}
               /> */}
-              {powerUsageType == "watts" ? (
+              {power_usageType == "watts" ? (
                 <input
                   type="text"
-                  name="powerUsage"
+                  name="power_usage"
                   placeholder="Enter Watts"
                   className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
-                  value={formData.powerUsage}
+                  value={formData.power_usage}
                   onChange={handleInputChange}
                 />
-              ) : powerUsageType == "kiloWatts" ? (
+              ) : power_usageType == "kiloWatts" ? (
                 <input
                   type="text"
-                  name="powerUsage"
+                  name="power_usage"
                   placeholder="Enter kiloWatts"
                   className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
-                  value={formData.powerUsage}
+                  value={formData.power_usage}
                   onChange={handleInputChange}
                 />
               ) : (
