@@ -43,7 +43,7 @@ const CreateAppliancePage: React.FC = () => {
       formData.append("image", selectedFile);
 
       try {
-        const response = await fetch("http://localhost:5000/analyse", {
+        const response = await fetch("http://localhost:5000/scan", {
           method: "POST",
           body: formData,
         });
