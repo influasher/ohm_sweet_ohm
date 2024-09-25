@@ -65,15 +65,21 @@ const ApplianceCardComponent: FC<ApplianceCardProps> = ({
       <div className="mt-4">
         <label className="text-sm text-gray-500">Frequency of use</label>
         <select
-          value={frequencyOfUse}
-          onChange={(e) => {
-            setFrequencyOfUse(Number(e.target.value));
-          }}
-          className="w-full mt-1 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={frequencyOfUse}
+            onChange={(e) => {
+              setFrequencyOfUse(Number(e.target.value));
+            }}
+            className="w-full mt-1 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value={24}>Always on (24hrs/day)</option>
           <option value={12}>12 hrs/day</option>
-          <option value={6}>6 hrs/day</option>
+          <option value={8}>8 hrs/day</option>
+          <option value={4}>4 hrs/day</option>
+          <option value={2}>2 hrs/day</option>
+          <option value={1}>1 hrs/day</option>
+          <option value={.5}>30 mins/day</option>
+          <option value={.25}>15 mins/day</option>
+          <option value={5/60}>5 mins/day</option>
         </select>
       </div>
 
