@@ -1,7 +1,24 @@
 import React, { useState } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
-const EnergyDashboard = () => {
+interface Appliance {
+    appliance: string;
+    powerUsage: number;
+    brand: string;  // Note: This is 'brand' in localStorage, but we'll map it to 'brandName' in our component
+    model: string;
+    frequencyOfUse: number;
+    numberOfAppliance: number;
+    totalCost: number;
+}
+
+interface BreakdownProp {
+    totalCost: number;
+    appliances: Appliance[];
+}
+
+
+
+const EnergyDashboard: React.FC<BreakdownProp> = ({totalCost, appliances}) => {
     const [activeTab, setActiveTab] = useState('cost');
 
     const costData = [
