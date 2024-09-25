@@ -121,7 +121,7 @@ def get_all_appliances():
     return jsonify(result)
 
 
-# New endpoint to add a new appliance to the database
+# Endpoint to add a new appliance to the database
 @app.route('/addAppliance', methods=['POST'])
 def add_appliance():
     data = request.json
@@ -144,6 +144,97 @@ def add_appliance():
         return jsonify({'message': 'New appliance added successfully!', 'appliance': new_appliance.to_dict()}), 201
     except Exception as e:
         db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+# Update both frequency_of_use and number_of_appliance of an appliance by ID
+@app.route('/appliance/<int:appliance_id>', methods=['PATCH'])
+def update_appliance(appliance_id):
+    data = request.json
+
+    try:
+        # Fetch the appliance by ID
+        appliance = Appliance.query.get(appliance_id)
+
+        if appliance is None:
+            return jsonify({'error': 'Appliance not found'}), 404
+
+        # Update frequency_of_use if provided in the request body
+        new_frequency = data.get('frequency_of_use')
+        if new_frequency is not None:
+            appliance.frequency_of_use = new_frequency
+
+        # Update number_of_appliance if provided in the request body
+        new_number = data.get('number_of_appliance')
+        if new_number is not None:
+            appliance.number_of_appliance = new_number
+
+        db.session.commit()
+
+        return jsonify({'message': 'Appliance updated successfully'}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+# Update ALL appliance Monthly Cost
+@app.route('/updateMonthlyCost', methods=['PATCH'])
+def update_monthly_cost():
+    tariffs = 0.03257 # cost per Wh
+    days_in_month = 30
+
+    try:
+        # Fetch all appliances to update their total_cost
+        appliances = Appliance.query.all()
+
+        for appliance in appliances:
+            # Ensure power_usage, frequency_of_use, and number_of_appliance are valid before calculating
+            if appliance.power_usage and appliance.frequency_of_use and appliance.number_of_appliance:
+                # Calculate the total cost
+                appliance.total_cost = tariffs * appliance.power_usage * appliance.frequency_of_use * appliance.number_of_appliance * days_in_month
+
+                db.session.add(appliance)
+
+        db.session.commit()
+
+        return jsonify({"message": "Monthly costs updated successfully!"}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+# Get the total cost of an individual appliance by ID
+@app.route('/appliance/<int:appliance_id>/total_cost', methods=['GET'])
+def get_total_cost(appliance_id):
+    try:
+        # Fetch the appliance by its ID
+        appliance = Appliance.query.get(appliance_id)
+        
+        if appliance is None:
+            return jsonify({'error': 'Appliance not found'}), 404
+
+        return jsonify(appliance.total_cost), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+
+# Get the sum of total_cost for all appliances
+@app.route('/appliances/total_cost', methods=['GET'])
+def get_total_cost_of_all_appliances():
+    try:
+        # Fetch the sum of total_cost for all appliances
+        total_cost_sum = db.session.query(db.func.sum(Appliance.total_cost)).scalar()
+
+        if total_cost_sum is None:
+            total_cost_sum = 0
+
+        return jsonify(total_cost_sum), 200
+
+    except Exception as e:
         return jsonify({'error': str(e)}), 500
 
 
