@@ -130,6 +130,7 @@ const CreateAppliancePage: React.FC = () => {
         <input
           type="file"
           accept="image/*"
+          multiple
           onChange={handleFileChange}
           id="file-input"
           style={{ display: "none" }}
