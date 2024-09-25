@@ -7,6 +7,15 @@ interface ApplianceCardProps {
   powerUsage: number;
 }
 
+type Appliance = {
+  appliance: string;
+  powerUsage: number;
+  brandName: string;
+  model: string;
+  frequencyOfUse: number;
+  numberOfAppliance: number;
+}
+
 const tariff: number = 32.57;
 
 function calcCost(
@@ -39,7 +48,7 @@ const ApplianceCardComponent: FC<ApplianceCardProps> = ({
 
     // Update localStorage
     const storedData = JSON.parse(localStorage.getItem("storedData") || "[]");
-    const updatedData = storedData.map((item: any) => {
+    const updatedData = storedData.map((item: Appliance) => {
       if (item.appliance === applianceName) {
         return { ...item, totalCost: newCost };
       }
@@ -47,7 +56,7 @@ const ApplianceCardComponent: FC<ApplianceCardProps> = ({
     });
 
     // If the appliance doesn't exist, add it
-    if (!updatedData.some((item: any) => item.appliance === applianceName)) {
+    if (!updatedData.some((item: Appliance) => item.appliance === applianceName)) {
       updatedData.push({ applianceName, totalCost: newCost });
     }
 
