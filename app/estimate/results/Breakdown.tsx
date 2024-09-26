@@ -41,16 +41,16 @@ const EnergyDashboard: React.FC<BreakdownProp> = ({
       name: appliance.appliance,
       value: parseFloat(((appliance.totalCost / totalCost) * 100).toFixed(0)),
       cost: appliance.totalCost,
-      Consumption: (appliance.powerUsage * appliance.frequencyOfUse).toFixed(0),
+      consumption: (appliance.powerUsage * appliance.frequencyOfUse).toFixed(0),
     });
     applianceConsumptionData.push({
       name: appliance.appliance,
-      consumption: appliance.powerUsage * appliance.frequencyOfUse,
+      Consumption: appliance.powerUsage * appliance.frequencyOfUse,
       cost: appliance.totalCost,
-      Average: 5,
+      Average: 30,
     });
   });
-
+  console.log(applianceConsumptionData);
   const costData = [
     { name: "Room 1", value: 76, cost: 43.73, consumption: 92.58 },
     { name: "Room 2", value: 24, cost: 43.73, consumption: 92.58 },
@@ -173,7 +173,7 @@ const EnergyDashboard: React.FC<BreakdownProp> = ({
                 <div>
                   <div>{item.name}</div>
                   <div className="text-sm text-gray-600">
-                    {item.consumption.toFixed(2)} kWh/month
+                    {item.Consumption.toFixed(2)} kWh/month
                   </div>
                 </div>
                 <div>${item.cost.toFixed(2)}</div>
