@@ -112,7 +112,7 @@ const Infographic: React.FC<InfographicProps> = ({ totalCost, appliances }) => {
       </div>
       <p className="text-dark-purple mb-2">See More Protips?</p>
       <button
-        className="bg-dark-purple text-white px-6 py-2 rounded-full hover:bg-purple-900 transition duration-300"
+        className="bg-dark-purple text-white px-6 py-2 rounded-full transition duration-300"
         onClick={changeView}
       >
         Show Me More
