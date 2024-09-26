@@ -1,5 +1,16 @@
 import React, { useState } from "react";
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Legend,
+  Rectangle,
+} from "recharts";
 
 interface Appliance {
   appliance: string;
@@ -30,12 +41,13 @@ const EnergyDashboard: React.FC<BreakdownProp> = ({
       name: appliance.appliance,
       value: parseFloat(((appliance.totalCost / totalCost) * 100).toFixed(0)),
       cost: appliance.totalCost,
-      consumption: (appliance.powerUsage * appliance.frequencyOfUse).toFixed(0),
+      Consumption: (appliance.powerUsage * appliance.frequencyOfUse).toFixed(0),
     });
     applianceConsumptionData.push({
       name: appliance.appliance,
       consumption: appliance.powerUsage * appliance.frequencyOfUse,
       cost: appliance.totalCost,
+      Average: 10,
     });
   });
 
@@ -66,6 +78,15 @@ const EnergyDashboard: React.FC<BreakdownProp> = ({
 
   const COLORS = applianceCostData.map(() => generateRandomColor());
 
+  const data = [
+    { name: "Page A", uv: 4000, pv: 2400, amt: 2400 },
+    { name: "Page B", uv: 3000, pv: 1398, amt: 2210 },
+    { name: "Page C", uv: 2000, pv: 9800, amt: 2290 },
+    { name: "Page D", uv: 2780, pv: 3908, amt: 2000 },
+    { name: "Page E", uv: 1890, pv: 4800, amt: 2181 },
+    { name: "Page F", uv: 2390, pv: 3800, amt: 2500 },
+    { name: "Page G", uv: 3490, pv: 4300, amt: 2100 },
+  ];
   const Tab = ({ id, label, isActive, onClick }) => (
     <button
       onClick={() => onClick(id)}
@@ -88,7 +109,7 @@ const EnergyDashboard: React.FC<BreakdownProp> = ({
         />
         <Tab
           id="consumption"
-          label="Consumption Breakdown"
+          label="National Consumption Comparison"
           isActive={activeTab === "consumption"}
           onClick={setActiveTab}
         />
@@ -96,7 +117,9 @@ const EnergyDashboard: React.FC<BreakdownProp> = ({
 
       {activeTab === "cost" && (
         <div className="text-black">
-          <h2 className="text-2xl font-bold mb-4 ">Monthly Cost Breakdown</h2>
+          <h2 className="text-2xl font-bold mb-4 text-center">
+            Monthly Cost Breakdown
+          </h2>
           <div className="flex">
             <div className="w-full">
               <ResponsiveContainer width="100%" height={300}>
@@ -140,46 +163,48 @@ const EnergyDashboard: React.FC<BreakdownProp> = ({
             </div>
           </div>
 
-
           <div className="mt-4">
             <h3 className="font-semibold">Appliance Breakdown</h3>
             {applianceConsumptionData.map((item, itemIndex) => (
-                <div
-                  key={itemIndex}
-                  className="flex justify-between items-center py-2"
-                >
-                  <div>
-                    <div>{item.name}</div>
-                    <div className="text-sm text-gray-600">
-                      {item.consumption} kWh/month
-                    </div>
+              <div
+                key={itemIndex}
+                className="flex justify-between items-center py-2"
+              >
+                <div>
+                  <div>{item.name}</div>
+                  <div className="text-sm text-gray-600">
+                    {item.consumption} kWh/month
                   </div>
-                  <div>${item.cost.toFixed(2)}</div>
                 </div>
-              ))}
+                <div>${item.cost.toFixed(2)}</div>
+              </div>
+            ))}
           </div>
         </div>
       )}
 
       {activeTab === "consumption" && (
         <div>
-          <h2 className="text-2xl font-bold mb-4">
-            Highest Monthly Consumption
+          <h2 className="text-2xl font-bold mb-4 text-center">
+            National Consumption Comparison
           </h2>
-          {consumptionData.map((item, index) => (
-            <div
-              key={index}
-              className="flex justify-between items-center py-2 border-b"
-            >
-              <div>
-                <div className="font-semibold">{item.name}</div>
-                <div className="text-sm text-gray-600">
-                  {item.consumption} kWh/month
-                </div>
-              </div>
-              <div>${item.cost.toFixed(2)}</div>
-            </div>
-          ))}
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart width={150} height={40} data={applianceConsumptionData}>
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Legend />
+              <Bar
+                dataKey="Consumption"
+                fill="#8884d8"
+                activeBar={<Rectangle fill="pink" stroke="blue" />}
+              />
+              <Bar
+                dataKey="Average"
+                fill="#82ca9d"
+                activeBar={<Rectangle fill="gold" stroke="purple" />}
+              />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       )}
     </div>
