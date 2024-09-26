@@ -14,7 +14,7 @@ type Appliance = {
   model: string;
   frequencyOfUse: number;
   numberOfAppliance: number;
-}
+};
 
 const tariff: number = 32.57;
 
@@ -23,6 +23,8 @@ function calcCost(
   powerUsage: number,
   numberOfAppliance: number
 ) {
+  if (numberOfAppliance <= 0 || !numberOfAppliance) return 0;
+
   const hoursPerMonth = frequencyOfUse * 31;
   return hoursPerMonth * powerUsage * tariff * numberOfAppliance;
 }
@@ -50,20 +52,30 @@ const ApplianceCardComponent: FC<ApplianceCardProps> = ({
     const storedData = JSON.parse(localStorage.getItem("storedData") || "[]");
     const updatedData = storedData.map((item: Appliance) => {
       if (item.appliance === applianceName) {
-        return { ...item, totalCost: newCost , frequencyOfUse: frequencyOfUse, numberOfAppliance: numberOfAppliances};
+        return {
+          ...item,
+          totalCost: newCost,
+          frequencyOfUse: frequencyOfUse,
+          numberOfAppliance: numberOfAppliances,
+        };
       }
       return item;
     });
 
     // If the appliance doesn't exist, add it
-    if (!updatedData.some((item: Appliance) => item.appliance === applianceName)) {
-      updatedData.push({ applianceName, totalCost: newCost , frequencyOfUse: frequencyOfUse, numberOfAppliances: numberOfAppliances});
+    if (
+      !updatedData.some((item: Appliance) => item.appliance === applianceName)
+    ) {
+      updatedData.push({
+        applianceName,
+        totalCost: newCost,
+        frequencyOfUse: frequencyOfUse,
+        numberOfAppliances: numberOfAppliances,
+      });
     }
 
     localStorage.setItem("storedData", JSON.stringify(updatedData));
   }, [frequencyOfUse, numberOfAppliances, applianceName, powerUsage]);
-
-
 
   // Handlers
   // const handleFrequencyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -97,11 +109,11 @@ const ApplianceCardComponent: FC<ApplianceCardProps> = ({
       <div className="mt-4">
         <label className="text-sm text-gray-500">Frequency of use</label>
         <select
-            value={frequencyOfUse}
-            onChange={(e) => {
-              setFrequencyOfUse(Number(e.target.value));
-            }}
-            className="w-full mt-1 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          value={frequencyOfUse}
+          onChange={(e) => {
+            setFrequencyOfUse(Number(e.target.value));
+          }}
+          className="w-full mt-1 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value={24}>Always on (24hrs/day)</option>
           <option value={12}>12 hrs/day</option>
@@ -109,9 +121,9 @@ const ApplianceCardComponent: FC<ApplianceCardProps> = ({
           <option value={4}>4 hrs/day</option>
           <option value={2}>2 hrs/day</option>
           <option value={1}>1 hrs/day</option>
-          <option value={.5}>30 mins/day</option>
-          <option value={.25}>15 mins/day</option>
-          <option value={5/60}>5 mins/day</option>
+          <option value={0.5}>30 mins/day</option>
+          <option value={0.25}>15 mins/day</option>
+          <option value={5 / 60}>5 mins/day</option>
         </select>
       </div>
 
