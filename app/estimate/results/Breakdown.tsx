@@ -23,12 +23,19 @@ const EnergyDashboard: React.FC<BreakdownProp> = ({
   const [activeTab, setActiveTab] = useState("cost");
 
   const applianceCostData: any[] | undefined = [];
+  const applianceConsumptionData: any[] | undefined = [];
+
   appliances.map((appliance) => {
     applianceCostData.push({
       name: appliance.appliance,
       value: parseFloat(((appliance.totalCost / totalCost) * 100).toFixed(0)),
       cost: appliance.totalCost,
+      consumption: (appliance.powerUsage * appliance.frequencyOfUse).toFixed(0),
+    });
+    applianceConsumptionData.push({
+      name: appliance.appliance,
       consumption: appliance.powerUsage * appliance.frequencyOfUse,
+      cost: appliance.totalCost,
     });
   });
 
@@ -133,10 +140,10 @@ const EnergyDashboard: React.FC<BreakdownProp> = ({
             </div>
           </div>
 
-          {["Room 1", "Room 2"].map((room, index) => (
-            <div key={index} className="mt-4">
-              <h3 className="font-semibold">{room}</h3>
-              {consumptionData.map((item, itemIndex) => (
+
+          <div className="mt-4">
+            <h3 className="font-semibold">Appliance Breakdown</h3>
+            {applianceConsumptionData.map((item, itemIndex) => (
                 <div
                   key={itemIndex}
                   className="flex justify-between items-center py-2"
@@ -150,8 +157,7 @@ const EnergyDashboard: React.FC<BreakdownProp> = ({
                   <div>${item.cost.toFixed(2)}</div>
                 </div>
               ))}
-            </div>
-          ))}
+          </div>
         </div>
       )}
 
