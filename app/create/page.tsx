@@ -15,7 +15,7 @@ type Appliance = {
 const CreateAppliancePage: React.FC = () => {
   const [formData, setFormData] = useState({
     appliance: "",
-    powerUsage: 0,
+    powerUsage: "",
     brand: "",
     model: "",
   });
