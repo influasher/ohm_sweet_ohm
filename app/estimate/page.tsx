@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 const AddAppliancePage = () => {
   const [newUser, setNewUser] = useState(true);
   const [dataSet, setDataSet] = useState<Appliance[]>();
+
   interface Appliance {
     appliance: string;
     powerUsage: number;
@@ -39,6 +40,7 @@ const AddAppliancePage = () => {
       setDataSet(data);
     }
   }, []);
+
   const router = useRouter();
   return (
     <div className="bg-white min-h-screen font-Montserrat">

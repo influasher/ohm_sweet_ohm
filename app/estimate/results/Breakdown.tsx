@@ -47,7 +47,7 @@ const EnergyDashboard: React.FC<BreakdownProp> = ({
       name: appliance.appliance,
       consumption: appliance.powerUsage * appliance.frequencyOfUse,
       cost: appliance.totalCost,
-      Average: 10,
+      Average: 5,
     });
   });
 
@@ -173,7 +173,7 @@ const EnergyDashboard: React.FC<BreakdownProp> = ({
                 <div>
                   <div>{item.name}</div>
                   <div className="text-sm text-gray-600">
-                    {item.consumption} kWh/month
+                    {item.consumption.toFixed(2)} kWh/month
                   </div>
                 </div>
                 <div>${item.cost.toFixed(2)}</div>

@@ -74,7 +74,7 @@ const Infographic: React.FC<InfographicProps> = ({ totalCost, appliances }) => {
       <p className="text-4xl font-bold text-dark-purple mb-2">
         ~${totalCost.toFixed(2)}
       </p>
-      <p className="text-dark-purple mb-2">({totalkWh} kWh)</p>
+      <p className="text-dark-purple mb-2">({totalkWh.toFixed(2)} kWh)</p>
       {/* <ul>
                 {appliances.map((appliance, index) => (
                     <li key={index}>

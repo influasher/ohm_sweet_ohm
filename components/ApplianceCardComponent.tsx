@@ -5,6 +5,7 @@ interface ApplianceCardProps {
   applianceName: string;
   modelNumber: string;
   powerUsage: number;
+  
 }
 
 type Appliance = {
