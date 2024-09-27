@@ -137,8 +137,6 @@ def get_energy_saving_suggestions(appliances_list):
         reply = response.json()['choices'][0]['message']['content'].strip()
         try:
             # Convert the reply to a JSON object
-            print("Here is ai_functions jsonloads")
-            print(reply)
             return json.loads(reply)
         except ValueError:
             return {

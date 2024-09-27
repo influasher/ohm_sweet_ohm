@@ -32,10 +32,9 @@ def scan():
             #     "brand": "Meyer",
             #     "model": "MMEK1500D"
             # }
-            
+
             image_responses.append(reply)
 
-            # Clean up the saved image
             os.remove(image_path)
 
         print(image_responses) # debug
