@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 openai_api_key = os.getenv('OPENAI_API_KEY')
 
-def analyse_image(image_path):
+def scan_image(image_path):
     def encode_image(image_path):
         with open(image_path, "rb") as image_file:
             return base64.b64encode(image_file.read()).decode('utf-8')
@@ -19,18 +19,17 @@ def analyse_image(image_path):
     }
 
     payload = {
-        "model": "gpt-4o-mini",
+        "model": "gpt-4o",
         "messages": [
             {
                 "role": "user",
                 "content": [
                     {
                         "type": "text",
-                        "text": "For the appliance in this image, extract the appliance, brand name, model, \
-                                and estimate/calculate the electricity consumption in Wh per month. Extract the following information and return it strictly \
-                                with no additional text: \
-                                e.g.: {\"appliance\": \"Kettle 1.5L\", \"brand\": \"Meyer\", \"model\": \"MMEK1500D\", \"Wh\": \"100\"}. \
-                                If unable to identify any fields, change that field to \"Unidentified\""
+                        "text": "For the appliance in this image, accurately extract the appliance, brand name, model, \
+                                and power usage in Watts. Extract the following information and return it strictly with no additional text: \
+                                e.g.: {\"appliance\": \"Kettle 1.5L\", \"power_usage\": \"100\", \"brand\": \"Meyer\", \"model\": \"MMEK1500D\"}. \
+                                Ensure the values for 'appliance' and 'power_usage' are best guesses. If the brand or model cannot be determined, return \"Unidentified\" for those fields."
                     },
                     {
                         "type": "image_url",
