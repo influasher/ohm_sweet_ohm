@@ -37,14 +37,26 @@ const ApplianceCardComponent: FC<ApplianceCardProps> = ({
   modelNumber,
   powerUsage,
 }) => {
+  const getInitialValue = (key: string, defaultValue: number): number => {
+    const storedData = localStorage.getItem("storedData");
+    if (storedData) {
+      const parsedData = JSON.parse(storedData);
+      const appliance = parsedData.find((item: Appliance) => item.appliance === applianceName);
+      if (appliance && appliance[key] !== undefined) {
+        return appliance[key];
+      }
+    }
+    return defaultValue;
+  };
   // State to track user input
-  const [frequencyOfUse, setFrequencyOfUse] = useState<number>(24);
-  const [numberOfAppliances, setNumberOfAppliances] = useState<number>(1);
+  const [frequencyOfUse, setFrequencyOfUse] = useState<number>(() => getInitialValue("frequencyOfUse", 24));
+  const [numberOfAppliances, setNumberOfAppliances] = useState<number>(() => getInitialValue("numberOfAppliance", 1));
   const [costPerMonth, setCostPerMonth] = useState<number>(0);
 
   // useEffect(() => {
   //   setCostPerMonth(calcCost(frequencyOfUse, powerUsage, numberOfAppliances));
   // }, [frequencyOfUse, numberOfAppliances]);
+
 
   useEffect(() => {
     const newCost = calcCost(frequencyOfUse, powerUsage, numberOfAppliances);
@@ -64,19 +76,9 @@ const ApplianceCardComponent: FC<ApplianceCardProps> = ({
       return item;
     });
 
-    // If the appliance doesn't exist, add it
-    if (
-      !updatedData.some((item: Appliance) => item.appliance === applianceName)
-    ) {
-      updatedData.push({
-        applianceName,
-        totalCost: newCost,
-        frequencyOfUse: frequencyOfUse,
-        numberOfAppliances: numberOfAppliances,
-      });
-    }
-
     localStorage.setItem("storedData", JSON.stringify(updatedData));
+    setFrequencyOfUse(frequencyOfUse);
+    setNumberOfAppliances(numberOfAppliances);
   }, [frequencyOfUse, numberOfAppliances, applianceName, powerUsage]);
 
   // Handlers
