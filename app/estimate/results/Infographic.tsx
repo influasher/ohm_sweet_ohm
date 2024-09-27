@@ -13,6 +13,10 @@ interface Appliance {
 interface InfographicProps {
   totalCost: number;
   appliances: Appliance[];
+  views: {
+    view1: string[];
+    view2: string[];
+  };
 }
 
 const placeholderAnalyses = {
@@ -28,21 +32,9 @@ const placeholderAnalyses = {
     "leaving your lights 💡 on when not in use could be adding ~$7.20 to your electricity bill",
     "Switch to energy-efficient LED bulbs 💡✅ and always turn off the lights 🔦 when leaving a room.",
   ],
-  view4: [
-    "your washing machine 🧺 usage may account for ~$12.50 a month",
-    "Try washing with cold water ❄️ and only run full loads 🏡 to cut down on energy use.",
-  ],
-  view5: [
-    "your entertainment devices like TVs 📺 and gaming consoles 🎮 are contributing ~$9.80 to your monthly bill",
-    "Unplug these devices when not in use 🔌 or invest in smart plugs 📱 to cut power.",
-  ],
-  view6: [
-    "your fridge 🧊 might be using ~$25.40 a month if it's an older model",
-    "Consider upgrading 🆕 to an energy-efficient refrigerator and keep it at the optimal temperature of 4°C 🌡️.",
-  ],
 };
 
-const Infographic: React.FC<InfographicProps> = ({ totalCost, appliances }) => {
+const Infographic: React.FC<InfographicProps> = ({ totalCost, appliances, views }) => {
   const [currentView, setCurrentView] = useState("view1");
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -54,10 +46,10 @@ const Infographic: React.FC<InfographicProps> = ({ totalCost, appliances }) => {
 
   const changeView = () => {
     setIsAnimating(true);
-    const views = Object.keys(placeholderAnalyses);
+    const viewKeys = Object.keys(views);
     let newView;
     do {
-      newView = views[Math.floor(Math.random() * views.length)];
+      newView = viewKeys[Math.floor(Math.random() * viewKeys.length)];
     } while (newView === currentView);
 
     setTimeout(() => {
@@ -96,18 +88,10 @@ const Infographic: React.FC<InfographicProps> = ({ totalCost, appliances }) => {
         }`}
       >
         <p className="text-lg text-dark-purple mb-4">
-          {
-            placeholderAnalyses[
-              currentView as keyof typeof placeholderAnalyses
-            ][0]
-          }
+          {views[currentView as keyof typeof views][0]}
         </p>
         <p className="text-lg text-dark-purple mb-4">
-          {
-            placeholderAnalyses[
-              currentView as keyof typeof placeholderAnalyses
-            ][1]
-          }
+          {views[currentView as keyof typeof views][1]}
         </p>
       </div>
       <p className="text-dark-purple mb-2">See More Protips?</p>

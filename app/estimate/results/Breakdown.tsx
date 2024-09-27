@@ -20,6 +20,7 @@ interface Appliance {
   frequencyOfUse: number;
   numberOfAppliance: number;
   totalCost: number;
+  monthlyNationalAverage: number;
 }
 
 interface BreakdownProp {
@@ -45,9 +46,9 @@ const EnergyDashboard: React.FC<BreakdownProp> = ({
     });
     applianceConsumptionData.push({
       name: appliance.appliance,
-      Consumption: appliance.powerUsage * appliance.frequencyOfUse,
+      Consumption: appliance.powerUsage * appliance.frequencyOfUse * 30,
       cost: appliance.totalCost,
-      Average: 30,
+      Average: appliance.monthlyNationalAverage,
     });
   });
   console.log(applianceConsumptionData);

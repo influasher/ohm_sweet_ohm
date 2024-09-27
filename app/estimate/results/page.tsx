@@ -14,25 +14,95 @@ interface Appliance {
   frequencyOfUse: number;
   numberOfAppliance: number;
   totalCost: number;
+  monthlyNationalAverage: number;
 }
 
 const EstimateResults = () => {
   const [appliances, setAppliances] = useState<Appliance[]>([]);
   const [totalCost, setTotalCost] = useState<number>(0);
+  const [views, setViews] = useState<{ view1: string[]; view2: string[] }>({
+    view1: ["", ""],
+    view2: ["", ""],
+  });
+  const router = useRouter();
 
   useEffect(() => {
-    const storedData = localStorage.getItem("storedData");
-    if (storedData) {
-      const parsedData: Appliance[] = JSON.parse(storedData);
-      setAppliances(parsedData);
-      const total = parsedData.reduce(
-        (sum, appliance) => sum + appliance.totalCost,
-        0
-      );
-      setTotalCost(total);
-    }
+    const fetchApplianceData = async () => {
+      const storedData = localStorage.getItem("storedData");
+      if (storedData) {
+        const parsedData: Appliance[] = JSON.parse(storedData);
+        
+        try {
+          // Send a POST request to update the monthlyNationalAverage field for each appliance
+          const response = await fetch("http://localhost:5000/getNationalMonthlyAverage", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(parsedData),
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+
+          const updatedData: Appliance[] = await response.json();
+          setAppliances(updatedData);
+
+          const total = updatedData.reduce(
+            (sum, appliance) => sum + appliance.totalCost,
+            0
+          );
+          setTotalCost(total);
+          localStorage.setItem("storedData", JSON.stringify(updatedData));
+
+          // POST request to the getSuggestions endpoint
+          const suggestionsResponse = await fetch("http://localhost:5000/getSuggestions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedData),
+          });
+
+          if (!suggestionsResponse.ok) {
+            throw new Error(`HTTP error! Status: ${suggestionsResponse.status}`);
+          }
+
+          const suggestionsViews = await suggestionsResponse.json();
+          setViews(suggestionsViews); // Update the views state with the response
+
+        } catch (error) {
+          console.error("Error updating appliance data:", error);
+        }
+      }
+    };
+
+    fetchApplianceData();
   }, []);
-  const router = useRouter();
+
+  // useEffect(() => {
+  //   const storedData = localStorage.getItem("storedData");
+  //   if (storedData) {
+  //     const parsedData: Appliance[] = JSON.parse(storedData);
+  //     setAppliances(parsedData);
+  //     const total = parsedData.reduce(
+  //       (sum, appliance) => sum + appliance.totalCost,
+  //       0
+  //     );
+  //     setTotalCost(total);
+
+  //     // send the appliances (list, line 21)
+  //     // return same data with monthlyNationalAverage field
+  //     // json.parse, save the result to setAppliances like line 30
+  //     // change breakdown.tsx line 51 (30 to appliance.monthlyNationalAverage)
+
+  //     // do post request
+  //     // send the appliances (list, line 21)
+  //     // return ai response to line 62 as prop (Infographic + views, line 24)
+  //   }
+  // }, []);
+
   return (
     <div className="bg-white min-h-screen font-Montserrat">
       <Topbar />
@@ -47,7 +117,7 @@ const EstimateResults = () => {
         </div>
       </div>
       <div className="m-2 p-2 float-left items-center justify-center">
-        <Infographic totalCost={totalCost} appliances={appliances} />
+        <Infographic totalCost={totalCost} appliances={appliances} views={views}/>
       </div>
       <div className="m-2 p-2 float-left items-center justify-center">
         <Breakdown totalCost={totalCost} appliances={appliances} />
