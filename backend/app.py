@@ -25,14 +25,14 @@ def scan():
             image_path = os.path.join('temp', image.filename)
             image.save(image_path)
 
-            # reply = scan_image(image_path)
+            reply = scan_image(image_path)
             # below is for test
-            reply = {
-                "appliance": "Kettle 1.5L",
-                "power_usage": 0.1,
-                "brand": "Meyer",
-                "model": "MMEK1500D"
-            }
+            # reply = {
+            #     "appliance": "Kettle 1.5L",
+            #     "power_usage": 0.1,
+            #     "brand": "Meyer",
+            #     "model": "MMEK1500D"
+            # }
             image_responses.append(reply)
 
             # Clean up the saved image
