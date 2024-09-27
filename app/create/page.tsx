@@ -9,8 +9,8 @@ type Appliance = {
   powerUsage: number;
   brand: string;
   model: string;
-  frequency_of_use: number;
-  number_of_appliance: number;
+  frequencyOfUse: number;
+  numberOfAppliance: number;
   totalCost: number;
 };
 const CreateAppliancePage: React.FC = () => {
@@ -205,19 +205,19 @@ const CreateAppliancePage: React.FC = () => {
               {power_usageType == "watts" ? (
                 <input
                   type="text"
-                  name="power_usage"
+                  name="powerUsage"
                   placeholder="Enter Watts"
                   className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
-                  value={formData.power_usage}
+                  value={formData.powerUsage}
                   onChange={handleInputChange}
                 />
               ) : power_usageType == "kiloWatts" ? (
                 <input
                   type="text"
-                  name="power_usage"
+                  name="powerUsage"
                   placeholder="Enter kiloWatts"
                   className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
-                  value={formData.power_usage}
+                  value={formData.powerUsage}
                   onChange={handleInputChange}
                 />
               ) : (
