@@ -83,7 +83,7 @@ def scan():
             # below is for test
             reply = {
                 "appliance": "Kettle 1.5L",
-                "power_usage": 100,
+                "power_usage": 0.1,
                 "brand": "Meyer",
                 "model": "MMEK1500D"
             }

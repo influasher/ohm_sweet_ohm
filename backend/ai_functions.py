@@ -27,9 +27,9 @@ def scan_image(image_path):
                 "content": [
                     {
                         "type": "text",
-                        "text": "For the appliance in this image, accurately extract the appliance type, brand name, model, and power usage in Watts. \
+                        "text": "For the appliance in this image, accurately extract the appliance type, brand name, model, and power usage in kiloWatts. \
                                 Return the information strictly in the following JSON format with no additional text, noting to exclude the ```json\ ```: \
-                                {\"appliance\": \"Kettle 1.5L\", \"power_usage\": 100, \"brand\": \"Meyer\", \"model\": \"MMEK1500D\"}. \
+                                {\"appliance\": \"Kettle 1.5L\", \"power_usage\": 0.1, \"brand\": \"Meyer\", \"model\": \"MMEK1500D\"}. \
                                 Use your best guesses for the values of 'appliance' and 'power_usage'. If the brand or model cannot be determined, use \"Unidentified\" for those fields."
                     },
                     {
