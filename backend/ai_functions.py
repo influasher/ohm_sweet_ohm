@@ -2,6 +2,7 @@ import requests
 import base64
 import os
 from dotenv import load_dotenv
+import json
 
 load_dotenv()
 openai_api_key = os.getenv('OPENAI_API_KEY')
@@ -26,10 +27,10 @@ def scan_image(image_path):
                 "content": [
                     {
                         "type": "text",
-                        "text": "For the appliance in this image, accurately extract the appliance, brand name, model, \
-                                and power usage in Watts. Extract the following information and return it strictly with no additional text: \
-                                e.g.: {\"appliance\": \"Kettle 1.5L\", \"power_usage\": \"100\", \"brand\": \"Meyer\", \"model\": \"MMEK1500D\"}. \
-                                Ensure the values for 'appliance' and 'power_usage' are best guesses. If the brand or model cannot be determined, return \"Unidentified\" for those fields."
+                        "text": "For the appliance in this image, accurately extract the appliance type, brand name, model, and power usage in Watts. \
+                                Return the information strictly in the following JSON format with no additional text, noting to exclude the ```json\ ```: \
+                                {\"appliance\": \"Kettle 1.5L\", \"power_usage\": 100, \"brand\": \"Meyer\", \"model\": \"MMEK1500D\"}. \
+                                Use your best guesses for the values of 'appliance' and 'power_usage'. If the brand or model cannot be determined, use \"Unidentified\" for those fields."
                     },
                     {
                         "type": "image_url",
@@ -52,6 +53,6 @@ def scan_image(image_path):
 
     if response.status_code == 200:
         reply = response.json()['choices'][0]['message']['content'].strip()
-        return reply
+        return json.loads(reply)
     else:
         raise Exception(f"OpenAI API error: {response.status_code} - {response.text}")

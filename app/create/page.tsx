@@ -35,42 +35,64 @@ const CreateAppliancePage: React.FC = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-  
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const selectedFile = e.target.files[0];
+      const selectedFiles = Array.from(e.target.files); // Convert FileList to an array
       setLoading(true);
-
-      // Prepare the form data to send to the API
-      const formData = new FormData();
-      formData.append("image", selectedFile);
-
+  
       try {
+        const formData = new FormData();
+  
+        // Append each file to the form data
+        selectedFiles.forEach((file) => {
+          formData.append("images", file); // Ensure the key matches what the backend expects
+        });
+  
         const response = await fetch("http://localhost:5000/scan", {
           method: "POST",
           body: formData,
         });
-
+  
         const data = await response.json();
-
+  
         console.log(data);
-
-        // Assuming API returns a JSON with {appliance, brand, model, Wh}
-        if (data) {
-          setFormData((prev) => ({
-            ...prev,
-            appliance: data.appliance || "Unidentified",
-            brand: data.brand || "Unidentified",
-            model: data.model || "Unidentified",
-            powerUsage: data.powerUsage || "Unidentified",
+  
+        // Check if data is an array (since multiple files are uploaded)
+        if (Array.isArray(data)) {
+          const newAppliances = data.map((item) => ({
+            appliance: item.appliance || "Unidentified",
+            brand: item.brand || "Unidentified",
+            model: item.model || "Unidentified",
+            powerUsage: item.power_usage || 0, // Adjusted key name if necessary
+            frequencyOfUse: 1,
+            numberOfAppliance: 1,
+            totalCost: 0,
           }));
+  
+          // Retrieve the existing appliances from localStorage
+          const existingData = localStorage.getItem("storedData");
+          const parsedData = existingData ? JSON.parse(existingData) : [];
+  
+          // Add new appliances to the existing list
+          const updatedData = [...parsedData, ...newAppliances];
+  
+          // Store the updated list in localStorage
+          localStorage.setItem("storedData", JSON.stringify(updatedData));
+  
+          // Update the local state
+          setLocalData(updatedData);
+  
+          // Update the form data in the state (use the first uploaded appliance data as an example)
+          if (newAppliances.length > 0) {
+            setFormData(newAppliances[0]);
+          }
         } else {
-          alert("Could not extract data from the image.");
+          alert("Could not extract data from the image(s).");
         }
       } catch (error) {
-        console.error("Error scanning the label:", error);
-        alert("An error occurred while scanning the label.");
+        console.error("Error scanning the label(s):", error);
+        alert("An error occurred while scanning the label(s).");
       } finally {
         setLoading(false);
       }

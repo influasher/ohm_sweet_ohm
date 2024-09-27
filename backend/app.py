@@ -80,7 +80,13 @@ def scan():
             image.save(image_path)
 
             # reply = scan_image(image_path)
-            reply = "{\"appliance\": \"Kettle 1.5L\", \"power_usage\": \"100\", \"brand\": \"Meyer\", \"model\": \"MMEK1500D\"}" # for test
+            # below is for test
+            reply = {
+                "appliance": "Kettle 1.5L",
+                "power_usage": 100,
+                "brand": "Meyer",
+                "model": "MMEK1500D"
+            }
             image_responses.append(reply)
 
             # Clean up the saved image
