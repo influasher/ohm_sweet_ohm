@@ -25,6 +25,7 @@ const CreateAppliancePage: React.FC = () => {
   });
   const [power_usageType, setPower_usageType] = useState("watts");
 
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const [voltage, setVoltage] = useState<number>();
@@ -95,6 +96,7 @@ const CreateAppliancePage: React.FC = () => {
         alert("An error occurred while scanning the label(s).");
       } finally {
         setLoading(false);
+        router.push('./estimate');
       }
     }
   };
@@ -109,7 +111,6 @@ const CreateAppliancePage: React.FC = () => {
     }
   }, []);
 
-  const router = useRouter();
   return (
     <div className="font-montserrat bg-white min-h-screen">
       <Topbar />

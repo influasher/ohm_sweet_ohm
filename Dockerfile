@@ -1,14 +1,14 @@
 # app/Dockerfile
 
 # Use an official Node.js image for building Next.js app
-FROM node:16-alpine
+FROM node:22-alpine
 
 # Set the working directory inside the container
 WORKDIR /app
 
 # Copy package.json and install dependencies
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
 # Copy the rest of the application
 COPY . .
@@ -20,4 +20,4 @@ RUN npm run build
 EXPOSE 3000
 
 # Start the application
-CMD ["npm", "start"]
+CMD ["npm", "run", "start"]

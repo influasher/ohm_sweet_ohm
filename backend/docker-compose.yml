@@ -7,3 +7,7 @@ services:
       MYSQL_DATABASE: appliance  # Default database to be created
     ports:
       - "3306:3306"  # Expose port 3306 for MySQL connections
+  backend:
+    build: .
+    ports:
+      - "5000:5000"

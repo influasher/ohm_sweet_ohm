@@ -127,7 +127,7 @@ const EnergyBillsPage = () => {
               <p className="flex items-center text-gray-600 mb-4">
                 <Ghost className="mr-2 text-gray-400" />
                 Even when not in use, appliances can still consume power if
-                they're plugged in. Check out these estimates to see how much
+                they are plugged in. Check out these estimates to see how much
                 phantom energy might be costing you.
               </p>
               <p className="text-sm text-gray-500 mb-2">
