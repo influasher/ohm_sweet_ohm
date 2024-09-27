@@ -16,6 +16,7 @@ const AddAppliancePage = () => {
     model: string;
     frequencyOfUse: number;
     numberOfAppliance: number;
+    totalCost: number;
   }
 
   //data processing function
@@ -27,6 +28,7 @@ const AddAppliancePage = () => {
       model: item.model,
       frequencyOfUse: Number(item.frequencyOfUse),
       numberOfAppliance: Number(item.numberOfAppliance),
+      totalCost: Number(item.totalCost)
     }));
   }
   useEffect(() => {

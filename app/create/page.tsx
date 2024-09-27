@@ -6,19 +6,22 @@ import Topbar from "@/components/Topbar";
 import { useRouter } from "next/navigation";
 type Appliance = {
   appliance: string;
-  power_usage: number;
+  powerUsage: number;
   brand: string;
   model: string;
   frequency_of_use: number;
   number_of_appliance: number;
-  total_cost: number;
+  totalCost: number;
 };
 const CreateAppliancePage: React.FC = () => {
   const [formData, setFormData] = useState({
     appliance: "",
-    powerUsage: "",
+    powerUsage: 0,
     brand: "",
     model: "",
+    frequencyOfUse: 1,
+    numberOfAppliance: 1,
+    totalCost: 0,
   });
   const [power_usageType, setPower_usageType] = useState("watts");
 
@@ -60,7 +63,7 @@ const CreateAppliancePage: React.FC = () => {
             appliance: data.appliance || "Unidentified",
             brand: data.brand || "Unidentified",
             model: data.model || "Unidentified",
-            power_usage: data.power_usage || "Unidentified",
+            powerUsage: data.powerUsage || "Unidentified",
           }));
         } else {
           alert("Could not extract data from the image.");
@@ -103,10 +106,10 @@ const CreateAppliancePage: React.FC = () => {
               const updatedFormData = { ...prevFormData };
 
               if (power_usageType === "watts") {
-                updatedFormData.power_usage =
-                  Number(prevFormData.power_usage) / 1000;
+                updatedFormData.powerUsage =
+                  Number(prevFormData.powerUsage) / 1000;
               } else if (power_usageType == "voltage_current") {
-                updatedFormData.power_usage = (voltage * current) / 1000;
+                updatedFormData.powerUsage = (voltage * current) / 1000;
               }
 
               console.log(updatedFormData);

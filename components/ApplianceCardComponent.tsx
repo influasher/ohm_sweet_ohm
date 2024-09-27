@@ -15,6 +15,7 @@ type Appliance = {
   model: string;
   frequencyOfUse: number;
   numberOfAppliance: number;
+  totalCost: number;
 };
 
 const tariff: number = 32.57;
