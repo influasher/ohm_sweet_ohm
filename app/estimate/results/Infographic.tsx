@@ -95,14 +95,14 @@ const Infographic: React.FC<InfographicProps> = ({ totalCost, appliances }) => {
           isAnimating ? "opacity-0" : "opacity-100"
         }`}
       >
-        <p className="text-lg text-dark-purple mb-4 font-bold">
+        <p className="text-lg text-dark-purple mb-4">
           {
             placeholderAnalyses[
               currentView as keyof typeof placeholderAnalyses
             ][0]
           }
         </p>
-        <p className="text-lg text-dark-purple mb-6 font-bold">
+        <p className="text-lg text-dark-purple mb-4">
           {
             placeholderAnalyses[
               currentView as keyof typeof placeholderAnalyses
