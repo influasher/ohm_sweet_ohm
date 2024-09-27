@@ -18,7 +18,7 @@ type Appliance = {
   totalCost: number;
 };
 
-const tariff: number = 32.57;
+const tariff: number = 0.3257;
 
 function calcCost(
   frequencyOfUse: number,
