@@ -103,7 +103,7 @@ def get_energy_saving_suggestions(appliances_list):
         "Given the following list of appliances and their usage in Singapore, provide suggestions "
         "for reducing energy consumption and fun insights. Generate two views: "
         "the first item should either be a key data-driven insight based on their usage (eg: You might be spending ~$14.60 powering inactive appliances that are plugged in 🔌💡)"
-        "or something fun (eg: Your air conditioning ❄️ is costing you extra 30 bubble teas a month 🧋🧋🧋🧋🧋🧋), and the "
+        "or something fun (eg: Your air conditioning ❄️ is costing you x bubble teas a month 🧋🧋🧋🧋🧋🧋), and the "
         "second item should be an actionable suggestion for reducing energy consumption (eg: Save energy by setting your air conditioner to 25°C 🌡️ and using fans 🌀 instead when possible.)."
         "If there are no specific suggestions, provide a default suggestion based on phantom usage. Each item should "
         "be less than 100 characters and include emojis where appropriate.\n\n"

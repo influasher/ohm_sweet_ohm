@@ -87,7 +87,7 @@ const Infographic: React.FC<InfographicProps> = ({ totalCost, appliances, views 
           isAnimating ? "opacity-0" : "opacity-100"
         }`}
       >
-        <p className="text-lg text-dark-purple mb-4">
+        <p className="text-lg text-dark-purple mb-4 font-bold">
           {views[currentView as keyof typeof views][0]}
         </p>
         <p className="text-lg text-dark-purple mb-4">
