@@ -1,21 +1,36 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ArrowLeft, Camera } from "lucide-react";
 import Topbar from "@/components/Topbar";
 import { useRouter } from "next/navigation";
-
+type Appliance = {
+  appliance: string;
+  powerUsage: number;
+  brand: string;
+  model: string;
+  frequencyOfUse: number;
+  numberOfAppliance: number;
+  totalCost: number;
+};
 const CreateAppliancePage: React.FC = () => {
   const [formData, setFormData] = useState({
     appliance: "",
+    powerUsage: 0,
     brand: "",
     model: "",
-    wattage: "",
-    frequency: "",
-    quantity: "",
+    frequencyOfUse: 1,
+    numberOfAppliance: 1,
+    totalCost: 0,
   });
+  const [power_usageType, setPower_usageType] = useState("watts");
 
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
+
+  const [voltage, setVoltage] = useState<number>();
+
+  const [current, setCurrent] = useState<number>();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -24,57 +39,115 @@ const CreateAppliancePage: React.FC = () => {
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const selectedFile = e.target.files[0];
+      const selectedFiles = Array.from(e.target.files); // Convert FileList to an array
       setLoading(true);
-
-      // Prepare the form data to send to the API
-      const formData = new FormData();
-      formData.append("image", selectedFile);
-
+  
       try {
-        const response = await fetch("http://localhost:5000/analyse", {
+        const formData = new FormData();
+  
+        // Append each file to the form data
+        selectedFiles.forEach((file) => {
+          formData.append("images", file); // Ensure the key matches what the backend expects
+        });
+  
+        const response = await fetch("http://localhost:5000/scan", {
           method: "POST",
           body: formData,
         });
-
+  
         const data = await response.json();
-
-        console.log(data)
-
-        // Assuming API returns a JSON with {appliance, brand, model, Wh}
-        if (data) {
-          setFormData((prev) => ({
-            ...prev,
-            appliance: data.appliance || "Unidentified",
-            brand: data.brand || "Unidentified",
-            model: data.model || "Unidentified",
-            wattage: data.Wh || "Unidentified",
+  
+        console.log(data);
+  
+        // Check if data is an array (since multiple files are uploaded)
+        if (Array.isArray(data)) {
+          const newAppliances = data.map((item) => ({
+            appliance: item.appliance || "Unidentified",
+            brand: item.brand || "Unidentified",
+            model: item.model || "Unidentified",
+            powerUsage: item.power_usage || 0, // Adjusted key name if necessary
+            frequencyOfUse: 1,
+            numberOfAppliance: 1,
+            totalCost: 0,
           }));
+  
+          // Retrieve the existing appliances from localStorage
+          const existingData = localStorage.getItem("storedData");
+          const parsedData = existingData ? JSON.parse(existingData) : [];
+  
+          // Add new appliances to the existing list
+          const updatedData = [...parsedData, ...newAppliances];
+  
+          // Store the updated list in localStorage
+          localStorage.setItem("storedData", JSON.stringify(updatedData));
+  
+          // Update the local state
+          setLocalData(updatedData);
+  
+          // Update the form data in the state (use the first uploaded appliance data as an example)
+          if (newAppliances.length > 0) {
+            setFormData(newAppliances[0]);
+          }
         } else {
-          alert("Could not extract data from the image.");
+          alert("Could not extract data from the image(s).");
         }
       } catch (error) {
-        console.error("Error scanning the label:", error);
-        alert("An error occurred while scanning the label.");
+        console.error("Error scanning the label(s):", error);
+        alert("An error occurred while scanning the label(s).");
       } finally {
         setLoading(false);
+        router.push('./estimate');
       }
     }
   };
 
-  const router = useRouter();
+  //use effect to handle update in local storage
+  const [localData, setLocalData] = useState<Appliance[]>([]);
+  useEffect(() => {
+    const data = localStorage.getItem("storedData");
+    if (data) {
+      const parsedData = JSON.parse(data);
+      setLocalData(parsedData);
+    }
+  }, []);
+
   return (
-    <div className="font-montserrat bg-purple-100 min-h-screen">
+    <div className="font-montserrat bg-white min-h-screen">
       <Topbar />
       <div className="bg-dark-purple text-white p-4 flex items-center justify-between">
         <div className="flex items-center">
-          <ArrowLeft className="mr-4" />
+          <ArrowLeft className="mr-4" onClick={() => router.back()} />
           <h1 className="text-lg font-montserrat flex-grow">
-            Create new appliances
+            Enter Product Details
           </h1>
         </div>
-        <button className="text-sm" type="button" onClick={() => router.push('./estimate')}>
-          Save
+        <button
+          className="text-sm"
+          type="button"
+          onClick={() => {
+            setFormData((prevFormData) => {
+              const updatedFormData = { ...prevFormData };
+
+              if (power_usageType === "watts") {
+                updatedFormData.powerUsage =
+                  Number(prevFormData.powerUsage) / 1000;
+              } else if (power_usageType == "voltage_current") {
+                updatedFormData.powerUsage = (voltage * current) / 1000;
+              }
+
+              console.log(updatedFormData);
+
+              const dataToSave = localData.concat(updatedFormData);
+              localStorage.setItem("storedData", JSON.stringify(dataToSave));
+
+              // Move the router.push here if you want it to happen after the state update
+              router.push("./estimate");
+
+              return updatedFormData;
+            });
+          }}
+        >
+          Next
         </button>
       </div>
 
@@ -83,113 +156,150 @@ const CreateAppliancePage: React.FC = () => {
         <input
           type="file"
           accept="image/*"
+          multiple
           onChange={handleFileChange}
           id="file-input"
           style={{ display: "none" }}
         />
-        
+
         {/* Button to trigger file upload */}
         <button
-          className="w-full py-2 px-4 border border-purple-300 rounded-md flex items-center justify-center text-dark-purple"
-          onClick={() => document.getElementById('file-input')?.click()}
+          className="w-full py-3 px-4 border border-purple-900 rounded-md flex items-center justify-center text-dark-purple"
+          onClick={() => document.getElementById("file-input")?.click()}
         >
           <Camera className="mr-2" />
-          {loading ? "Scanning..." : "Scan label"}
+          {loading ? "Scanning..." : "Scan Appliance"}
         </button>
 
         <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-dark-purple mb-1">
-              Appliance
-            </label>
-            <input
-              type="text"
-              name="appliance"
-              placeholder="e.g. Kettle 1.5L"
-              className="w-full p-2 border border-purple-200 rounded-md"
-              value={formData.appliance}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-dark-purple mb-1">
-              Brand Name
-            </label>
-            <input
-              type="text"
-              name="brand"
-              placeholder="Optional"
-              className="w-full p-2 border border-purple-200 rounded-md"
-              value={formData.brand}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-dark-purple mb-1">
-              Model
-            </label>
-            <input
-              type="text"
-              name="model"
-              placeholder="Optional"
-              className="w-full p-2 border border-purple-200 rounded-md"
-              value={formData.model}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-dark-purple mb-1">
-              Power usage
-            </label>
-            <div className="flex">
-              <select className="p-2 border border-purple-200 rounded-l-md bg-white">
-                <option>Wattage</option>
-              </select>
+          <div className="border border-gray-300 rounded-md p-3 mb-4">
+            <div className="flex justify-between items-center">
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-gray-700">
+                  Appliance
+                </label>
+                <span className="text-xs text-gray-500">
+                  (e.g. Kettle 1.5L)
+                </span>
+              </div>
               <input
                 type="text"
-                name="wattage"
+                name="appliance"
+                placeholder="Describe Appliance"
+                className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
+                value={formData.appliance}
+                onChange={handleInputChange}
+              />
+            </div>
+          </div>
+
+          <div className="border border-gray-300 rounded-md p-3 mb-4">
+            <div className="flex justify-between items-center">
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-gray-700">
+                  Power Usage
+                </label>
+                {/* <span className="text-xs text-gray-500">Wattage (W)</span> */}
+                <select
+                  name=""
+                  id=""
+                  className="text-xs text-gray-500 mt-1"
+                  value={power_usageType}
+                  onChange={(e) => {
+                    setPower_usageType(e.target.value);
+                    console.log(power_usageType);
+                  }}
+                >
+                  <option value="watts">Watts (W)</option>
+                  <option value="kiloWatts">kiloWatts (kW)</option>
+                  <option value="voltage_current">
+                    Voltage (V) + Current (A)
+                  </option>
+                </select>
+              </div>
+              {/* <input
+                type="text"
+                name="power_usage"
                 placeholder="Enter Watts"
-                className="flex-grow p-2 border border-purple-200 rounded-r-md"
-                value={formData.wattage}
+                className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
+                value={formData.power_usage}
                 onChange={handleInputChange}
-              />
+              /> */}
+              {power_usageType == "watts" ? (
+                <input
+                  type="text"
+                  name="powerUsage"
+                  placeholder="Enter Watts"
+                  className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
+                  value={formData.powerUsage}
+                  onChange={handleInputChange}
+                />
+              ) : power_usageType == "kiloWatts" ? (
+                <input
+                  type="text"
+                  name="powerUsage"
+                  placeholder="Enter kiloWatts"
+                  className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
+                  value={formData.powerUsage}
+                  onChange={handleInputChange}
+                />
+              ) : (
+                <div className="flex flex-col">
+                  <input
+                    type="number"
+                    name="voltage"
+                    placeholder="Enter Volts"
+                    className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
+                    value={voltage}
+                    onChange={(e) => setVoltage(Number(e.target.value))}
+                  />
+                  <input
+                    type="number"
+                    name="current"
+                    placeholder="Enter Amps"
+                    className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
+                    value={current}
+                    onChange={(e) => setCurrent(Number(e.target.value))}
+                  />
+                </div>
+              )}
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-dark-purple mb-1">
-              Frequency of use (per 30days)
-            </label>
-            <div className="flex">
-              <select className="p-2 border border-purple-200 rounded-l-md bg-white">
-                <option>Hour</option>
-              </select>
+          <div className="border border-gray-300 rounded-md p-3 mb-4">
+            <div className="flex justify-between items-center">
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-gray-700">
+                  Brand Name
+                </label>
+              </div>
               <input
                 type="text"
-                name="frequency"
-                placeholder="Enter quantity"
-                className="flex-grow p-2 border border-purple-200 rounded-r-md"
-                value={formData.frequency}
+                name="brand"
+                placeholder="Optional"
+                className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
+                value={formData.brand}
                 onChange={handleInputChange}
               />
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-dark-purple mb-1">
-              Number of Appliance
-            </label>
-            <input
-              type="text"
-              name="quantity"
-              placeholder="Enter quantity"
-              className="w-full p-2 border border-purple-200 rounded-md"
-              value={formData.quantity}
-              onChange={handleInputChange}
-            />
+          <div className="border border-gray-300 rounded-md p-3 mb-4">
+            <div className="flex justify-between items-center">
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-gray-700">
+                  Model
+                </label>
+              </div>
+              <input
+                type="text"
+                name="model"
+                placeholder="Optional"
+                className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
+                value={formData.model}
+                onChange={handleInputChange}
+              />
+            </div>
           </div>
         </div>
       </div>
