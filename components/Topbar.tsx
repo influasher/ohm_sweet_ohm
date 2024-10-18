@@ -1,9 +1,7 @@
 "use client";
-import React, { useState } from "react";
 import Link from "next/link";
 
 const Topbar: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <header className="w-full bg-white shadow-sm">

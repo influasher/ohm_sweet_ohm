@@ -1,13 +1,12 @@
-version: '0.1'
 
 
 services:
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
+#  frontend:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    ports:
+#      - "3000:3000"
   backend:
     build:
       context: ./backend
