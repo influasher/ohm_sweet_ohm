@@ -81,7 +81,7 @@ const CreateAppliancePage: React.FC = () => {
     dispatch({type: "SET_FORM_DATA", payload: {[name]: value}});
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const selectedFiles = Array.from(e.target.files);
       dispatch({type: "SET_LOADING", payload: true});
@@ -100,49 +100,48 @@ const CreateAppliancePage: React.FC = () => {
         formData.append("images", file);
       });
 
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/scan`, {
+          method: 'POST',
+          body: formData
+        });
 
-
-      // Synchronous XMLHttpRequest
-      const xhr = new XMLHttpRequest();
-      xhr.open("POST", process.env.BACKEND_URL + "/scan", false);  // false makes it synchronous
-      xhr.onload = function() {
-        if (xhr.status === 200) {
-          const data = JSON.parse(xhr.responseText);
-          if (Array.isArray(data)) {
-            const newAppliances = data.map((item) => ({
-              appliance: item.appliance || "Unidentified",
-              brand: item.brand || "Unidentified",
-              model: item.model || "Unidentified",
-              powerUsage: item.power_usage || 0,
-              frequencyOfUse: 1,
-              numberOfAppliance: 1,
-              totalCost: 0,
-            }));
-
-            dispatch({type: "ADD_APPLIANCES", payload: newAppliances});
-
-            if (newAppliances.length > 0) {
-              dispatch({type: "SET_FORM_DATA", payload: newAppliances[0]});
-            }
-
-            const updatedData = [...state.localData, ...newAppliances];
-            localStorage.setItem("storedData", JSON.stringify(updatedData));
-          } else {
-            alert("Could not extract data from the image(s).");
-          }
-        } else {
-          console.error("Error scanning the label(s):", xhr.statusText);
-          alert("An error occurred while scanning the label(s).");
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-        dispatch({type: "SET_LOADING", payload: false});
+
+        const data = await response.json();
+
+        if (Array.isArray(data)) {
+          const newAppliances = data.map((item) => ({
+            appliance: item.appliance || "Unidentified",
+            brand: item.brand || "Unidentified",
+            model: item.model || "Unidentified",
+            powerUsage: item.power_usage || 0,
+            frequencyOfUse: 1,
+            numberOfAppliance: 1,
+            totalCost: 0,
+          }));
+
+          dispatch({type: "ADD_APPLIANCES", payload: newAppliances});
+
+          if (newAppliances.length > 0) {
+            dispatch({type: "SET_FORM_DATA", payload: newAppliances[0]});
+          }
+
+          const updatedData = [...state.localData, ...newAppliances];
+          localStorage.setItem("storedData", JSON.stringify(updatedData));
+        } else {
+          throw new Error("Could not extract data from the image(s).");
+        }
+
         router.push('./estimate');
-      };
-      xhr.onerror = function() {
-        console.error("Network error occurred");
-        alert("A network error occurred. Please try again.");
+      } catch (error) {
+        console.error("Error:", error);
+        alert(error instanceof Error ? error.message : "An error occurred while scanning the label(s).");
+      } finally {
         dispatch({type: "SET_LOADING", payload: false});
-      };
-      xhr.send(formData);
+      }
     }
   };
   const handleSubmit = () => {
