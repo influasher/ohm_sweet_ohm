@@ -101,7 +101,7 @@ const CreateAppliancePage: React.FC = () => {
       });
 
       try {
-        const response = await fetch("https://sea-turtle-app-xrfqv.ondigitalocean.app/scan", {
+        const response = await fetch("https://oso-backend.vercel.app/scan", {
           method: 'POST',
           body: formData
         });
