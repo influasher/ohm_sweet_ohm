@@ -101,7 +101,7 @@ const CreateAppliancePage: React.FC = () => {
       });
 
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/scan`, {
+        const response = await fetch("https://sea-turtle-app-xrfqv.ondigitalocean.app/scan", {
           method: 'POST',
           body: formData
         });
