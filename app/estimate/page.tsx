@@ -14,7 +14,8 @@ type State = {
 
 type Action =
     | { type: "SET_NEW_USER"; payload: boolean }
-    | { type: "SET_APPLIANCES"; payload: Appliance[] };
+    | { type: "SET_APPLIANCES"; payload: Appliance[] }
+    | { type: "DELETE_APPLIANCE"; payload: string };  // New action type
 
 const initialState: State = {
   isNewUser: true,
@@ -27,6 +28,14 @@ function reducer(state: State, action: Action): State {
       return { ...state, isNewUser: action.payload };
     case "SET_APPLIANCES":
       return { ...state, appliances: action.payload };
+    case "DELETE_APPLIANCE":
+      return {
+        ...state,
+        appliances: state.appliances.filter(
+            appliance => appliance.appliance !== action.payload
+        ),
+        isNewUser: state.appliances.length <= 1  // Set to true if last appliance is deleted
+      };
     default:
       return state;
   }
@@ -51,6 +60,20 @@ const AddAppliancePage: React.FC = () => {
 
   const handleCalculateBills = () => {
     router.push("estimate/results/");
+  };
+
+  const handleDeleteAppliance = (applianceName: string) => {
+    dispatch({ type: "DELETE_APPLIANCE", payload: applianceName });
+
+    // Update localStorage
+    const storedData = localStorage.getItem("storedData");
+    if (storedData) {
+      const parsedData = JSON.parse(storedData);
+      const updatedData = parsedData.filter(
+          (item: Appliance) => item.appliance !== applianceName
+      );
+      localStorage.setItem("storedData", JSON.stringify(updatedData));
+    }
   };
 
   return (
@@ -78,6 +101,7 @@ const AddAppliancePage: React.FC = () => {
                       applianceName={appliance.appliance}
                       modelNumber={appliance.model}
                       powerUsage={appliance.powerUsage}
+                      onDelete={() => handleDeleteAppliance(appliance.appliance)}
                   />
                 </div>
             ))}
