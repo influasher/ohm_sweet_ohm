@@ -1,0 +1,63 @@
+/* index.module.css */
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #fff9e7;
+  padding: 20px;
+  text-align: left;
+}
+
+.templateSection {
+  max-width: 600px;
+  width: 100%;
+}
+
+.headerLogo {
+  font-size: 36px;
+  color: #65558f;
+  text-align: center;
+}
+
+.imageContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.mainImage {
+  border-radius: 10px;
+  text-align: center;
+}
+
+.headerTitle {
+  font-size: 32px;
+  color: #222;
+  margin: 20px 0;
+  font-weight: bold;
+}
+
+.challengeDetails {
+  color: #000022;
+  font-size: 18px;
+  line-height: 1.5;
+  margin: 10px 0;
+}
+
+.joinButton {
+  display: inline-block;
+  background-color: #65558f;
+  color: #ffffff;
+  padding: 12px 24px;
+  border-radius: 24px;
+  font-size: 18px;
+  text-decoration: none;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.joinButton:hover {
+  background-color: #4b3c6f;
+}
