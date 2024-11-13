@@ -106,7 +106,7 @@ const Topbar: React.FC = () => {
                         My Profile
                       </Link>
                       <Link
-                        href="/estimates"
+                        href="/estimate"
                         className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
                       >
                         My Estimates
@@ -128,12 +128,12 @@ const Topbar: React.FC = () => {
                   >
                     Login
                   </button>
-                  <Link
-                    href="/signup"
+                  <button
+                    onClick={handleLogin}
                     className="font-medium text-gray-700 hover:text-gray-900"
                   >
                     Sign Up
-                  </Link>
+                  </button>
                 </div>
               )}
             </div>
