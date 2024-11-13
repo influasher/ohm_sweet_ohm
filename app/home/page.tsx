@@ -18,7 +18,7 @@ const EnergyUsageCard: React.FC = () => {
   async function getUser() {
     try {
       const user = await client.auth.getUser();
-      console.log(user);
+      console.log(user.data.user.id);
     } catch (error) {
       console.error("Error fetching user:", error);
     }
