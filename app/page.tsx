@@ -61,7 +61,7 @@ const Home: React.FC = () => {
             </div>
 
             <h1 className={`${styles.headerTitle} ${arvo.className}`}>
-              Join OhmSweetOhm's energy-saving challenge!
+              Join OhmSweetOhm&apos;s energy-saving challenge!
             </h1>
 
             <div className={`${styles.challengeDetails} ${karla.className}`}>
