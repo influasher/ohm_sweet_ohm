@@ -37,6 +37,7 @@ export async function signup(formData: FormData) {
       data: {
         first_name: formData.get("firstName") as string,
         last_name: formData.get("lastName") as string,
+        address: formData.get("address") as string,
       },
     },
   };
