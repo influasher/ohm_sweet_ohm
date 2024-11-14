@@ -106,10 +106,7 @@ export default function LoginPage() {
                     </div>
 
                     {/* Submit button */}
-                    <button
-                      type="submit"
-                      className="custom-btn w-full bg-dark-purple text-white py-2"
-                    >
+                    <button type="submit" className={styles.loginButton}>
                       Sign in
                     </button>
                   </form>
@@ -172,6 +169,24 @@ export default function LoginPage() {
                       />
                     </div>
 
+                    {/* Address input */}
+                    <div className="mb-4">
+                      <label
+                        htmlFor="address"
+                        className="form-label block text-left text-sm"
+                      >
+                        Address
+                      </label>
+                      <input
+                        type="text"
+                        id="address"
+                        name="address"
+                        className="form-control w-full border border-gray-300 p-2"
+                        placeholder="Enter your address"
+                        required
+                      />
+                    </div>
+
                     {/* Password input */}
                     <div className="mb-4">
                       <label
@@ -209,10 +224,7 @@ export default function LoginPage() {
                     </div>
 
                     {/* Submit button */}
-                    <button
-                      type="submit"
-                      className="custom-btn w-full bg-dark-purple text-white py-2"
-                    >
+                    <button type="submit" className={styles.loginButton}>
                       Sign up
                     </button>
                   </form>
