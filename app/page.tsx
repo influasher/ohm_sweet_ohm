@@ -121,7 +121,7 @@ const Home: React.FC = () => {
             </div>
           </div>
 
-          {/*Second green box*/}
+          {/*Third yellow box*/}
           <div className="mx-auto my-2 px-4 bg-[#FFD761] p-8 md:p-12 rounded-3xl max-w-5xl">
             <div className="flex flex-col md:flex-row items-center gap-8">
               <div className="column2 w-full md:w-1/2 md:pt-0">

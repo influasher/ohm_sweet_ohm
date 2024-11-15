@@ -2,12 +2,6 @@
 
 import Head from "next/head";
 import Image from "next/image";
-import styles from "./index.module.css";
-import { Arvo, Karla } from "@next/font/google";
-
-// Load Google Fonts
-const arvo = Arvo({ subsets: ["latin"], weight: ["400", "700"] });
-const karla = Karla({ subsets: ["latin"], weight: ["400", "700"] });
 
 const energySavingChallenge: React.FC = () => {
   return (
@@ -30,62 +24,203 @@ const energySavingChallenge: React.FC = () => {
           content="https://mailchi.mp/8c071eea5dc3/yfo9gng51s"
         />
       </Head>
-
-      <div className={`${styles.wrapper} ${karla.className}`}>
-        <header
-          className={`${styles.templateSection} ${styles.templateHeader}`}
-        >
-          <div
-            className={`${styles.headerContainer} ${styles.contentContainer}`}
-          >
-            <div className={styles.imageContainer}>
+      <main className="min-h-screen bg-gradient-to-b from-white to-gray-100 pb-16">
+        <div className="mx-auto my-2 px-4 p-8 md:p-12 rounded-3xl max-w-5xl">
+          <div className="flex flex-col md:flex-row items-center gap-8">
+            <div className="column2 w-full md:w-1/2 md:pt-0">
               <Image
-                src="/logo-mailchimp.png" // Local path to the uploaded image
-                alt="OhmSweetOhm Energy Challenge"
-                width={200}
-                height={200}
-                className={styles.mainImage}
-              />
+                src="/sustainable.png"
+                width={600}
+                height={656}
+                alt="Lady watering plants"
+              ></Image>
             </div>
 
-            <div className={styles.imageContainer}>
-              <Image
-                src="/sustainable.png" // Local path to the uploaded image
-                alt="OhmSweetOhm Energy Challenge"
-                width={200}
-                height={200}
-                className={styles.mainImage}
-              />
-            </div>
-
-            <h1 className={`${styles.headerTitle} ${arvo.className}`}>
-              Join OhmSweetOhm&apos;s energy-saving challenge!
-            </h1>
-
-            <div className={`${styles.challengeDetails} ${karla.className}`}>
-              <p>
-                <strong>17 Nov – 31 Dec 2024</strong>
-                <br />
-                <em>Registration closes on 29 Nov 2024, 12pm</em>
+            <div className="column1 w-full md:w-1/2">
+              <div className="font-Arvo text-5xl px-0 pb-8 md:pb-10">
+                <h1 className="font-medium text-dark-purple">
+                  OhmSweetOhm&apos;s
+                </h1>
+                <h1 className="font-black">Energy Saving Challenge!</h1>
+              </div>
+              <p className="font-Karla font-semibold">
+                17 Nov till 31 Dec 2024
               </p>
-              <p>
-                Track your energy use, adopt smarter habits, and earn up to $20
-                NTUC voucher for supporting sustainability while saving on your
-                bills! Terms & Conditions apply.
+              <p className="font-Karla font-semibold">
+                Registration closes on 29 Nov, 12pm.
               </p>
+              <p className="font-Karla font-thin pb-3">
+                Track your energy use with our cost calculator, adopt smarter
+                habits, and earn up to $20 NTUC voucher for supporting
+                sustainability while saving on your bills! Terms & Conditions
+                apply.
+              </p>
+              <button className="rounded-full bg-dark-purple text-white text-sm font-semibold px-9 w-80 py-2 font-Karla">
+                Join now
+              </button>
             </div>
-
-            <a
-              href="https://mailchi.mp/66e65f63236d/oso-energy-savings-challenge"
-              className={styles.joinButton}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Join the challenge now
-            </a>
           </div>
-        </header>
-      </div>
+        </div>
+
+        <div className="mx-auto bg-[#FFD761] my-2 px-4 p-8 md:p-12 rounded-3xl max-w-5xl justify-center">
+          <h1 className="font-Arvo font-bold text-5xl text-center">
+            Save Electricity For What Truly Matters
+          </h1>
+        </div>
+        {/* Challenge stuff*/}
+        <div className="mx-auto my-2 px-4 p-8 md:p-12 rounded-3xl max-w-5xl">
+          <div className="font-Arvo text-4xl px-0 pb-8 md:pb-10">
+            <h1 className="font-bold text-black">What is this challenge?</h1>
+          </div>
+          <p>OhmSweetOhm is currently in its early stages.</p>
+          <p>
+             We’re launching this challenge as part of a pilot to gather
+            valuable feedback and insights for improving the product. Your
+            participation helps shape a tool that empowers more people to save
+            energy to protect our planet and of course—reduce our bills!
+          </p>
+        </div>
+
+        {/* steps */}
+
+        <div className="mx-auto my-2 px-4 p-8 md:p-12 rounded-3xl max-w-5xl">
+          <div className="font-Arvo text-3xl px-0 pb-8 md:pb-10">
+            <h1 className="font-bold text-black">How does it work?</h1>
+          </div>
+          <div>
+            <div className="flex items-center gap-8">
+              {/* Left side - Illustration */}
+              <div className="w-1/3 flex justify-end">
+                {/* Replace path with your actual illustration */}
+                <Image
+                  src="/account-purple.png"
+                  alt="Person interacting with electronic devices"
+                  height={200}
+                  width={200}
+                />
+              </div>
+
+              {/* Right side - Content */}
+              <div className="w-2/3">
+                <div className="flex items-start gap-4">
+                  <span className="text-2xl font-bold">01</span>
+                  <div>
+                    <p className=" mb-4">
+                      Sign up and log in to your account between 17-29 Nov 2024
+                      and use the cost estimator to get estimates for at least 3
+                      appliances.
+                    </p>
+                    <p className="text-sm text-gray-500 italic">
+                      Note: Each household may only participate in this
+                      challenge once.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* second */}
+            <div className="flex items-center gap-8">
+              {/* Left side - Illustration */}
+              <div className="w-1/3 flex justify-end">
+                {/* Replace path with your actual illustration */}
+                <Image
+                  src="/track-purple.png"
+                  alt="Person interacting with electronic devices"
+                  height={200}
+                  width={200}
+                />
+              </div>
+
+              {/* Right side - Content */}
+              <div className="w-2/3">
+                <div className="flex items-start gap-4">
+                  <span className="text-2xl font-bold">02</span>
+                  <div>
+                    <p className="mb-4">
+                      Take action to reduce your total energy consumption by the
+                      next billing cycle.
+                    </p>
+                    <p className="text-sm text-gray-500 italic">
+                      OhmSweetOhm&apos;s calculator will provide you with some
+                      tips and recommendations to help you in your energy-saving
+                      journey.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/*third*/}
+            <div className="flex items-center gap-8">
+              {/* Left side - Illustration */}
+              <div className="w-1/3 flex justify-end">
+                {/* Replace path with your actual illustration */}
+                <Image
+                  src="/bills-purple.png"
+                  alt="Person interacting with electronic devices"
+                  height={200}
+                  width={200}
+                />
+              </div>
+
+              {/* Right side - Content */}
+              <div className="w-2/3">
+                <div className="flex items-start gap-4">
+                  <span className="text-2xl font-bold">03</span>
+                  <div>
+                    <p className="">
+                      Complete these tasks to qualify for NTUC Vouchers:
+                    </p>
+                    <ol className="list-decimal list-inside pl-2">
+                      <li>A short mid-point survey</li>
+                      <li>A final feedback survey by 12 Jan 2025, 11.59pm</li>
+                      <li>
+                        Submit your two most recent electricity bills (for the
+                        month that has just been billed and previous month) at
+                        the end of the challenge to validate your energy-saving
+                        success.
+                      </li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/*purple box*/}
+
+            <div className="mx-auto bg-[#D5D4FF] my-2 px-4 p-8 md:p-12 rounded-3xl max-w-5xl justify-center">
+              <div className="flex flex-col md:flex-row items-center gap-8">
+                <div className="column2 w-full md:w-1/2 md:pt-0">
+                  <Image
+                    src="/discount.png"
+                    width={600}
+                    height={656}
+                    alt="Lady watering plants"
+                  ></Image>
+                </div>
+
+                <div className="column1 w-full md:w-1/2">
+                  <div className="font-Arvo text-3xl px-0 pb-8 md:pb-10">
+                    <h1 className="font-black">We celebrate every effort</h1>
+                  </div>
+                  <ul className="list-disc pl-8 space-y-4 font-Karla">
+                    <li className="text-gray-700">
+                      <span className="font-bold">$20 NTUC Voucher</span> if you
+                      reduce your energy consumption by more than 2% compared to
+                      last month&apos;s level.
+                    </li>
+                    <li className="text-gray-700">
+                      <span className="font-bold">$5 NTUC Voucher</span> if you
+                      keep your energy usage within a +/-2% range of last
+                      month&apos;s level.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
     </>
   );
 };
