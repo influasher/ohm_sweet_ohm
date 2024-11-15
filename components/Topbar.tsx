@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const useSignOut = () => {
   const supabaseClient = createClient();
@@ -60,12 +61,15 @@ const Topbar: React.FC = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link
-              href="/home/"
-              className="font-Monserrat text-xl font-black text-dark-purple transition-colors duration-200"
-            >
-              ohmsweetohm
-            </Link>
+            <Image
+              src="/logo-mailchimp.png"
+              width={200}
+              height={200}
+              alt="OSO logo"
+              onClick={() => {
+                router.push("/home/");
+              }}
+            ></Image>
           </div>
 
           {/* Profile Menu */}
