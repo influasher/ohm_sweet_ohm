@@ -1,0 +1,47 @@
+[
+  {
+    "appliance": "Toshiba Rice Cooker",
+    "brand": "Toshiba",
+    "frequencyOfUse": 14,
+    "model": "RC-18NMF",
+    "numberOfAppliance": 1,
+    "powerUsage": 0.7,
+    "totalCost": 23.52
+  },
+  {
+    "appliance": "Electrolux Dishwasher",
+    "brand": "Electrolux",
+    "frequencyOfUse": 6,
+    "model": "ESF6010BW",
+    "numberOfAppliance": 1,
+    "powerUsage": 1.8,
+    "totalCost": 43.2
+  },
+  {
+    "appliance": "Sharp Water Heater",
+    "brand": "Sharp",
+    "frequencyOfUse": 15,
+    "model": "Aqua Power",
+    "numberOfAppliance": 1,
+    "powerUsage": 2.5,
+    "totalCost": 67.5
+  },
+  {
+    "appliance": "Asus Laptop",
+    "brand": "Asus",
+    "frequencyOfUse": 8,
+    "model": "VivoBook",
+    "numberOfAppliance": 2,
+    "powerUsage": 0.05,
+    "totalCost": 5.76
+  },
+  {
+    "appliance": "GE Coffee Maker",
+    "brand": "General Electric",
+    "frequencyOfUse": 3,
+    "model": "Cafe Series",
+    "numberOfAppliance": 1,
+    "powerUsage": 1.0,
+    "totalCost": 10.8
+  }
+]

@@ -4,7 +4,8 @@ import React, { useEffect, useReducer } from "react";
 import { ArrowLeft, Camera } from "lucide-react";
 import Topbar from "@/components/Topbar";
 import { useRouter } from "next/navigation";
-import {Appliance} from "@/types/appliance";
+import { Appliance } from "@/types/appliance";
+import { createClient } from "@/utils/supabase/client";
 
 type PowerUsageType = "watts" | "kiloWatts" | "voltage_current";
 
@@ -18,13 +19,13 @@ type State = {
 };
 
 type Action =
-    | { type: "SET_FORM_DATA"; payload: Partial<Appliance> }
-    | { type: "SET_POWER_USAGE_TYPE"; payload: PowerUsageType }
-    | { type: "SET_VOLTAGE"; payload: number | undefined }
-    | { type: "SET_CURRENT"; payload: number | undefined }
-    | { type: "SET_LOADING"; payload: boolean }
-    | { type: "SET_LOCAL_DATA"; payload: Appliance[] }
-    | { type: "ADD_APPLIANCES"; payload: Appliance[] };
+  | { type: "SET_FORM_DATA"; payload: Partial<Appliance> }
+  | { type: "SET_POWER_USAGE_TYPE"; payload: PowerUsageType }
+  | { type: "SET_VOLTAGE"; payload: number | undefined }
+  | { type: "SET_CURRENT"; payload: number | undefined }
+  | { type: "SET_LOADING"; payload: boolean }
+  | { type: "SET_LOCAL_DATA"; payload: Appliance[] }
+  | { type: "ADD_APPLIANCES"; payload: Appliance[] };
 
 const initialState: State = {
   formData: {
@@ -63,6 +64,67 @@ function reducer(state: State, action: Action): State {
       return state;
   }
 }
+const supabase = createClient();
+
+async function getUser() {
+  const { data, error } = await supabase.auth.getUser();
+
+  if (error) {
+    console.log(error);
+  } else {
+    console.log(data);
+    return data.user.id;
+  }
+}
+
+const saveAppliancesToSupabase = async (appliance: Appliance) => {
+  const userId = await getUser();
+  if (!userId) {
+    console.error("No user found");
+    return;
+  }
+
+  try {
+    // Create a JSON filename for the appliance
+    const filename = `${appliance.appliance}.json`;
+
+    // Check if a file with the same name already exists
+    const { data: existingFiles, error: listError } = await supabase.storage
+      .from("oso_appliances")
+      .list(`${userId}`, { search: filename });
+
+    if (listError) {
+      throw listError;
+    }
+
+    if (existingFiles && existingFiles.length > 0) {
+      alert(
+        `An appliance with the name "${appliance.appliance}" already exists. Please upload a different appliance..`
+      );
+      return;
+    }
+
+    // Create a JSON blob with the appliances data
+    const jsonData = JSON.stringify(appliance);
+    const blob = new Blob([jsonData], { type: "application/json" });
+
+    // Upload the new file
+    const { error } = await supabase.storage
+      .from("oso_appliances")
+      .upload(`${userId}/${filename}`, blob, {
+        contentType: "application/json",
+        upsert: false,
+      });
+
+    if (error) throw error;
+
+    alert(`Appliance "${appliance.appliance}" saved successfully.`);
+  } catch (error) {
+    console.error("Error saving appliances:", error);
+    alert("Failed to save appliance data. Please try again.");
+    throw error;
+  }
+};
 
 const CreateAppliancePage: React.FC = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -72,26 +134,26 @@ const CreateAppliancePage: React.FC = () => {
     const data = localStorage.getItem("storedData");
     if (data) {
       const parsedData = JSON.parse(data);
-      dispatch({type: "SET_LOCAL_DATA", payload: parsedData});
+      dispatch({ type: "SET_LOCAL_DATA", payload: parsedData });
     }
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {name, value} = e.target;
-    dispatch({type: "SET_FORM_DATA", payload: {[name]: value}});
+    const { name, value } = e.target;
+    dispatch({ type: "SET_FORM_DATA", payload: { [name]: value } });
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const selectedFiles = Array.from(e.target.files);
-      dispatch({type: "SET_LOADING", payload: true});
+      dispatch({ type: "SET_LOADING", payload: true });
 
       // Log file details
       selectedFiles.forEach((file, index) => {
         console.log(`File ${index + 1}:`, {
           name: file.name,
           type: file.type,
-          size: `${file.size} bytes`
+          size: `${file.size} bytes`,
         });
       });
 
@@ -102,8 +164,8 @@ const CreateAppliancePage: React.FC = () => {
 
       try {
         const response = await fetch("https://oso-backend.vercel.app/scan", {
-          method: 'POST',
-          body: formData
+          method: "POST",
+          body: formData,
         });
 
         if (!response.ok) {
@@ -113,6 +175,7 @@ const CreateAppliancePage: React.FC = () => {
         const data = await response.json();
 
         if (Array.isArray(data)) {
+          console.log(data)
           const newAppliances = data.map((item) => ({
             appliance: item.appliance || "Unidentified",
             brand: item.brand || "Unidentified",
@@ -123,10 +186,10 @@ const CreateAppliancePage: React.FC = () => {
             totalCost: 0,
           }));
 
-          dispatch({type: "ADD_APPLIANCES", payload: newAppliances});
+          dispatch({ type: "ADD_APPLIANCES", payload: newAppliances });
 
           if (newAppliances.length > 0) {
-            dispatch({type: "SET_FORM_DATA", payload: newAppliances[0]});
+            dispatch({ type: "SET_FORM_DATA", payload: newAppliances[0] });
           }
 
           const updatedData = [...state.localData, ...newAppliances];
@@ -135,179 +198,218 @@ const CreateAppliancePage: React.FC = () => {
           throw new Error("Could not extract data from the image(s).");
         }
 
-        router.push('./estimate');
+        router.push("./estimate");
       } catch (error) {
         console.error("Error:", error);
-        alert(error instanceof Error ? error.message : "An error occurred while scanning the label(s).");
+        alert(
+          error instanceof Error
+            ? error.message
+            : "An error occurred while scanning the label(s)."
+        );
       } finally {
-        dispatch({type: "SET_LOADING", payload: false});
+        dispatch({ type: "SET_LOADING", payload: false });
       }
     }
   };
-  const handleSubmit = () => {
-    const updatedFormData = {...state.formData};
+  // const handleSubmit = () => {
+  //   const updatedFormData = { ...state.formData };
 
-    if (state.power_usageType === "watts") {
-      updatedFormData.powerUsage = Number(state.formData.powerUsage) / 1000;
-    } else if (state.power_usageType === "voltage_current") {
-      updatedFormData.powerUsage = ((state.voltage ?? 0) * (state.current ?? 0)) / 1000;
+  //   if (state.power_usageType === "watts") {
+  //     updatedFormData.powerUsage = Number(state.formData.powerUsage) / 1000;
+  //   } else if (state.power_usageType === "voltage_current") {
+  //     updatedFormData.powerUsage =
+  //       ((state.voltage ?? 0) * (state.current ?? 0)) / 1000;
+  //   }
+
+  //   const dataToSave = [...state.localData, updatedFormData];
+  //   localStorage.setItem("storedData", JSON.stringify(dataToSave)); //this needs to change
+
+  //   router.push("./estimate");
+  // };
+  const handleSubmit = async () => {
+    try {
+      const updatedFormData = { ...state.formData };
+
+      if (state.power_usageType === "watts") {
+        updatedFormData.powerUsage = Number(state.formData.powerUsage) / 1000;
+      } else if (state.power_usageType === "voltage_current") {
+        updatedFormData.powerUsage =
+          ((state.voltage ?? 0) * (state.current ?? 0)) / 1000;
+      }
+
+      const dataToSave = updatedFormData;
+      await saveAppliancesToSupabase(dataToSave);
+
+      router.push("./estimate");
+    } catch (error) {
+      console.error("Error saving data:", error);
+      alert("Failed to save appliance data");
     }
-
-    const dataToSave = [...state.localData, updatedFormData];
-    localStorage.setItem("storedData", JSON.stringify(dataToSave));
-
-    router.push("./estimate");
   };
 
   return (
-      <div className="font-montserrat bg-white min-h-screen">
-        <Topbar/>
-        <div className="bg-dark-purple text-white p-4 flex items-center justify-between">
-          <div className="flex items-center">
-            <ArrowLeft className="mr-4" onClick={() => router.back()}/>
-            <h1 className="text-lg font-montserrat flex-grow">
-              Enter Product Details
-            </h1>
-          </div>
-          <button
-              className="text-sm"
-              type="button"
-              onClick={handleSubmit}
-          >
-            Next
-          </button>
+    <div className="font-montserrat bg-white min-h-screen">
+      <Topbar />
+      <div className="bg-dark-purple text-white p-4 flex items-center justify-between">
+        <div className="flex items-center">
+          <ArrowLeft className="mr-4" onClick={() => router.back()} />
+          <h1 className="text-lg font-montserrat flex-grow">
+            Enter Product Details
+          </h1>
         </div>
+        <button className="text-sm" type="button" onClick={handleSubmit}>
+          Next
+        </button>
+      </div>
 
-        <div className="p-4 space-y-4">
-          <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleFileChange}
-              id="file-input"
-              style={{display: "none"}}
-          />
+      <div className="p-4 space-y-4">
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={handleFileChange}
+          id="file-input"
+          style={{ display: "none" }}
+        />
 
-          <button
-              className="w-full py-3 px-4 border border-purple-900 rounded-md flex items-center justify-center text-dark-purple"
-              onClick={() => document.getElementById("file-input")?.click()}
-          >
-            <Camera className="mr-2"/>
-            {state.loading ? "Scanning..." : "Scan Appliance"}
-          </button>
+        <button
+          className="w-full py-3 px-4 border border-purple-900 rounded-md flex items-center justify-center text-dark-purple"
+          onClick={() => document.getElementById("file-input")?.click()}
+        >
+          <Camera className="mr-2" />
+          {state.loading ? "Scanning..." : "Scan Appliance"}
+        </button>
 
-          <div className="space-y-4">
-            <div className="border border-gray-300 rounded-md p-3 mb-4">
-              <div className="flex justify-between items-center">
-                <div className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-700">
-                    Appliance
-                  </label>
-                  <span className="text-xs text-gray-500">
-                (e.g. Kettle 1.5L)
-              </span>
-                </div>
-                <input
-                    type="text"
-                    name="appliance"
-                    placeholder="Describe Appliance"
-                    className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
-                    value={state.formData.appliance}
-                    onChange={handleInputChange}
-                />
+        <div className="space-y-4">
+          <div className="border border-gray-300 rounded-md p-3 mb-4">
+            <div className="flex justify-between items-center">
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-gray-700">
+                  Appliance
+                </label>
+                <span className="text-xs text-gray-500">
+                  (e.g. Kettle 1.5L)
+                </span>
               </div>
-            </div>
-
-            <div className="border border-gray-300 rounded-md p-3 mb-4">
-              <div className="flex justify-between items-center">
-                <div className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-700">
-                    Power Usage
-                  </label>
-                  <select
-                      className="text-xs text-gray-500 mt-1"
-                      value={state.power_usageType}
-                      onChange={(e) => dispatch({
-                        type: "SET_POWER_USAGE_TYPE",
-                        payload: e.target.value as PowerUsageType
-                      })}
-                  >
-                    <option value="watts">Watts (W)</option>
-                    <option value="kiloWatts">kiloWatts (kW)</option>
-                    <option value="voltage_current">
-                      Voltage (V) + Current (A)
-                    </option>
-                  </select>
-                </div>
-                {state.power_usageType === "watts" || state.power_usageType === "kiloWatts" ? (
-                    <input
-                        type="text"
-                        name="powerUsage"
-                        placeholder={state.power_usageType === "watts" ? "Enter Watts" : "Enter kiloWatts"}
-                        className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
-                        value={state.formData.powerUsage}
-                        onChange={handleInputChange}
-                    />
-                ) : (
-                    <div className="flex flex-col">
-                      <input
-                          type="number"
-                          name="voltage"
-                          placeholder="Enter Volts"
-                          className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
-                          value={state.voltage}
-                          onChange={(e) => dispatch({type: "SET_VOLTAGE", payload: Number(e.target.value)})}
-                      />
-                      <input
-                          type="number"
-                          name="current"
-                          placeholder="Enter Amps"
-                          className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
-                          value={state.current}
-                          onChange={(e) => dispatch({type: "SET_CURRENT", payload: Number(e.target.value)})}
-                      />
-                    </div>
-                )}
-              </div>
-            </div>
-
-            <div className="border border-gray-300 rounded-md p-3 mb-4">
-              <div className="flex justify-between items-center">
-                <div className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-700">
-                    Brand Name
-                  </label>
-                </div>
-                <input
-                    type="text"
-                    name="brand"
-                    placeholder="Optional"
-                    className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
-                    value={state.formData.brand}
-                    onChange={handleInputChange}
-                />
-              </div>
-            </div>
-
-            <div className="border border-gray-300 rounded-md p-3 mb-4">
-              <div className="flex justify-between items-center">
-                <div className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-700">
-                    Model
-                  </label>
-                </div>
-                <input
-                    type="text"
-                    name="model"
-                    placeholder="Optional"
-                    className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
-                    value={state.formData.model}
-                    onChange={handleInputChange}
-                />
-              </div>
+              <input
+                type="text"
+                name="appliance"
+                placeholder="Describe Appliance"
+                className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
+                value={state.formData.appliance}
+                onChange={handleInputChange}
+              />
             </div>
           </div>
+
+          <div className="border border-gray-300 rounded-md p-3 mb-4">
+            <div className="flex justify-between items-center">
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-gray-700">
+                  Power Usage
+                </label>
+                <select
+                  className="text-xs text-gray-500 mt-1"
+                  value={state.power_usageType}
+                  onChange={(e) =>
+                    dispatch({
+                      type: "SET_POWER_USAGE_TYPE",
+                      payload: e.target.value as PowerUsageType,
+                    })
+                  }
+                >
+                  <option value="watts">Watts (W)</option>
+                  <option value="kiloWatts">kiloWatts (kW)</option>
+                  <option value="voltage_current">
+                    Voltage (V) + Current (A)
+                  </option>
+                </select>
+              </div>
+              {state.power_usageType === "watts" ||
+              state.power_usageType === "kiloWatts" ? (
+                <input
+                  type="text"
+                  name="powerUsage"
+                  placeholder={
+                    state.power_usageType === "watts"
+                      ? "Enter Watts"
+                      : "Enter kiloWatts"
+                  }
+                  className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
+                  value={state.formData.powerUsage}
+                  onChange={handleInputChange}
+                />
+              ) : (
+                <div className="flex flex-col">
+                  <input
+                    type="number"
+                    name="voltage"
+                    placeholder="Enter Volts"
+                    className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
+                    value={state.voltage}
+                    onChange={(e) =>
+                      dispatch({
+                        type: "SET_VOLTAGE",
+                        payload: Number(e.target.value),
+                      })
+                    }
+                  />
+                  <input
+                    type="number"
+                    name="current"
+                    placeholder="Enter Amps"
+                    className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
+                    value={state.current}
+                    onChange={(e) =>
+                      dispatch({
+                        type: "SET_CURRENT",
+                        payload: Number(e.target.value),
+                      })
+                    }
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="border border-gray-300 rounded-md p-3 mb-4">
+            <div className="flex justify-between items-center">
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-gray-700">
+                  Brand Name
+                </label>
+              </div>
+              <input
+                type="text"
+                name="brand"
+                placeholder="Optional"
+                className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
+                value={state.formData.brand}
+                onChange={handleInputChange}
+              />
+            </div>
+          </div>
+
+          <div className="border border-gray-300 rounded-md p-3 mb-4">
+            <div className="flex justify-between items-center">
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-gray-700">
+                  Model
+                </label>
+              </div>
+              <input
+                type="text"
+                name="model"
+                placeholder="Optional"
+                className="text-right text-dark-purple placeholder-dark-purple focus:outline-none"
+                value={state.formData.model}
+                onChange={handleInputChange}
+              />
+            </div>
+          </div>
         </div>
-      </div>);
+      </div>
+    </div>
+  );
 };
 export default CreateAppliancePage;
