@@ -148,7 +148,12 @@ const Home: React.FC = () => {
                   Take part in our energy-saving challenge and share your
                   feedback to help us make an even greater impact.
                 </p>
-                <button className="rounded-full bg-dark-purple text-white text-sm font-semibold px-9 w-80 py-2 font-Karla">
+                <button
+                  className="rounded-full bg-dark-purple text-white text-sm font-semibold px-9 w-80 py-2 font-Karla"
+                  onClick={() => {
+                    router.push("/energySavingChallenge");
+                  }}
+                >
                   Learn more
                 </button>
               </div>
