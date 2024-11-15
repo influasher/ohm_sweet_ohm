@@ -131,7 +131,7 @@ const Home: React.FC = () => {
                   <h1 className="font-black">NTUC Vouchers!</h1>
                 </div>
                 <p className="font-Karla font-semibold">
-                  From 15 Nov till 31 Dec 2024 Registration closes on 29 Nov,
+                  From 15 Nov till 31 Dec 2024  Registration closes on 29 Nov,
                   12pm.
                 </p>
                 <p className="font-Karla font-thin pb-3">
