@@ -11,13 +11,15 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        'dark-purple': '#65558F',
-        'light-purple': '#D0BCFF',
-        'selection-purple': '#E8DEF8',
+        "dark-purple": "#65558F",
+        "light-purple": "#D0BCFF",
+        "selection-purple": "#E8DEF8",
       },
       fontFamily: {
-        Montserrat: ['Montserrat', 'sans-serif'],
-      }
+        Montserrat: ["var(--font-montserrat)"],
+        Arvo: ["var(--font-arvo)"],
+        Karla: ["var(--font-karla)"],
+      },
     },
   },
   plugins: [],

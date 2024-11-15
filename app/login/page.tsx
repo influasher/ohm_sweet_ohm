@@ -8,6 +8,40 @@ import styles from "./login.module.css";
 export default function LoginPage() {
   const [activeTab, setActiveTab] = useState("login");
 
+  async function setLogin(formData: FormData) {
+    try {
+      // Call the login function with formData
+      await login(formData);
+    } catch (error) {
+      // Display an alert with the error message
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        // Handle other types of errors (if any)
+        alert("An unexpected error occurred.");
+      }
+      // Refresh the page after the user clicks OK
+      window.location.reload();
+    }
+  }
+
+  async function setSignup(formData: FormData) {
+    try {
+      // Call the login function with formData
+      await signup(formData);
+    } catch (error) {
+      // Display an alert with the error message
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        // Handle other types of errors (if any)
+        alert("An unexpected error occurred.");
+      }
+      // Refresh the page after the user clicks OK
+      window.location.reload();
+    }
+  }
+
   return (
     <section className="login-section flex items-center justify-center min-h-screen">
       <div className="container mx-auto wrapper flex items-center justify-center">
@@ -24,7 +58,7 @@ export default function LoginPage() {
           </div>
 
           {/* Login and Register Forms */}
-          <div className="login-register flex flex-col items-center text-center mt-6">
+          <div className="login-register flex flex-col items-center text-center">
             <div className={styles.imageContainer}>
               <Image
                 src="/logo-mailchimp.png" // Local path to the uploaded image
@@ -68,7 +102,15 @@ export default function LoginPage() {
               <div className="tab-content w-full">
                 {/* Login Form */}
                 {activeTab === "login" && (
-                  <form method="post" action={login} className="w-full">
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault(); // Prevent the default form submission
+                      const formData = new FormData(e.currentTarget);
+                      setLogin(formData); // Call setLogin with the form data
+                    }}
+                    className="w-full"
+                  >
+                    {" "}
                     {/* Email input */}
                     <div className="mb-4">
                       <label
@@ -86,7 +128,6 @@ export default function LoginPage() {
                         required
                       />
                     </div>
-
                     {/* Password input */}
                     <div className="mb-4">
                       <label
@@ -104,7 +145,6 @@ export default function LoginPage() {
                         required
                       />
                     </div>
-
                     {/* Submit button */}
                     <button type="submit" className={styles.loginButton}>
                       Sign in
@@ -114,7 +154,15 @@ export default function LoginPage() {
 
                 {/* Register Form */}
                 {activeTab === "register" && (
-                  <form method="post" action={signup} className="w-full">
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault(); // Prevent the default form submission
+                      const formData = new FormData(e.currentTarget);
+                      setSignup(formData); // Call setSignup with the form data
+                    }}
+                    className="w-full"
+                  >
+                    {" "}
                     {/* First Name input */}
                     <div className="mb-4">
                       <label
@@ -132,7 +180,6 @@ export default function LoginPage() {
                         required
                       />
                     </div>
-
                     {/* Last Name input */}
                     <div className="mb-4">
                       <label
@@ -150,7 +197,6 @@ export default function LoginPage() {
                         required
                       />
                     </div>
-
                     {/* Email input */}
                     <div className="mb-4">
                       <label
@@ -168,7 +214,6 @@ export default function LoginPage() {
                         required
                       />
                     </div>
-
                     {/* Address input */}
                     <div className="mb-4">
                       <label
@@ -186,7 +231,6 @@ export default function LoginPage() {
                         required
                       />
                     </div>
-
                     {/* Password input */}
                     <div className="mb-4">
                       <label
@@ -204,7 +248,6 @@ export default function LoginPage() {
                         required
                       />
                     </div>
-
                     {/* Repeat Password input */}
                     <div className="mb-4">
                       <label
@@ -222,7 +265,6 @@ export default function LoginPage() {
                         required
                       />
                     </div>
-
                     {/* Submit button */}
                     <button type="submit" className={styles.loginButton}>
                       Sign up

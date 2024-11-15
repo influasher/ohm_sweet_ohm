@@ -1,94 +1,64 @@
-// app/index.tsx
-
-import Head from "next/head";
+"use client";
+import React from "react";
+import { ArrowDown } from "lucide-react";
 import Image from "next/image";
-import styles from "./index.module.css";
-import { Arvo, Karla } from "@next/font/google";
-
-// Load Google Fonts
-const arvo = Arvo({ subsets: ["latin"], weight: ["400", "700"] });
-const karla = Karla({ subsets: ["latin"], weight: ["400", "700"] });
-
 const Home: React.FC = () => {
   return (
-    <>
-      <Head>
-        <title>OhmSweetOhm Energy Savings Challenge</title>
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
-        />
-        <meta
-          property="og:title"
-          content="OhmSweetOhm Energy Savings Challenge"
-        />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="/path/to/image.png" />{" "}
-        {/* Adjust the image path */}
-        <meta
-          property="og:url"
-          content="https://mailchi.mp/8c071eea5dc3/yfo9gng51s"
-        />
-        <link rel="icon" href="/path/to/favicon.ico" />{" "}
-        {/* Adjust the favicon path */}
-      </Head>
+    <main className="min-h-screen bg-gradient-to-b from-white to-gray-100">
+      <div className="max-w-2xl mx-auto px-4 text-center">
+        <h1 className="text-4xl font-extrabold mb-8 font-Arvo ">
+          Powering Smart Savings For Every Home!
+        </h1>
 
-      <div className={`${styles.wrapper} ${karla.className}`}>
-        <header
-          className={`${styles.templateSection} ${styles.templateHeader}`}
-        >
-          <div
-            className={`${styles.headerContainer} ${styles.contentContainer}`}
-          >
-            <div className={styles.imageContainer}>
-              <Image
-                src="/logo-mailchimp.png" // Local path to the uploaded image
-                alt="OhmSweetOhm Energy Challenge"
-                width={200}
-                height={200}
-                className={styles.mainImage}
-              />
-            </div>
-
-            <div className={styles.imageContainer}>
-              <Image
-                src="/sustainable.png" // Local path to the uploaded image
-                alt="OhmSweetOhm Energy Challenge"
-                width={200}
-                height={200}
-                className={styles.mainImage}
-              />
-            </div>
-
-            <h1 className={`${styles.headerTitle} ${arvo.className}`}>
-              Join OhmSweetOhm&apos;s energy-saving challenge!
-            </h1>
-
-            <div className={`${styles.challengeDetails} ${karla.className}`}>
-              <p>
-                <strong>17 Nov – 31 Dec 2024</strong>
-                <br />
-                <em>Registration closes on 29 Nov 2024, 12pm</em>
-              </p>
-              <p>
-                Track your energy use, adopt smarter habits, and earn up to $20
-                NTUC voucher for supporting sustainability while saving on your
-                bills! Terms & Conditions apply.
-              </p>
-            </div>
-
-            <a
-              href="https://mailchi.mp/66e65f63236d/oso-energy-savings-challenge"
-              className={styles.joinButton}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Join the challenge now
-            </a>
-          </div>
-        </header>
+        <p className="font-medium font-Karla pb-4">
+          Understanding your home&apos;s energy use, reduce waste, and save-with
+          ease.
+        </p>
+        <button className="rounded-full bg-dark-purple text-white text-sm font-semibold px-8 py-2 font-Karla">
+          Get started for free
+        </button>
+        <p className="p-3 font-Karla font-xs">See how it works</p>
+        <div className="grid place-items-center">
+          <ArrowDown
+            className="text-black"
+            absoluteStrokeWidth={true}
+            size={48}
+          />
+        </div>
       </div>
-    </>
+      {/*First purple box*/}
+      <div className="container mx-auto px-4 bg-light-purple p-8 md:p-12 rounded-3xl max-w-5xl">
+        <div className="flex flex-col md:flex-row items-center gap-8">
+          <div className="column1 w-full md:w-1/2">
+            <div className="font-Arvo text-5xl px-0 pb-8 md:pb-10">
+              <h1 className="font-[500]">What is </h1>
+              <h1 className="font-black">OhmSweetOhm?</h1>
+            </div>
+            <p className="font-Karla font-thin pb-3">
+              OhmSweetOhm is a web-based cost calculator that estimates the
+              energy costs of your home appliances—no extra devices or
+              installations needed beyond your mobile phone or computer!{" "}
+            </p>
+
+            <p className="font-Karla font-thin pt-2">
+              With actionable insights, OhmSweetOhm empowers you to make smart
+              choices to reduce energy use and save on your bills.
+            </p>
+            <p className="font-Karla font-semibold">
+              Best of all, it&apos;s completely free to use!
+            </p>
+          </div>
+          <div className="column2 w-full md:w-1/2 md:pt-0">
+            <Image
+              src="/lp-software-img-1.png"
+              width={600}
+              height={656}
+              alt="Image of phone"
+            ></Image>
+          </div>
+        </div>
+      </div>
+    </main>
   );
 };
 
