@@ -22,7 +22,7 @@ const Footer = () => {
           <Instagram size={30} />
         </a>
       </div>
-      <div className="max-w-7xl mx-auto px-6 font-Karla ">
+      <div className="w-full mx-0 px-3 font-Karla ">
         <div className="flex flex-col md:flex-row justify-between items-start py-4">
           {/* Logo and links */}
           <div className="flex flex-col md:flex-row items-center  gap-4 md:gap-8 pb-2">
