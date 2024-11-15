@@ -6,7 +6,17 @@ import styles from "./profile.module.css";
 
 const ProfilePage = () => {
   const client = createClient();
-  const [userProfile, setUserProfile] = useState(null);
+  // const [userProfile, setUserProfile] = useState({
+  //   first_name: "",
+  //   last_name: "",
+  //   address: "",
+  //   email: "",
+  // });
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [address, setAddress] = useState("");
+  const [email, setEmail] = useState("");
+
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -21,13 +31,29 @@ const ProfilePage = () => {
       try {
         const response = await client.auth.getUser();
         const userData = response.data.user?.user_metadata;
-        setUserProfile(userData);
-        setFormData({
-          first_name: userData?.first_name || "",
-          last_name: userData?.last_name || "",
-          email: response.data.user?.email || "",
-          address: userData?.address || "", // Added address field
-        });
+        if (userData) {
+          const first_name = userData.first_name;
+          const last_name = userData.last_name;
+          const email = userData.email;
+          const address = userData.address;
+
+          setFirstName(first_name);
+          setLastName(last_name);
+          setAddress(address);
+          setEmail(email);
+
+          // setUserProfile({
+          //   first_name: first_name,
+          //   last_name: userData.last_name,
+          //   email: usuerData
+          // });
+          setFormData({
+            first_name: userData.first_name || "",
+            last_name: userData.last_name || "",
+            email: response.data.user?.email || "",
+            address: userData.address || "",
+          });
+        }
       } catch (error) {
         console.error("Error fetching user:", error);
       } finally {
@@ -38,7 +64,9 @@ const ProfilePage = () => {
     fetchUser();
   }, [client]);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -46,7 +74,7 @@ const ProfilePage = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const { error } = await client.auth.updateUser({
@@ -59,13 +87,16 @@ const ProfilePage = () => {
       });
 
       if (error) throw error;
+      setFirstName(formData.first_name);
+      setLastName(formData.last_name);
+      setAddress(formData.address);
 
-      setUserProfile({
-        ...userProfile,
-        first_name: formData.first_name,
-        last_name: formData.last_name,
-        address: formData.address, // Added address field
-      });
+      // setUserProfile({
+      //   ...userProfile,
+      //   first_name: formData.first_name,
+      //   last_name: formData.last_name,
+      //   address: formData.address, // Added address field
+      // });
       setIsEditing(false);
       alert("Profile updated successfully!");
     } catch (error) {
@@ -89,13 +120,14 @@ const ProfilePage = () => {
               {!isEditing ? (
                 <div className="text-center">
                   <h2 className="text-2xl font-bold text-gray-800">
-                    {userProfile
+                    {/* {userProfile
                       ? `${userProfile.first_name} ${userProfile.last_name}`
-                      : ""}
+                      : ""} */}
+                    {firstName} {lastName}
                   </h2>
-                  <p className="text-gray-600 mt-2">{formData.email}</p>
+                  <p className="text-gray-600 mt-2">{email}</p>
                   <p className="text-gray-600 mt-2">
-                    {formData.address || "No address provided"}
+                    {address || "No address provided"}
                   </p>
                   <button
                     onClick={() => setIsEditing(true)}
@@ -156,7 +188,7 @@ const ProfilePage = () => {
                       name="address"
                       value={formData.address}
                       onChange={handleInputChange}
-                      rows="3"
+                      rows={3}
                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>

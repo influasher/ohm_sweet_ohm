@@ -22,7 +22,7 @@ const useSignOut = () => {
 
 const Topbar: React.FC = () => {
   const client = createClient();
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const signOut = useSignOut();
