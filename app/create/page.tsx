@@ -192,10 +192,12 @@ const CreateAppliancePage: React.FC = () => {
             dispatch({ type: "SET_FORM_DATA", payload: newAppliances[0] });
           }
 
-          const updatedData = [...state.localData, ...newAppliances];
+          // const updatedData = [...state.localData, ...newAppliances];
+          const updatedData = newAppliances[0]; //we need to change this for accepting multiple photo inputs
+
           console.log(updatedData)
-          localStorage.setItem("storedData", JSON.stringify(updatedData));
-          // await saveAppliancesToSupabase(updatedData);
+          // localStorage.setItem("storedData", JSON.stringify(updatedData));
+          await saveAppliancesToSupabase(updatedData);
 
         } else {
           throw new Error("Could not extract data from the image(s).");
