@@ -58,6 +58,82 @@ const Home: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/*Second green box*/}
+
+      <div className="mx-auto my-5 px-4 bg-[#BEF1C9] p-8 md:p-12 rounded-3xl max-w-5xl">
+        <div>
+          <h1 className="font-Arvo mb-8 text-4xl font-bold">
+            How does it work?
+          </h1>
+        </div>
+        <div className="grid-cols-3 flex flex-col md:flex-row items-stretch justify-evenly gap-6">
+          {/*three columns here*/}
+          <div className="col1 bg-white md:w-1/3 items-center rounded-xl p-6 flex flex-col text-center">
+            <div className="bg-gray-500 size-40 "> image here</div>
+            <div className="font-Arvo text-xl font-semibold m-3">
+              <h1>Simple Setup</h1>
+            </div>
+            <p className="text-black">
+              Input appliance details or snap a picture of a household appliance
+              or its specifications label—no additional hardware needed.
+            </p>
+            {/*2nd columns here*/}
+          </div>
+          <div className="col1 bg-white md:w-1/3 items-center rounded-xl p-6 flex flex-col text-center">
+            <div className="bg-gray-500 size-40 "> image here</div>
+            <div className="font-Arvo text-xl font-semibold m-3">
+              <h1>Personalised Insights</h1>
+            </div>
+            <p className="text-black">
+              Input appliance details or snap a picture of a household appliance
+              or its specifications label—no additional hardware needed.
+            </p>
+          </div>
+          {/*third columns here*/}
+          <div className="col1 bg-white md:w-1/3 items-center rounded-xl p-6 flex flex-col text-center">
+            <div className="bg-dark-purple size-40 "> image here</div>
+            <div className="font-Arvo text-xl font-semibold m-3">
+              <h1>Actionable Recommendations</h1>
+            </div>
+            <p className="text-black">
+              Input appliance details or snap a picture of a household appliance
+              or its specifications label—no additional hardware needed.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/*3rd yellow box*/}
+
+      <div className="mx-auto my-5 px-4 bg-[#FFD761] p-8 md:p-12 rounded-3xl max-w-5xl">
+        <div className="flex flex-col md:flex-row items-center gap-8">
+          <div className="column2 w-full md:w-1/2 md:pt-0">
+            <Image
+              src="/sustainable.png"
+              width={600}
+              height={656}
+              alt="Lady watering plants"
+            ></Image>
+          </div>
+
+          <div className="column1 w-full md:w-1/2">
+            <div className="font-Arvo text-5xl px-0 pb-8 md:pb-10">
+              <h1 className="font-black">Save Energy</h1>
+              <h1 className="font-black">And Earn</h1>
+              <h1 className="font-black">NTUC Vouchers!</h1>
+            </div>
+            <p className="font-Karla font-semibold">
+              From 15 Nov till 31 Dec 2024 Registration closes on 29 Nov, 12pm.
+            </p>
+            <p className="font-Karla font-thin pb-3">
+              Join us in making Singapore a greener, more resilient place! Take
+              part in our energy-saving challenge and share your feedback to
+              help us make an even greater impact.
+            </p>
+          </div>
+        </div>
+      </div>
     </main>
   );
 };
