@@ -193,7 +193,10 @@ const CreateAppliancePage: React.FC = () => {
           }
 
           const updatedData = [...state.localData, ...newAppliances];
+          console.log(updatedData)
           localStorage.setItem("storedData", JSON.stringify(updatedData));
+          // await saveAppliancesToSupabase(updatedData);
+
         } else {
           throw new Error("Could not extract data from the image(s).");
         }
