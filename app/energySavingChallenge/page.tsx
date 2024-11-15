@@ -1,9 +1,12 @@
-// app/index.tsx
-
+"use client";
 import Head from "next/head";
 import Image from "next/image";
-
+import FAQ from "./Faq-Accordian";
+import Footer from "@/components/Footer";
+import { useRouter } from "next/navigation";
+import Topbar from "@/components/Topbar";
 const energySavingChallenge: React.FC = () => {
+  const router = useRouter();
   return (
     <>
       <Head>
@@ -24,8 +27,9 @@ const energySavingChallenge: React.FC = () => {
           content="https://mailchi.mp/8c071eea5dc3/yfo9gng51s"
         />
       </Head>
+      <Topbar />
       <main className="min-h-screen bg-gradient-to-b from-white to-gray-100 pb-16">
-        <div className="mx-auto my-2 px-4 p-8 md:p-12 rounded-3xl max-w-5xl">
+        <div className="mx-auto  px-4 p-8 md:p-12 rounded-3xl max-w-5xl">
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="column2 w-full md:w-1/2 md:pt-0">
               <Image
@@ -219,8 +223,55 @@ const energySavingChallenge: React.FC = () => {
               </div>
             </div>
           </div>
+          <div className="max-auto max-w-5xl my-2 px-4 p-8 md:p-12 justify-center">
+            <FAQ />
+          </div>
+
+          <div className="mx-auto my-3 px-4 p-8 md:p-12 max-w-5xl">
+            <div className="max-w-2xl mx-auto px-4 text-center">
+              <h1 className="text-5xl font-extrabold mb-8 font-Arvo ">
+                Ready To Start Saving?
+              </h1>
+              <button
+                className="rounded-full bg-dark-purple text-white text-sm font-semibold px-8 py-2 font-Karla"
+                onClick={() => {
+                  router.push("/home/");
+                }}
+              >
+                Join the challenge now
+              </button>
+            </div>
+
+            <div className="border-2 rounded-xl border-dark-purple text-center text-sm mx-auto mt-20">
+              <div className="font-Karla p-3 m-3">
+                This product was developed by citizen participants of{" "}
+                <a
+                  href="https://build.gov.sg"
+                  className="font-semibold text-purple-700 hover:text-purple-900 hover:underline"
+                >
+                  Build For Good 2024
+                </a>{" "}
+                – a hackathon organised by{" "}
+                <a
+                  href="https://open.gov.sg"
+                  className="font-semibold text-purple-700 hover:text-purple-900 hover:underline"
+                >
+                  Open Government Products
+                </a>
+                , in collaboration with{" "}
+                <a
+                  href="https://www.sgpo.gov.sg"
+                  className="font-semibold text-purple-700 hover:text-purple-900 hover:underline"
+                >
+                  Singapore Government Partnerships Office
+                </a>
+                .
+              </div>
+            </div>
+          </div>
         </div>
       </main>
+      <Footer />
     </>
   );
 };
