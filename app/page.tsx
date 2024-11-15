@@ -4,7 +4,11 @@ import { ArrowDown } from "lucide-react";
 import Image from "next/image";
 import Footer from "@/components/Footer";
 import Topbar from "@/components/Topbar";
+import { useRouter } from "next/navigation";
+
 const Home: React.FC = () => {
+  const router = useRouter();
+
   return (
     <>
       <Topbar />
@@ -19,7 +23,12 @@ const Home: React.FC = () => {
               Understanding your home&apos;s energy use, reduce waste, and
               save-with ease.
             </p>
-            <button className="rounded-full bg-dark-purple text-white text-sm font-semibold px-8 py-2 font-Karla">
+            <button
+              className="rounded-full bg-dark-purple text-white text-sm font-semibold px-8 py-2 font-Karla"
+              onClick={() => {
+                router.push("/home/");
+              }}
+            >
               Get started for free
             </button>
             <p className="p-3 font-Karla font-xs">See how it works</p>
@@ -151,7 +160,12 @@ const Home: React.FC = () => {
               <h1 className="text-5xl font-extrabold mb-8 font-Arvo ">
                 Ready To Start Saving?
               </h1>
-              <button className="rounded-full bg-dark-purple text-white text-sm font-semibold px-8 py-2 font-Karla">
+              <button
+                className="rounded-full bg-dark-purple text-white text-sm font-semibold px-8 py-2 font-Karla"
+                onClick={() => {
+                  router.push("/home/");
+                }}
+              >
                 Get started for free
               </button>
             </div>
