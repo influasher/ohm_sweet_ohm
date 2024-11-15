@@ -4,7 +4,7 @@ import { ArrowDown } from "lucide-react";
 import Image from "next/image";
 const Home: React.FC = () => {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white to-gray-100">
+    <main className="min-h-screen bg-gradient-to-b from-white to-gray-100 pb-16">
       <div className="max-w-2xl mx-auto px-4 text-center">
         <h1 className="text-4xl font-extrabold mb-8 font-Arvo ">
           Powering Smart Savings For Every Home!
@@ -67,7 +67,7 @@ const Home: React.FC = () => {
             How does it work?
           </h1>
         </div>
-        <div className="grid-cols-3 flex flex-col md:flex-row items-stretch justify-evenly gap-6">
+        <div className="flex flex-col md:flex-row items-stretch justify-evenly gap-6">
           {/*three columns here*/}
           <div className="col1 bg-white md:w-1/3 items-center rounded-xl p-6 flex flex-col text-center">
             <div className="bg-gray-500 size-40 "> image here</div>
@@ -80,7 +80,7 @@ const Home: React.FC = () => {
             </p>
             {/*2nd columns here*/}
           </div>
-          <div className="col1 bg-white md:w-1/3 items-center rounded-xl p-6 flex flex-col text-center">
+          <div className="col2 bg-white md:w-1/3 items-center rounded-xl p-6 flex flex-col text-center">
             <div className="bg-gray-500 size-40 "> image here</div>
             <div className="font-Arvo text-xl font-semibold m-3">
               <h1>Personalised Insights</h1>
@@ -91,7 +91,7 @@ const Home: React.FC = () => {
             </p>
           </div>
           {/*third columns here*/}
-          <div className="col1 bg-white md:w-1/3 items-center rounded-xl p-6 flex flex-col text-center">
+          <div className="col3 bg-white md:w-1/3 items-center rounded-xl p-6 flex flex-col text-center">
             <div className="bg-dark-purple size-40 "> image here</div>
             <div className="font-Arvo text-xl font-semibold m-3">
               <h1>Actionable Recommendations</h1>
@@ -104,9 +104,8 @@ const Home: React.FC = () => {
         </div>
       </div>
 
-      {/*3rd yellow box*/}
-
-      <div className="mx-auto my-5 px-4 bg-[#FFD761] p-8 md:p-12 rounded-3xl max-w-5xl">
+      {/*Second green box*/}
+      <div className="mx-auto my-2 px-4 bg-[#FFD761] p-8 md:p-12 rounded-3xl max-w-5xl">
         <div className="flex flex-col md:flex-row items-center gap-8">
           <div className="column2 w-full md:w-1/2 md:pt-0">
             <Image
@@ -131,6 +130,47 @@ const Home: React.FC = () => {
               part in our energy-saving challenge and share your feedback to
               help us make an even greater impact.
             </p>
+            <button className="rounded-full bg-dark-purple text-white text-sm font-semibold px-9 w-80 py-2 font-Karla">
+              Learn more
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto my-3 px-4 p-8 md:p-12 max-w-5xl">
+        <div className="max-w-2xl mx-auto px-4 text-center">
+          <h1 className="text-5xl font-extrabold mb-8 font-Arvo ">
+            Ready To Start Saving?
+          </h1>
+          <button className="rounded-full bg-dark-purple text-white text-sm font-semibold px-8 py-2 font-Karla">
+            Get started for free
+          </button>
+        </div>
+
+        <div className="border-2 rounded-xl border-dark-purple text-center text-sm mx-auto mt-20">
+          <div className="font-Karla p-3 m-3">
+            This product was developed by citizen participants of{" "}
+            <a
+              href="https://build.gov.sg"
+              className="font-semibold text-purple-700 hover:text-purple-900 hover:underline"
+            >
+              Build For Good 2024
+            </a>{" "}
+            – a hackathon organised by{" "}
+            <a
+              href="https://open.gov.sg"
+              className="font-semibold text-purple-700 hover:text-purple-900 hover:underline"
+            >
+              Open Government Products
+            </a>
+            , in collaboration with{" "}
+            <a
+              href="https://www.sgpo.gov.sg"
+              className="font-semibold text-purple-700 hover:text-purple-900 hover:underline"
+            >
+              Singapore Government Partnerships Office
+            </a>
+            .
           </div>
         </div>
       </div>
