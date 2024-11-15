@@ -44,7 +44,7 @@ const Topbar: React.FC = () => {
     };
 
     checkAuth();
-  }, []);
+  }, [client.auth]);
 
   const handleLogin = () => {
     router.push("/login");

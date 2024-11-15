@@ -5,7 +5,7 @@ import FAQ from "./Faq-Accordian";
 import Footer from "@/components/Footer";
 import { useRouter } from "next/navigation";
 import Topbar from "@/components/Topbar";
-const energySavingChallenge: React.FC = () => {
+const EnergySavingChallenge: React.FC = () => {
   const router = useRouter();
   return (
     <>
@@ -276,4 +276,4 @@ const energySavingChallenge: React.FC = () => {
   );
 };
 
-export default energySavingChallenge;
+export default EnergySavingChallenge;
