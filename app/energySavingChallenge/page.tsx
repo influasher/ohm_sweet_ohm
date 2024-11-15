@@ -2,7 +2,7 @@
 
 import Head from "next/head";
 import Image from "next/image";
-import styles from "./energySavingChallenge/index.module.css";
+import styles from "./index.module.css";
 import { Arvo, Karla } from "@next/font/google";
 
 // Load Google Fonts
