@@ -18,7 +18,7 @@ export default function LoginPage() {
         alert(error.message);
       } else {
         // Handle other types of errors (if any)
-        alert("An unexpected error occurred.");
+        alert("An unexpected error occurred. Please try again.");
       }
       // Refresh the page after the user clicks OK
       window.location.reload();
@@ -35,7 +35,7 @@ export default function LoginPage() {
         alert(error.message);
       } else {
         // Handle other types of errors (if any)
-        alert("An unexpected error occurred.");
+        alert("An unexpected error occurred. Please try again.");
       }
       // Refresh the page after the user clicks OK
       window.location.reload();
