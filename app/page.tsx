@@ -4,7 +4,11 @@ import { ArrowDown } from "lucide-react";
 import Image from "next/image";
 import Footer from "@/components/Footer";
 import Topbar from "@/components/Topbar";
+import { useRouter } from "next/navigation";
+
 const Home: React.FC = () => {
+  const router = useRouter();
+
   return (
     <>
       <Topbar />
@@ -19,7 +23,12 @@ const Home: React.FC = () => {
               Understanding your home&apos;s energy use, reduce waste, and
               save-with ease.
             </p>
-            <button className="rounded-full bg-dark-purple text-white text-sm font-semibold px-8 py-2 font-Karla">
+            <button
+              className="rounded-full bg-dark-purple text-white text-sm font-semibold px-8 py-2 font-Karla"
+              onClick={() => {
+                router.push("/home/");
+              }}
+            >
               Get started for free
             </button>
             <p className="p-3 font-Karla font-xs">See how it works</p>
@@ -131,7 +140,7 @@ const Home: React.FC = () => {
                   <h1 className="font-black">NTUC Vouchers!</h1>
                 </div>
                 <p className="font-Karla font-semibold">
-                  From 15 Nov till 31 Dec 2024 Registration closes on 29 Nov,
+                  From 15 Nov till 31 Dec 2024  Registration closes on 29 Nov,
                   12pm.
                 </p>
                 <p className="font-Karla font-thin pb-3">
@@ -151,7 +160,12 @@ const Home: React.FC = () => {
               <h1 className="text-5xl font-extrabold mb-8 font-Arvo ">
                 Ready To Start Saving?
               </h1>
-              <button className="rounded-full bg-dark-purple text-white text-sm font-semibold px-8 py-2 font-Karla">
+              <button
+                className="rounded-full bg-dark-purple text-white text-sm font-semibold px-8 py-2 font-Karla"
+                onClick={() => {
+                  router.push("/home/");
+                }}
+              >
                 Get started for free
               </button>
             </div>
