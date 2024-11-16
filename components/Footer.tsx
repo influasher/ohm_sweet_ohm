@@ -14,7 +14,7 @@ const Footer = () => {
           className="mx-3 pt-3"
         ></Image>
         <a
-          href="https://instagram.com/ohmsweetohm"
+          href="https://instagram.com/ohmsweetohm_sg"
           target="_blank"
           rel="noopener noreferrer"
           className="text-black hover:text-gray-800 px-6"
@@ -33,7 +33,7 @@ const Footer = () => {
                 TERMS OF USE
               </Link>
               <span className="text-black">|</span>
-              <Link href="/privacy" className="hover:text-gray-800">
+              <Link href="/privacyPolicy" className="hover:text-gray-800">
                 PRIVACY POLICY
               </Link>
               <span className="text-black">|</span>
