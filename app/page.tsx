@@ -1,16 +1,21 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { ArrowDown } from "lucide-react";
 import Image from "next/image";
 import Footer from "@/components/Footer";
 import Topbar from "@/components/Topbar";
 import { useRouter } from "next/navigation";
+import PromoBanner from "@/components/PromoBanner";
 
 const Home: React.FC = () => {
+  const [showBanner, setShowBanner] = useState(true);
   const router = useRouter();
 
   return (
     <>
+      <div>
+        {showBanner && <PromoBanner onClose={() => setShowBanner(false)} />}
+      </div>
       <Topbar />
       <main className="min-h-screen bg-gradient-to-b from-white to-gray-100 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
