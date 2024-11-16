@@ -449,8 +449,8 @@ const AddAppliancePage: React.FC = () => {
       </div>
 
       <div className="text-dark-purple font-normal text-sm mx-4">
-        Calculation is based on 30days/month and tariff rates of $0.31/kWh,
-        based on rates in Jul – Sep 2024. Tariff rates are updated every
+        Calculation is based on 30days/month and tariff rates of 31.72 cents/kWh,
+        based on rates in Oct – Dec 2024. Tariff rates are updated every
         quarter.
       </div>
 
