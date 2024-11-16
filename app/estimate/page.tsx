@@ -6,22 +6,24 @@ import Topbar from "@/components/Topbar";
 import ApplianceCardComponent from "@/components/ApplianceCardComponent";
 import { useRouter } from "next/navigation";
 import { Appliance } from "@/types/appliance";
-// import { createClient } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
 
 type State = {
   isNewUser: boolean;
   appliances: Appliance[];
+  isSaving: boolean;
 };
 
 type Action =
   | { type: "SET_NEW_USER"; payload: boolean }
   | { type: "SET_APPLIANCES"; payload: Appliance[] }
-  | { type: "DELETE_APPLIANCE"; payload: string }; // New action type
+  | { type: "DELETE_APPLIANCE"; payload: string }
+  | { type: "SET_SAVING"; payload: boolean };
 
 const initialState: State = {
   isNewUser: true,
   appliances: [],
+  isSaving: false,
 };
 
 function reducer(state: State, action: Action): State {
@@ -36,103 +38,121 @@ function reducer(state: State, action: Action): State {
         appliances: state.appliances.filter(
           (appliance) => appliance.appliance !== action.payload
         ),
-        isNewUser: state.appliances.length <= 1, // Set to true if last appliance is deleted
+        isNewUser: state.appliances.length <= 1,
       };
+    case "SET_SAVING":
+      return { ...state, isSaving: action.payload };
     default:
       return state;
   }
 }
 
 const supabase = createClient();
-// process.env.NEXT_PUBLIC_SUPABASE_URL!,
-// process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
-async function getAppliances() {
-  try {
-    // Get the user ID
-    const userid = await getUser();
-    const userPath = userid + "/";
-
-    // List all files in the user's directory
-    const { data: fileList, error: listError } = await supabase.storage
-      .from("oso_appliances")
-      .list(userPath);
-
-    if (listError) {
-      console.error("Error listing files:", listError);
-      return [];
-    }
-
-    // Filter for JSON files if needed
-    const jsonFiles = fileList.filter((file) => file.name.endsWith(".json"));
-
-    console.log(jsonFiles);
-
-    // Download and parse each file
-    const allAppliances = await Promise.all(
-      jsonFiles.map(async (file) => {
-        const { data, error } = await supabase.storage
-          .from("oso_appliances")
-          .download(userid + "/" + file.name);
-
-        if (error) {
-          console.error(`Error downloading ${file.name}:`, error);
-          return null;
-        }
-
-        try {
-          const arrayBuffer = await data.arrayBuffer();
-          const jsonString = new TextDecoder("utf-8").decode(arrayBuffer);
-          return JSON.parse(jsonString);
-        } catch (parseError) {
-          console.error(`Error parsing ${file.name}:`, parseError);
-          return null;
-        }
-      })
-    );
-
-    // Remove any null values from failed downloads/parsing
-    // and flatten the array if each file contains an array of appliances
-    const validAppliances = allAppliances
-      .filter((item) => item !== null)
-      .flat();
-
-    return validAppliances;
-  } catch (error) {
-    console.error("Error in getAppliances:", error);
-    return [];
-  }
-}
 
 async function getUser() {
   const { data, error } = await supabase.auth.getUser();
-
   if (error) {
-    console.log(error);
-  } else {
-    console.log(data);
-    return data.user.id;
+    console.error("Error getting user:", error);
+    return null;
   }
+  return data.user.id;
 }
 
-async function deleteApplianceFile(applianceName: string) {
+async function saveToSupabase(appliances: Appliance[]) {
   try {
-    const userid = await getUser();
-    const fileName = `${userid}/${applianceName}.json`;
+    const userId = await getUser();
+    if (!userId) {
+      console.error("No user ID found");
+      return false;
+    }
 
+    const fileName = `appliances_${Date.now()}.json`;
+    const filePath = `${userId}/${fileName}`;
+
+    // Convert appliances array to JSON string
+    const jsonString = JSON.stringify(appliances);
+    const blob = new Blob([jsonString], { type: "application/json" });
+
+    // Upload to Supabase Storage
     const { error } = await supabase.storage
       .from("oso_appliances")
-      .remove([fileName]);
+      .upload(filePath, blob);
 
     if (error) {
-      console.error("Error deleting appliance file:", error);
-      throw error;
+      console.error("Error uploading to Supabase:", error);
+      return false;
     }
 
     return true;
   } catch (error) {
-    console.error("Error in deleteApplianceFile:", error);
+    console.error("Error in saveToSupabase:", error);
     return false;
+  }
+}
+
+async function getAppliances(): Promise<Appliance[]> {
+  try {
+    const userid = await getUser();
+    if (!userid) return [];
+
+    const userPath = `${userid}/`;
+    const { data: fileList, error: listError } = await supabase.storage
+      .from("oso_appliances")
+      .list(userPath);
+
+    if (listError || !fileList) {
+      console.error("Error listing files:", listError);
+      return [];
+    }
+
+    // Get the most recent JSON file
+    const jsonFiles = fileList
+      .filter((file) => file.name.endsWith(".json"))
+      .sort((a, b) => {
+        const timeA = new Date(a.created_at || 0).getTime();
+        const timeB = new Date(b.created_at || 0).getTime();
+        return timeB - timeA;
+      });
+
+    if (jsonFiles.length === 0) return [];
+
+    // Download the most recent file
+    const mostRecentFile = jsonFiles[0];
+    const { data, error } = await supabase.storage
+      .from("oso_appliances")
+      .download(`${userid}/${mostRecentFile.name}`);
+
+    if (error || !data) {
+      console.error("Error downloading file:", error);
+      return [];
+    }
+
+    const arrayBuffer = await data.arrayBuffer();
+    const jsonString = new TextDecoder("utf-8").decode(arrayBuffer);
+    const parsed = JSON.parse(jsonString);
+
+    // Validate and return the appliances
+    const appliances = Array.isArray(parsed) ? parsed : [parsed];
+    return appliances.filter((item): item is Appliance => {
+      const isValid =
+        typeof item === "object" &&
+        item !== null &&
+        typeof item.appliance === "string" &&
+        typeof item.powerUsage === "number" &&
+        typeof item.brand === "string" &&
+        typeof item.model === "string" &&
+        typeof item.frequencyOfUse === "number" &&
+        typeof item.numberOfAppliance === "number" &&
+        typeof item.totalCost === "number";
+
+      if (!isValid) {
+        console.error("Invalid appliance data:", item);
+      }
+      return isValid;
+    });
+  } catch (error) {
+    console.error("Error in getAppliances:", error);
+    return [];
   }
 }
 
@@ -140,68 +160,110 @@ const AddAppliancePage: React.FC = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const router = useRouter();
 
-  // useEffect(() => {
-  //   // const storedData = localStorage.getItem("storedData"); // this needs to change
-  //   // getApplicances();
-  //   const storedData =  await getApplicances();
-  //   if (storedData) {
-  //     dispatch({ type: "SET_NEW_USER", payload: false });
-  //     const parsedData: Appliance[] = JSON.parse(storedData);
-  //     dispatch({ type: "SET_APPLIANCES", payload: parsedData });
-  //   }
-  // }, []);
   useEffect(() => {
-    const fetchData = async () => {
-      const storedData = await getAppliances();
-      if (storedData) {
-        dispatch({ type: "SET_NEW_USER", payload: false });
-        const parsedData: Appliance[] = storedData;
-        dispatch({ type: "SET_APPLIANCES", payload: parsedData });
+    const loadData = async () => {
+      try {
+        // First try to get data from Supabase
+        const appliancesData = await getAppliances();
+
+        if (appliancesData.length > 0) {
+          // Update local storage with the Supabase data
+          localStorage.setItem("storedData", JSON.stringify(appliancesData));
+          dispatch({ type: "SET_NEW_USER", payload: false });
+          dispatch({ type: "SET_APPLIANCES", payload: appliancesData });
+        } else {
+          // If no Supabase data, try local storage as fallback
+          const storedData = localStorage.getItem("storedData");
+          if (storedData) {
+            const parsedData: Appliance[] = JSON.parse(storedData);
+            dispatch({ type: "SET_NEW_USER", payload: false });
+            dispatch({ type: "SET_APPLIANCES", payload: parsedData });
+          }
+        }
+      } catch (error) {
+        console.error("Error loading data:", error);
+        alert("Error loading appliances. Please try refreshing the page.");
       }
     };
 
-    fetchData();
-    getUser();
+    loadData();
   }, []);
 
   const handleAddAppliance = () => {
     router.push("create/");
   };
 
-  const handleCalculateBills = () => {
-    router.push("estimate/results/");
+  const handleCalculateBills = async () => {
+    if (state.appliances.length === 0) {
+      alert("Please add at least one appliance before calculating bills.");
+      return;
+    }
+
+    try {
+      dispatch({ type: "SET_SAVING", payload: true });
+      const saved = await saveToSupabase(state.appliances);
+      if (!saved) {
+        console.error("Failed to save appliances to Supabase");
+        alert(
+          "Warning: Failed to save appliances, but proceeding with calculation."
+        );
+      }
+      router.push("estimate/results/");
+    } catch (error) {
+      console.error("Error in handleCalculateBills:", error);
+      alert("Error occurred while saving. Please try again.");
+    } finally {
+      dispatch({ type: "SET_SAVING", payload: false });
+    }
   };
 
-  // const handleDeleteAppliance = (applianceName: string) => {
-  //   dispatch({ type: "DELETE_APPLIANCE", payload: applianceName });
+  const handleSave = async (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
 
-  //   // Update localStorage
-  //   const storedData = localStorage.getItem("storedData");
+    if (state.appliances.length === 0) {
+      alert("No appliances to save");
+      return;
+    }
 
-  //   if (storedData) {
-  //     const parsedData = JSON.parse(storedData);
-  //     const updatedData = parsedData.filter(
-  //       (item: Appliance) => item.appliance !== applianceName
-  //     );
-  //     localStorage.setItem("storedData", JSON.stringify(updatedData));
-  //   }
-  const handleDeleteAppliance = async (applianceName: string) => {
+    if (state.isSaving) {
+      return; // Prevent multiple simultaneous saves
+    }
+
     try {
-      // First attempt to delete the file from Supabase storage
-      const deleteSuccess = await deleteApplianceFile(applianceName);
+      dispatch({ type: "SET_SAVING", payload: true });
+      const saved = await saveToSupabase(state.appliances);
 
-      if (deleteSuccess) {
-        // If file deletion was successful, update the local state
-        dispatch({ type: "DELETE_APPLIANCE", payload: applianceName });
+      if (saved) {
+        alert("Saved Appliances!");
       } else {
-        // Handle deletion failure
-        console.error("Failed to delete appliance file");
-        // Optionally show an error message to the user
-        // You might want to add a toast notification or alert here
+        alert("Failed to save appliances, please try again");
       }
     } catch (error) {
-      console.error("Error in handleDeleteAppliance:", error);
-      // Handle error appropriately
+      console.error("Error saving appliances:", error);
+      alert("Failed to save appliances, please try again");
+    } finally {
+      dispatch({ type: "SET_SAVING", payload: false });
+    }
+  };
+
+  const handleDeleteAppliance = async (applianceName: string) => {
+    dispatch({ type: "DELETE_APPLIANCE", payload: applianceName });
+
+    // Update localStorage
+    const storedData = localStorage.getItem("storedData");
+    if (storedData) {
+      const parsedData = JSON.parse(storedData);
+      const updatedData = parsedData.filter(
+        (item: Appliance) => item.appliance !== applianceName
+      );
+      localStorage.setItem("storedData", JSON.stringify(updatedData));
+
+      // Also save the updated data to Supabase
+      try {
+        await saveToSupabase(updatedData);
+      } catch (error) {
+        console.error("Error saving after delete:", error);
+      }
     }
   };
 
@@ -209,43 +271,69 @@ const AddAppliancePage: React.FC = () => {
     <div className="bg-white min-h-screen font-Montserrat">
       <Topbar />
       <div className="bg-dark-purple text-white p-4 flex items-center">
-        <ArrowLeft className="mr-4" onClick={() => router.push("home/")} />
+        <ArrowLeft
+          className="mr-4 cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={() => router.push("home/")}
+        />
         <h1 className="text-lg font-montserrat flex-grow">Estimate bills</h1>
-        <div className="flex">
-          <Save className="mr-3" />
-          <MoreVertical />
+        <div className="flex items-center">
+          <div
+            className={`p-2 cursor-pointer hover:bg-purple-700 rounded-full transition-all duration-200 flex items-center justify-center ${
+              state.isSaving ? "opacity-50" : "hover:opacity-80"
+            }`}
+            onClick={handleSave}
+            role="button"
+            tabIndex={0}
+            aria-label="Save appliances"
+            style={{ pointerEvents: state.isSaving ? "none" : "auto" }}
+          >
+            <Save className="w-5 h-5" />
+          </div>
+          <div className="p-2 cursor-pointer hover:bg-purple-700 rounded-full transition-colors duration-200 flex items-center justify-center">
+            <MoreVertical className="w-5 h-5" />
+          </div>
         </div>
       </div>
+
       <div
-        className="justify-center items-center flex text-dark-purple py-3 cursor-pointer"
+        className="justify-center items-center flex text-dark-purple py-3 cursor-pointer hover:opacity-80 transition-opacity"
         onClick={handleAddAppliance}
       >
         <CirclePlus />
         <div className="pl-1 font-semibold">Add Appliance</div>
       </div>
-      {!state.isNewUser &&
-        state.appliances.map((appliance, index) => (
-          <div key={index} className="m-2 p-2 float-left">
-            <ApplianceCardComponent
-              applianceName={appliance.appliance}
-              modelNumber={appliance.model}
-              powerUsage={appliance.powerUsage}
-              onDelete={() => handleDeleteAppliance(appliance.appliance)}
-            />
-          </div>
-        ))}
+
+      <div className="flex flex-wrap">
+        {!state.isNewUser &&
+          state.appliances.map((appliance, index) => (
+            <div key={index} className="m-2 p-2">
+              <ApplianceCardComponent
+                applianceName={appliance.appliance}
+                modelNumber={appliance.model}
+                powerUsage={appliance.powerUsage}
+                onDelete={() => handleDeleteAppliance(appliance.appliance)}
+              />
+            </div>
+          ))}
+      </div>
 
       <div className="text-dark-purple font-normal text-sm mx-4">
         Calculation is based on 30days/month and tariff rates of $0.31/kWh,
         based on rates in Jul – Sep 2024. Tariff rates are updated every
         quarter.
       </div>
+
       <div className="pt-5 pb-3 justify-center flex items-center">
         <button
-          className="border bg-dark-purple py-1.5 rounded-full w-11/12 text-white"
+          className={`border bg-dark-purple py-1.5 rounded-full w-11/12 text-white transition-opacity duration-200 ${
+            state.isSaving
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:opacity-90"
+          }`}
           onClick={handleCalculateBills}
+          disabled={state.isSaving}
         >
-          Calculate Bills
+          {state.isSaving ? "Saving..." : "Calculate Bills"}
         </button>
       </div>
     </div>

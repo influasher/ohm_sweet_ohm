@@ -5,7 +5,6 @@ import { ArrowLeft, Camera } from "lucide-react";
 import Topbar from "@/components/Topbar";
 import { useRouter } from "next/navigation";
 import { Appliance } from "@/types/appliance";
-import { createClient } from "@/utils/supabase/client";
 
 type PowerUsageType = "watts" | "kiloWatts" | "voltage_current";
 
@@ -64,67 +63,6 @@ function reducer(state: State, action: Action): State {
       return state;
   }
 }
-const supabase = createClient();
-
-async function getUser() {
-  const { data, error } = await supabase.auth.getUser();
-
-  if (error) {
-    console.log(error);
-  } else {
-    console.log(data);
-    return data.user.id;
-  }
-}
-
-const saveAppliancesToSupabase = async (appliance: Appliance) => {
-  const userId = await getUser();
-  if (!userId) {
-    console.error("No user found");
-    return;
-  }
-
-  try {
-    // Create a JSON filename for the appliance
-    const filename = `${appliance.appliance}.json`;
-
-    // Check if a file with the same name already exists
-    const { data: existingFiles, error: listError } = await supabase.storage
-      .from("oso_appliances")
-      .list(`${userId}`, { search: filename });
-
-    if (listError) {
-      throw listError;
-    }
-
-    if (existingFiles && existingFiles.length > 0) {
-      alert(
-        `An appliance with the name "${appliance.appliance}" already exists. Please upload a different appliance..`
-      );
-      return;
-    }
-
-    // Create a JSON blob with the appliances data
-    const jsonData = JSON.stringify(appliance);
-    const blob = new Blob([jsonData], { type: "application/json" });
-
-    // Upload the new file
-    const { error } = await supabase.storage
-      .from("oso_appliances")
-      .upload(`${userId}/${filename}`, blob, {
-        contentType: "application/json",
-        upsert: false,
-      });
-
-    if (error) throw error;
-
-    alert(`Appliance "${appliance.appliance}" saved successfully.`);
-  } catch (error) {
-    console.error("Error saving appliances:", error);
-    alert("Failed to save appliance data. Please try again.");
-    throw error;
-  }
-};
 
 const CreateAppliancePage: React.FC = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -175,7 +113,6 @@ const CreateAppliancePage: React.FC = () => {
         const data = await response.json();
 
         if (Array.isArray(data)) {
-          console.log(data)
           const newAppliances = data.map((item) => ({
             appliance: item.appliance || "Unidentified",
             brand: item.brand || "Unidentified",
@@ -192,13 +129,8 @@ const CreateAppliancePage: React.FC = () => {
             dispatch({ type: "SET_FORM_DATA", payload: newAppliances[0] });
           }
 
-          // const updatedData = [...state.localData, ...newAppliances];
-          const updatedData = newAppliances[0]; //we need to change this for accepting multiple photo inputs
-
-          console.log(updatedData)
-          // localStorage.setItem("storedData", JSON.stringify(updatedData));
-          await saveAppliancesToSupabase(updatedData);
-
+          const updatedData = [...state.localData, ...newAppliances];
+          localStorage.setItem("storedData", JSON.stringify(updatedData));
         } else {
           throw new Error("Could not extract data from the image(s).");
         }
@@ -216,40 +148,20 @@ const CreateAppliancePage: React.FC = () => {
       }
     }
   };
-  // const handleSubmit = () => {
-  //   const updatedFormData = { ...state.formData };
+  const handleSubmit = () => {
+    const updatedFormData = { ...state.formData };
 
-  //   if (state.power_usageType === "watts") {
-  //     updatedFormData.powerUsage = Number(state.formData.powerUsage) / 1000;
-  //   } else if (state.power_usageType === "voltage_current") {
-  //     updatedFormData.powerUsage =
-  //       ((state.voltage ?? 0) * (state.current ?? 0)) / 1000;
-  //   }
-
-  //   const dataToSave = [...state.localData, updatedFormData];
-  //   localStorage.setItem("storedData", JSON.stringify(dataToSave)); //this needs to change
-
-  //   router.push("./estimate");
-  // };
-  const handleSubmit = async () => {
-    try {
-      const updatedFormData = { ...state.formData };
-
-      if (state.power_usageType === "watts") {
-        updatedFormData.powerUsage = Number(state.formData.powerUsage) / 1000;
-      } else if (state.power_usageType === "voltage_current") {
-        updatedFormData.powerUsage =
-          ((state.voltage ?? 0) * (state.current ?? 0)) / 1000;
-      }
-
-      const dataToSave = updatedFormData;
-      await saveAppliancesToSupabase(dataToSave);
-
-      router.push("./estimate");
-    } catch (error) {
-      console.error("Error saving data:", error);
-      alert("Failed to save appliance data");
+    if (state.power_usageType === "watts") {
+      updatedFormData.powerUsage = Number(state.formData.powerUsage) / 1000;
+    } else if (state.power_usageType === "voltage_current") {
+      updatedFormData.powerUsage =
+        ((state.voltage ?? 0) * (state.current ?? 0)) / 1000;
     }
+
+    const dataToSave = [...state.localData, updatedFormData];
+    localStorage.setItem("storedData", JSON.stringify(dataToSave));
+
+    router.push("./estimate");
   };
 
   return (

@@ -6,105 +6,10 @@ import Infographic from "@/app/estimate/results/Infographic";
 import Breakdown from "@/app/estimate/results/Breakdown";
 import { useRouter } from "next/navigation";
 import { Appliance } from "@/types/appliance";
-import { createClient } from "@/utils/supabase/client";
 
 type Views = {
   [key: string]: string[];
 };
-const supabase = createClient();
-async function getUser() {
-  const { data, error } = await supabase.auth.getUser();
-
-  if (error) {
-    console.log(error);
-  } else {
-    console.log(data);
-    return data.user.id;
-  }
-}
-
-async function getAppliances(): Promise<Appliance[]> {
-  try {
-    // Get the user ID
-    const userid = await getUser();
-    const userPath = `${userid}/`;
-
-    // List all files in the user's directory
-    const { data: fileList, error: listError } = await supabase.storage
-      .from("oso_appliances")
-      .list(userPath);
-
-    if (listError) {
-      console.error("Error listing files:", listError);
-      return [];
-    }
-
-    if (!fileList) {
-      console.error("No files found");
-      return [];
-    }
-
-    // Filter for JSON files
-    const jsonFiles = fileList.filter((file) => file.name.endsWith(".json"));
-
-    // Download and parse each file
-    const allAppliances = await Promise.all(
-      jsonFiles.map(async (file) => {
-        const { data, error } = await supabase.storage
-          .from("oso_appliances")
-          .download(`${userid}/${file.name}`);
-
-        if (error || !data) {
-          console.error(`Error downloading ${file.name}:`, error);
-          return null;
-        }
-
-        try {
-          const arrayBuffer = await data.arrayBuffer();
-          const jsonString = new TextDecoder("utf-8").decode(arrayBuffer);
-          const parsed = JSON.parse(jsonString);
-
-          // Handle both single appliance and array of appliances
-          const appliances = Array.isArray(parsed) ? parsed : [parsed];
-
-          // Validate each appliance object
-          return appliances.filter((item): item is Appliance => {
-            const isValid =
-              typeof item === "object" &&
-              item !== null &&
-              typeof item.appliance === "string" &&
-              typeof item.powerUsage === "number" &&
-              typeof item.brand === "string" &&
-              typeof item.model === "string" &&
-              typeof item.frequencyOfUse === "number" &&
-              typeof item.numberOfAppliance === "number" &&
-              typeof item.totalCost === "number";
-
-            if (!isValid) {
-              console.error("Invalid appliance data:", item);
-            }
-
-            return isValid;
-          });
-        } catch (parseError) {
-          console.error(`Error parsing ${file.name}:`, parseError);
-          return null;
-        }
-      })
-    );
-
-    // Remove any null values from failed downloads/parsing
-    // and flatten the array of arrays into a single array
-    const validAppliances = allAppliances
-      .filter((item): item is Appliance[] => item !== null)
-      .flat();
-
-    return validAppliances;
-  } catch (error) {
-    console.error("Error in getAppliances:", error);
-    return [];
-  }
-}
 
 const EstimateResults: React.FC = () => {
   const [appliances, setAppliances] = useState<Appliance[]>([]);
@@ -132,8 +37,7 @@ const EstimateResults: React.FC = () => {
     }
 
     try {
-      // const parsedData: Appliance[] = JSON.parse(storedData);
-      const parsedData = await getAppliances();
+      const parsedData: Appliance[] = JSON.parse(storedData);
       console.log("Parsed data from localStorage:", parsedData);
 
       // Update state with localStorage data immediately
