@@ -6,11 +6,13 @@ import Footer from "@/components/Footer";
 import Topbar from "@/components/Topbar";
 import { useRouter } from "next/navigation";
 import PromoBanner from "@/components/PromoBanner";
+import Clarity from "@microsoft/clarity";
 
 const Home: React.FC = () => {
   const [showBanner, setShowBanner] = useState(true);
   const router = useRouter();
-
+  const projectId = "owc7qluduw";
+  Clarity.init(projectId);
   return (
     <>
       <div>
