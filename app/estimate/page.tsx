@@ -18,7 +18,11 @@ type Action =
   | { type: "SET_NEW_USER"; payload: boolean }
   | { type: "SET_APPLIANCES"; payload: Appliance[] }
   | { type: "DELETE_APPLIANCE"; payload: string }
-  | { type: "SET_SAVING"; payload: boolean };
+  | { type: "SET_SAVING"; payload: boolean }
+  | {
+      type: "UPDATE_APPLIANCE";
+      payload: { applianceName: string; updates: Partial<Appliance> };
+    };
 
 const initialState: State = {
   isNewUser: true,
@@ -42,6 +46,15 @@ function reducer(state: State, action: Action): State {
       };
     case "SET_SAVING":
       return { ...state, isSaving: action.payload };
+    case "UPDATE_APPLIANCE":
+      return {
+        ...state,
+        appliances: state.appliances.map((appliance) =>
+          appliance.appliance === action.payload.applianceName
+            ? { ...appliance, ...action.payload.updates }
+            : appliance
+        ),
+      };
     default:
       return state;
   }
@@ -66,11 +79,30 @@ async function saveToSupabase(appliances: Appliance[]) {
       return false;
     }
 
+    // Log the appliances data before saving
+    console.log("Saving appliances data:", appliances);
+
     const fileName = `appliances_${Date.now()}.json`;
     const filePath = `${userId}/${fileName}`;
 
-    // Convert appliances array to JSON string
-    const jsonString = JSON.stringify(appliances);
+    // Ensure all numeric fields are properly typed
+    const processedAppliances = appliances.map((appliance) => ({
+      ...appliance,
+      frequencyOfUse: Number(appliance.frequencyOfUse),
+      numberOfAppliance: Number(appliance.numberOfAppliance),
+      powerUsage: Number(appliance.powerUsage),
+      totalCost: Number(appliance.totalCost),
+    }));
+
+    // Log the processed data
+    console.log("Processed appliances data:", processedAppliances);
+
+    // Convert appliances array to JSON string with explicit typing
+    const jsonString = JSON.stringify(processedAppliances, null, 2);
+
+    // Log the final JSON string
+    console.log("JSON string to save:", jsonString);
+
     const blob = new Blob([jsonString], { type: "application/json" });
 
     // Upload to Supabase Storage
@@ -131,24 +163,42 @@ async function getAppliances(): Promise<Appliance[]> {
     const jsonString = new TextDecoder("utf-8").decode(arrayBuffer);
     const parsed = JSON.parse(jsonString);
 
-    // Validate and return the appliances
+    // Validate and return the appliances with proper type coercion
     const appliances = Array.isArray(parsed) ? parsed : [parsed];
     return appliances.filter((item): item is Appliance => {
+      // First check if the item exists and is an object
+      if (!item || typeof item !== "object") {
+        console.error("Invalid appliance data: not an object", item);
+        return false;
+      }
+
+      // Coerce numeric values while maintaining their original values
+      const validatedItem = {
+        ...item,
+        powerUsage: Number(item.powerUsage) || 0,
+        frequencyOfUse: Number(item.frequencyOfUse) || 1,
+        numberOfAppliance: Number(item.numberOfAppliance) || 1,
+        totalCost: Number(item.totalCost) || 0,
+      };
+
+      // Validate all required fields
       const isValid =
-        typeof item === "object" &&
-        item !== null &&
-        typeof item.appliance === "string" &&
-        typeof item.powerUsage === "number" &&
-        typeof item.brand === "string" &&
-        typeof item.model === "string" &&
-        typeof item.frequencyOfUse === "number" &&
-        typeof item.numberOfAppliance === "number" &&
-        typeof item.totalCost === "number";
+        typeof validatedItem.appliance === "string" &&
+        !isNaN(validatedItem.powerUsage) &&
+        typeof validatedItem.brand === "string" &&
+        typeof validatedItem.model === "string" &&
+        !isNaN(validatedItem.frequencyOfUse) &&
+        !isNaN(validatedItem.numberOfAppliance) &&
+        !isNaN(validatedItem.totalCost);
 
       if (!isValid) {
         console.error("Invalid appliance data:", item);
+        return false;
       }
-      return isValid;
+
+      // Update the original item with the validated values
+      Object.assign(item, validatedItem);
+      return true;
     });
   } catch (error) {
     console.error("Error in getAppliances:", error);
@@ -231,9 +281,17 @@ const AddAppliancePage: React.FC = () => {
 
     try {
       dispatch({ type: "SET_SAVING", payload: true });
+
+      // Log the current state before saving
+      console.log("Current appliances state:", state.appliances);
+
       const saved = await saveToSupabase(state.appliances);
 
       if (saved) {
+        // Verify the saved data immediately after saving
+        const savedAppliances = await getAppliances();
+        console.log("Verified saved appliances:", savedAppliances);
+
         alert("Saved Appliances!");
       } else {
         alert("Failed to save appliances, please try again");
@@ -311,7 +369,33 @@ const AddAppliancePage: React.FC = () => {
                 applianceName={appliance.appliance}
                 modelNumber={appliance.model}
                 powerUsage={appliance.powerUsage}
+                frequencyOfUse={appliance.frequencyOfUse}
+                numberOfAppliance={appliance.numberOfAppliance}
                 onDelete={() => handleDeleteAppliance(appliance.appliance)}
+                onUpdate={(updates) => {
+                  dispatch({
+                    type: "UPDATE_APPLIANCE",
+                    payload: {
+                      applianceName: appliance.appliance,
+                      updates,
+                    },
+                  });
+
+                  // Update localStorage
+                  const storedData = localStorage.getItem("storedData");
+                  if (storedData) {
+                    const parsedData = JSON.parse(storedData);
+                    const updatedData = parsedData.map((item: Appliance) =>
+                      item.appliance === appliance.appliance
+                        ? { ...item, ...updates }
+                        : item
+                    );
+                    localStorage.setItem(
+                      "storedData",
+                      JSON.stringify(updatedData)
+                    );
+                  }
+                }}
               />
             </div>
           ))}

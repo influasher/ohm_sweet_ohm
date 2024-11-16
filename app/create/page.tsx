@@ -5,6 +5,7 @@ import { ArrowLeft, Camera } from "lucide-react";
 import Topbar from "@/components/Topbar";
 import { useRouter } from "next/navigation";
 import { Appliance } from "@/types/appliance";
+import { createClient } from "@/utils/supabase/client";
 
 type PowerUsageType = "watts" | "kiloWatts" | "voltage_current";
 
@@ -43,6 +44,110 @@ const initialState: State = {
   localData: [],
 };
 
+const supabase = createClient();
+
+async function getUser() {
+  const { data, error } = await supabase.auth.getUser();
+  if (error) {
+    console.error("Error getting user:", error);
+    return null;
+  }
+  return data.user.id;
+}
+
+async function saveToSupabase(appliances: Appliance[]) {
+  try {
+    const userId = await getUser();
+    if (!userId) {
+      console.error("No user ID found");
+      return false;
+    }
+
+    const fileName = `appliances_${Date.now()}.json`;
+    const filePath = `${userId}/${fileName}`;
+
+    const jsonString = JSON.stringify(appliances);
+    const blob = new Blob([jsonString], { type: "application/json" });
+
+    const { error } = await supabase.storage
+      .from("oso_appliances")
+      .upload(filePath, blob);
+
+    if (error) {
+      console.error("Error uploading to Supabase:", error);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error in saveToSupabase:", error);
+    return false;
+  }
+}
+
+async function getAppliances(): Promise<Appliance[]> {
+  try {
+    const userid = await getUser();
+    if (!userid) return [];
+
+    const userPath = `${userid}/`;
+    const { data: fileList, error: listError } = await supabase.storage
+      .from("oso_appliances")
+      .list(userPath);
+
+    if (listError || !fileList) {
+      console.error("Error listing files:", listError);
+      return [];
+    }
+
+    const jsonFiles = fileList
+      .filter((file) => file.name.endsWith(".json"))
+      .sort((a, b) => {
+        const timeA = new Date(a.created_at || 0).getTime();
+        const timeB = new Date(b.created_at || 0).getTime();
+        return timeB - timeA;
+      });
+
+    if (jsonFiles.length === 0) return [];
+
+    const mostRecentFile = jsonFiles[0];
+    const { data, error } = await supabase.storage
+      .from("oso_appliances")
+      .download(`${userid}/${mostRecentFile.name}`);
+
+    if (error || !data) {
+      console.error("Error downloading file:", error);
+      return [];
+    }
+
+    const arrayBuffer = await data.arrayBuffer();
+    const jsonString = new TextDecoder("utf-8").decode(arrayBuffer);
+    const parsed = JSON.parse(jsonString);
+
+    const appliances = Array.isArray(parsed) ? parsed : [parsed];
+    return appliances.filter((item): item is Appliance => {
+      const isValid =
+        typeof item === "object" &&
+        item !== null &&
+        typeof item.appliance === "string" &&
+        typeof item.powerUsage === "number" &&
+        typeof item.brand === "string" &&
+        typeof item.model === "string" &&
+        typeof item.frequencyOfUse === "number" &&
+        typeof item.numberOfAppliance === "number" &&
+        typeof item.totalCost === "number";
+
+      if (!isValid) {
+        console.error("Invalid appliance data:", item);
+      }
+      return isValid;
+    });
+  } catch (error) {
+    console.error("Error in getAppliances:", error);
+    return [];
+  }
+}
+
 function reducer(state: State, action: Action): State {
   switch (action.type) {
     case "SET_FORM_DATA":
@@ -69,11 +174,18 @@ const CreateAppliancePage: React.FC = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const data = localStorage.getItem("storedData");
-    if (data) {
-      const parsedData = JSON.parse(data);
-      dispatch({ type: "SET_LOCAL_DATA", payload: parsedData });
-    }
+    const loadData = async () => {
+      try {
+        const appliancesData = await getAppliances();
+        if (appliancesData.length > 0) {
+          dispatch({ type: "SET_LOCAL_DATA", payload: appliancesData });
+        }
+      } catch (error) {
+        console.error("Error loading appliances:", error);
+      }
+    };
+
+    loadData();
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,15 +197,6 @@ const CreateAppliancePage: React.FC = () => {
     if (e.target.files && e.target.files.length > 0) {
       const selectedFiles = Array.from(e.target.files);
       dispatch({ type: "SET_LOADING", payload: true });
-
-      // Log file details
-      selectedFiles.forEach((file, index) => {
-        console.log(`File ${index + 1}:`, {
-          name: file.name,
-          type: file.type,
-          size: `${file.size} bytes`,
-        });
-      });
 
       const formData = new FormData();
       selectedFiles.forEach((file) => {
@@ -123,14 +226,18 @@ const CreateAppliancePage: React.FC = () => {
             totalCost: 0,
           }));
 
+          // Get existing appliances from Supabase
+          const existingAppliances = await getAppliances();
+          const updatedAppliances = [...existingAppliances, ...newAppliances];
+
+          // Save to Supabase
+          await saveToSupabase(updatedAppliances);
+
           dispatch({ type: "ADD_APPLIANCES", payload: newAppliances });
 
           if (newAppliances.length > 0) {
             dispatch({ type: "SET_FORM_DATA", payload: newAppliances[0] });
           }
-
-          const updatedData = [...state.localData, ...newAppliances];
-          localStorage.setItem("storedData", JSON.stringify(updatedData));
         } else {
           throw new Error("Could not extract data from the image(s).");
         }
@@ -148,20 +255,31 @@ const CreateAppliancePage: React.FC = () => {
       }
     }
   };
-  const handleSubmit = () => {
-    const updatedFormData = { ...state.formData };
 
-    if (state.power_usageType === "watts") {
-      updatedFormData.powerUsage = Number(state.formData.powerUsage) / 1000;
-    } else if (state.power_usageType === "voltage_current") {
-      updatedFormData.powerUsage =
-        ((state.voltage ?? 0) * (state.current ?? 0)) / 1000;
+  const handleSubmit = async () => {
+    try {
+      const updatedFormData = { ...state.formData };
+
+      if (state.power_usageType === "watts") {
+        updatedFormData.powerUsage = Number(state.formData.powerUsage) / 1000;
+      } else if (state.power_usageType === "voltage_current") {
+        updatedFormData.powerUsage =
+          ((state.voltage ?? 0) * (state.current ?? 0)) / 1000;
+      }
+
+      // Get existing appliances from Supabase
+      const existingAppliances = await getAppliances();
+      const updatedAppliances = [...existingAppliances, updatedFormData];
+
+      // Save to both Supabase and localStorage
+      await saveToSupabase(updatedAppliances);
+      localStorage.setItem("storedData", JSON.stringify(updatedAppliances));
+
+      router.push("./estimate");
+    } catch (error) {
+      console.error("Error saving appliance:", error);
+      alert("Failed to save appliance. Please try again.");
     }
-
-    const dataToSave = [...state.localData, updatedFormData];
-    localStorage.setItem("storedData", JSON.stringify(dataToSave));
-
-    router.push("./estimate");
   };
 
   return (
