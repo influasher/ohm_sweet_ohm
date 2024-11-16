@@ -250,11 +250,27 @@ const AddAppliancePage: React.FC = () => {
     router.push("create/");
   };
 
-  const handleCalculateBills = () => {
-    console.log("Calculate Bills button clicked");
-    console.log("Is saving:", state.isSaving);
-    console.log("Current appliances:", state.appliances);
-    router.push("/estimate/results/");
+  const handleCalculateBills = async () => {
+    if (state.appliances.length === 0) {
+      alert("Please add at least one appliance before calculating bills.");
+      return;
+    }
+    try {
+      dispatch({ type: "SET_SAVING", payload: true });
+      const saved = await saveToSupabase(state.appliances);
+      if (!saved) {
+        console.error("Failed to save appliances to Supabase");
+        alert(
+          "Warning: Failed to save appliances, but proceeding with calculation."
+        );
+      }
+      router.push("estimate/results/");
+    } catch (error) {
+      console.error("Error in handleCalculateBills:", error);
+      alert("Error occurred while saving. Please try again.");
+    } finally {
+      dispatch({ type: "SET_SAVING", payload: false });
+    }
   };
 
   const handleSave = async (e: React.MouseEvent<HTMLDivElement>) => {

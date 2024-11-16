@@ -12,6 +12,7 @@ interface ApplianceCardProps {
   onUpdate: (updates: {
     frequencyOfUse?: number;
     numberOfAppliance?: number;
+    totalCost?: number;
   }) => void;
 }
 
@@ -54,9 +55,10 @@ const ApplianceCardComponent: FC<ApplianceCardProps> = ({
     const updatedValues = {
       frequencyOfUse,
       numberOfAppliance: numberOfAppliances,
+      totalCost: costPerMonth, // Include the calculated cost in the update
     };
 
-    // Only update if values are different from initial values
+    // Only update if values are different from initial values or if there's a new cost
     if (
       frequencyOfUse !== initialFrequencyOfUse ||
       numberOfAppliances !== initialNumberOfAppliance
@@ -68,6 +70,8 @@ const ApplianceCardComponent: FC<ApplianceCardProps> = ({
     numberOfAppliances,
     initialFrequencyOfUse,
     initialNumberOfAppliance,
+    costPerMonth,
+    onUpdate, // Include onUpdate in dependencies
   ]);
 
   const handleDelete = () => {
