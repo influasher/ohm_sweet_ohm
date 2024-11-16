@@ -1,16 +1,21 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { ArrowDown } from "lucide-react";
 import Image from "next/image";
 import Footer from "@/components/Footer";
 import Topbar from "@/components/Topbar";
 import { useRouter } from "next/navigation";
+import PromoBanner from "@/components/PromoBanner";
 
 const Home: React.FC = () => {
+  const [showBanner, setShowBanner] = useState(true);
   const router = useRouter();
 
   return (
     <>
+      <div>
+        {showBanner && <PromoBanner onClose={() => setShowBanner(false)} />}
+      </div>
       <Topbar />
       <main className="min-h-screen bg-gradient-to-b from-white to-gray-100 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -26,7 +31,7 @@ const Home: React.FC = () => {
             <button
               className="rounded-full bg-dark-purple text-white text-sm font-semibold px-8 py-2 font-Karla"
               onClick={() => {
-                router.push("/home/");
+                router.push("/estimate/");
               }}
             >
               Get started for free
@@ -84,7 +89,12 @@ const Home: React.FC = () => {
             <div className="flex flex-col md:flex-row items-stretch justify-evenly gap-6">
               {/*three columns here*/}
               <div className="col1 bg-white md:w-1/3 items-center rounded-xl p-6 flex flex-col text-center">
-                <div className="bg-gray-500 size-40 "> image here</div>
+                <Image
+                  src={"/how-it-works-1.png"}
+                  height={300}
+                  width={300}
+                  alt="How it works first picture"
+                ></Image>
                 <div className="font-Arvo text-xl font-semibold m-3">
                   <h1>Simple Setup</h1>
                 </div>
@@ -96,7 +106,12 @@ const Home: React.FC = () => {
                 {/*2nd columns here*/}
               </div>
               <div className="col2 bg-white md:w-1/3 items-center rounded-xl p-6 flex flex-col text-center">
-                <div className="bg-gray-500 size-40 "> image here</div>
+                <Image
+                  src={"/how-it-works-2.png"}
+                  height={300}
+                  width={300}
+                  alt="How it works second picture"
+                ></Image>
                 <div className="font-Arvo text-xl font-semibold m-3">
                   <h1>Personalised Insights</h1>
                 </div>
@@ -108,7 +123,13 @@ const Home: React.FC = () => {
               </div>
               {/*third columns here*/}
               <div className="col3 bg-white md:w-1/3 items-center rounded-xl p-6 flex flex-col text-center">
-                <div className="bg-gray-500 size-40 "> image here</div>
+                <Image
+                  src={"/how-it-works-3.png"}
+                  height={300}
+                  width={300}
+                  alt="How it works third picture"
+                ></Image>
+
                 <div className="font-Arvo text-xl font-semibold m-3">
                   <h1>Actionable Recommendations</h1>
                 </div>
@@ -168,7 +189,7 @@ const Home: React.FC = () => {
               <button
                 className="rounded-full bg-dark-purple text-white text-sm font-semibold px-8 py-2 font-Karla"
                 onClick={() => {
-                  router.push("/home/");
+                  router.push("/estimate/");
                 }}
               >
                 Get started for free
