@@ -293,8 +293,8 @@ const AddAppliancePage: React.FC = () => {
   };
 
   const handleCalculateBills = async () => {
-    if (state.appliances.length === 0) {
-      alert("Please add at least one appliance before calculating bills.");
+    if (state.appliances.length < 3) {
+      alert("Please add at least three appliance before calculating bills.");
       return;
     }
     try {
