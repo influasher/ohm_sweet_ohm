@@ -26,7 +26,7 @@ const Home: React.FC = () => {
             <button
               className="rounded-full bg-dark-purple text-white text-sm font-semibold px-8 py-2 font-Karla"
               onClick={() => {
-                router.push("/home/");
+                router.push("/estimate/");
               }}
             >
               Get started for free
@@ -168,7 +168,7 @@ const Home: React.FC = () => {
               <button
                 className="rounded-full bg-dark-purple text-white text-sm font-semibold px-8 py-2 font-Karla"
                 onClick={() => {
-                  router.push("/home/");
+                  router.push("/estimate/");
                 }}
               >
                 Get started for free
