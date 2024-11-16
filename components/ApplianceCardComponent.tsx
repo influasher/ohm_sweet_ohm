@@ -46,19 +46,19 @@ const ApplianceCardComponent: FC<ApplianceCardProps> = ({
   onDelete,
   onUpdate,
 }) => {
-  const getInitialValue = (key: string, defaultValue: number): number => {
-    const storedData = localStorage.getItem("storedData");
-    if (storedData) {
-      const parsedData = JSON.parse(storedData);
-      const appliance = parsedData.find(
-        (item: Appliance) => item.appliance === applianceName
-      );
-      if (appliance && appliance[key] !== undefined) {
-        return appliance[key];
-      }
-    }
-    return defaultValue;
-  };
+  // const getInitialValue = (key: string, defaultValue: number): number => {
+  //   const storedData = localStorage.getItem("storedData");
+  //   if (storedData) {
+  //     const parsedData = JSON.parse(storedData);
+  //     const appliance = parsedData.find(
+  //       (item: Appliance) => item.appliance === applianceName
+  //     );
+  //     if (appliance && appliance[key] !== undefined) {
+  //       return appliance[key];
+  //     }
+  //   }
+  //   return defaultValue;
+  // };
 
   const [frequencyOfUse, setFrequencyOfUse] = useState<number>(
     initialFrequencyOfUse
