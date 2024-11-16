@@ -13,14 +13,22 @@ interface InfographicProps {
   views: Views;
 }
 
-const Infographic: React.FC<InfographicProps> = ({ totalCost, appliances, views }) => {
+const Infographic: React.FC<InfographicProps> = ({
+  totalCost,
+  appliances,
+  views,
+}) => {
   const [currentView, setCurrentView] = useState<ViewKey>("view1");
   const [isAnimating, setIsAnimating] = useState(false);
 
-  const totalkWh = useMemo(() =>
-      appliances.reduce((sum, appliance) =>
-          sum + appliance.powerUsage * appliance.frequencyOfUse, 0
-      ), [appliances]
+  const totalkWh = useMemo(
+    () =>
+      appliances.reduce(
+        (sum, appliance) =>
+          sum + appliance.powerUsage * appliance.frequencyOfUse,
+        0,
+      ),
+    [appliances],
   );
 
   const changeView = () => {
@@ -42,36 +50,37 @@ const Infographic: React.FC<InfographicProps> = ({ totalCost, appliances, views 
   };
 
   return (
-      <div className="border rounded-lg shadow-lg p-4 bg-white w-full md:w-96 max-w-md mx-auto text-center">
-        <h2 className="text-2xl font-bold text-dark-purple mb-2">
-          You will spend
-        </h2>
-        <p className="text-4xl font-bold text-dark-purple mb-2">
-          ~${totalCost.toFixed(2)}
+    <div className="border rounded-lg shadow-lg p-4 bg-white w-full md:w-96 max-w-md mx-auto text-center">
+      <h2 className="text-2xl font-bold text-dark-purple mb-2">
+        You will spend
+      </h2>
+      <p className="text-4xl font-bold text-dark-purple mb-2">
+        ~${totalCost.toFixed(2)}
+      </p>
+      <p className="text-dark-purple mb-2">({totalkWh.toFixed(2)} kWh)</p>
+      <div
+        className={`transition-opacity duration-300 ease-in-out ${
+          isAnimating ? "opacity-0" : "opacity-100"
+        }`}
+      >
+        <p className="text-lg text-dark-purple mb-4 font-bold">
+          {views[currentView]?.[0] || "Loading..."}
         </p>
-        <p className="text-dark-purple mb-2">({totalkWh.toFixed(2)} kWh)</p>
-        <div
-            className={`transition-opacity duration-300 ease-in-out ${
-                isAnimating ? "opacity-0" : "opacity-100"
-            }`}
-        >
-          <p className="text-lg text-dark-purple mb-4 font-bold">
-            {views[currentView]?.[0] || "No tip available"}
-          </p>
-          <p className="text-lg text-dark-purple mb-4">
-            {views[currentView]?.[1] || ""}
-          </p>
-        </div>
-        <p className="text-dark-purple mb-2">See More Protips?</p>
-        <button
-            className="bg-dark-purple text-white px-6 py-2 rounded-full transition duration-300"
-            onClick={changeView}
-            disabled={Object.keys(views).length === 0}
-        >
-          Show Me More
-        </button>
+        <p className="text-lg text-dark-purple mb-4">
+          {views[currentView]?.[1] || "Give me a moment, i'm thinking"}
+        </p>
       </div>
+      <p className="text-dark-purple mb-2">See More Protips?</p>
+      <button
+        className="bg-dark-purple text-white px-6 py-2 rounded-full transition duration-300"
+        onClick={changeView}
+        disabled={Object.keys(views).length === 0}
+      >
+        Show Me More
+      </button>
+    </div>
   );
 };
 
 export default Infographic;
+

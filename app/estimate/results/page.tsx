@@ -42,15 +42,21 @@ const EstimateResults: React.FC = () => {
 
       // Update state with localStorage data immediately
       setAppliances(parsedData);
-      const localTotal = parsedData.reduce((sum, appliance) => sum + appliance.totalCost, 0);
+      const localTotal = parsedData.reduce(
+        (sum, appliance) => sum + appliance.totalCost,
+        0
+      );
       setTotalCost(localTotal);
 
       // Then fetch updated data from the server
-      const response = await fetch("https://oso-backend.vercel.app/getNationalMonthlyAverage", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(parsedData),
-      });
+      const response = await fetch(
+        "https://oso-backend.vercel.app/getNationalMonthlyAverage",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(parsedData),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -60,16 +66,22 @@ const EstimateResults: React.FC = () => {
       console.log("Updated data from getNationalMonthlyAverage:", updatedData);
       setAppliances(updatedData);
 
-      const total = updatedData.reduce((sum, appliance) => sum + appliance.totalCost, 0);
+      const total = updatedData.reduce(
+        (sum, appliance) => sum + appliance.totalCost,
+        0
+      );
       console.log("Calculated total cost:", total);
       setTotalCost(total);
       localStorage.setItem("storedData", JSON.stringify(updatedData));
 
-      const suggestionsResponse = await fetch("https://oso-backend.vercel.app/getSuggestions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedData),
-      });
+      const suggestionsResponse = await fetch(
+        "https://oso-backend.vercel.app/getSuggestions",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedData),
+        }
+      );
 
       if (!suggestionsResponse.ok) {
         throw new Error(`HTTP error! Status: ${suggestionsResponse.status}`);
@@ -78,32 +90,35 @@ const EstimateResults: React.FC = () => {
       const suggestionsViews: Views = await suggestionsResponse.json();
       console.log("Suggestions views:", suggestionsViews);
       setViews(suggestionsViews);
-
     } catch (error) {
       console.error("Error updating appliance data:", error);
     }
   };
 
   return (
-      <div className="bg-white min-h-screen font-Montserrat">
-        <Topbar />
-        <div className="bg-dark-purple text-white p-4 flex items-center">
-          <ArrowLeft className="mr-4" onClick={() => router.push("/estimate")} />
-          <h1 className="text-lg font-montserrat flex-grow">
-            Estimate bills - Results
-          </h1>
-          <div className="flex">
-            <Share2 className="mr-3" />
-            <MoreVertical />
-          </div>
-        </div>
-        <div className="m-2 p-2 float-left items-center justify-center">
-          <Infographic totalCost={totalCost} appliances={appliances} views={views}/>
-        </div>
-        <div className="m-2 p-2 float-left items-center justify-center">
-          <Breakdown totalCost={totalCost} appliances={appliances} />
+    <div className="bg-white min-h-screen font-Montserrat">
+      <Topbar />
+      <div className="bg-dark-purple text-white p-4 flex items-center">
+        <ArrowLeft className="mr-4" onClick={() => router.push("/estimate")} />
+        <h1 className="text-lg font-montserrat flex-grow">
+          Estimate bills - Results
+        </h1>
+        <div className="flex">
+          <Share2 className="mr-3" />
+          <MoreVertical />
         </div>
       </div>
+      <div className="m-2 p-2 float-left items-center justify-center">
+        <Infographic
+          totalCost={totalCost}
+          appliances={appliances}
+          views={views}
+        />
+      </div>
+      <div className="m-2 p-2 float-left items-center justify-center">
+        <Breakdown totalCost={totalCost} appliances={appliances} />
+      </div>
+    </div>
   );
 };
 

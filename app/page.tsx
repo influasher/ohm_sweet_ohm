@@ -121,7 +121,7 @@ const Home: React.FC = () => {
             </div>
           </div>
 
-          {/*Second green box*/}
+          {/*Third yellow box*/}
           <div className="mx-auto my-2 px-4 bg-[#FFD761] p-8 md:p-12 rounded-3xl max-w-5xl">
             <div className="flex flex-col md:flex-row items-center gap-8">
               <div className="column2 w-full md:w-1/2 md:pt-0">
@@ -148,7 +148,12 @@ const Home: React.FC = () => {
                   Take part in our energy-saving challenge and share your
                   feedback to help us make an even greater impact.
                 </p>
-                <button className="rounded-full bg-dark-purple text-white text-sm font-semibold px-9 w-80 py-2 font-Karla">
+                <button
+                  className="rounded-full bg-dark-purple text-white text-sm font-semibold px-9 w-80 py-2 font-Karla"
+                  onClick={() => {
+                    router.push("/energySavingChallenge");
+                  }}
+                >
                   Learn more
                 </button>
               </div>

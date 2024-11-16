@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -27,7 +27,6 @@ body {
   }
 }
 
-
 .custom-range::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -37,3 +36,12 @@ body {
   cursor: pointer;
   border-radius: 50%;
 }
+
+p {
+  @apply font-Karla;
+}
+
+h1 {
+  @apply font-Arvo;
+}
+
