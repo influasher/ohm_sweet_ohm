@@ -29,7 +29,7 @@ const Footer = () => {
             {/* Logo */}
             {/* Navigation links */}
             <div className="flex gap-4 text-sm text-black">
-              <Link href="/terms" className="hover:text-gray-800">
+              <Link href="/termsOfUse" className="hover:text-gray-800">
                 TERMS OF USE
               </Link>
               <span className="text-black">|</span>
