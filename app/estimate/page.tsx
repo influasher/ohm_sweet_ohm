@@ -30,12 +30,27 @@ const initialState: State = {
   isSaving: false,
 };
 
+const tariff: number = 0.3257;
+
+function calcCost(
+  frequencyOfUse: number,
+  powerUsage: number,
+  numberOfAppliance: number
+) {
+  if (numberOfAppliance <= 0 || !numberOfAppliance) return 0;
+  const hoursPerMonth = frequencyOfUse * 31;
+  return hoursPerMonth * powerUsage * tariff * numberOfAppliance;
+}
+
 function reducer(state: State, action: Action): State {
   switch (action.type) {
     case "SET_NEW_USER":
       return { ...state, isNewUser: action.payload };
-    case "SET_APPLIANCES":
+    case "SET_APPLIANCES": {
+      // Update localStorage whenever appliances are updated
+      localStorage.setItem("storedData", JSON.stringify(action.payload));
       return { ...state, appliances: action.payload };
+    }
     case "DELETE_APPLIANCE":
       return {
         ...state,
@@ -196,6 +211,18 @@ const AddAppliancePage: React.FC = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const router = useRouter();
 
+  // Function to calculate and update totalCost for all appliances
+  const calculateTotalCosts = (appliances: Appliance[]): Appliance[] => {
+    return appliances.map((appliance) => ({
+      ...appliance,
+      totalCost: calcCost(
+        appliance.frequencyOfUse,
+        appliance.powerUsage,
+        appliance.numberOfAppliance
+      ),
+    }));
+  };
+
   // Memoized update handler
   const handleApplianceUpdate = useCallback(
     (applianceName: string, updates: Partial<Appliance>) => {
@@ -207,13 +234,28 @@ const AddAppliancePage: React.FC = () => {
         },
       });
 
-      // Update localStorage
+      // Update localStorage with totalCost
       const storedData = localStorage.getItem("storedData");
       if (storedData) {
         const parsedData = JSON.parse(storedData);
-        const updatedData = parsedData.map((item: Appliance) =>
-          item.appliance === applianceName ? { ...item, ...updates } : item
-        );
+        const updatedData = parsedData.map((item: Appliance) => {
+          if (item.appliance === applianceName) {
+            const updatedItem = { ...item, ...updates };
+            // Recalculate totalCost if relevant fields were updated
+            if (
+              updates.frequencyOfUse !== undefined ||
+              updates.numberOfAppliance !== undefined
+            ) {
+              updatedItem.totalCost = calcCost(
+                updatedItem.frequencyOfUse,
+                updatedItem.powerUsage,
+                updatedItem.numberOfAppliance
+              );
+            }
+            return updatedItem;
+          }
+          return item;
+        });
         localStorage.setItem("storedData", JSON.stringify(updatedData));
       }
     },
@@ -257,7 +299,20 @@ const AddAppliancePage: React.FC = () => {
     }
     try {
       dispatch({ type: "SET_SAVING", payload: true });
-      const saved = await saveToSupabase(state.appliances);
+
+      // Calculate total costs for all appliances
+      const appliancesWithCosts = calculateTotalCosts(state.appliances);
+
+      // Update state with new costs
+      dispatch({
+        type: "SET_APPLIANCES",
+        payload: appliancesWithCosts,
+      });
+
+      // Update localStorage with the latest data including costs
+      localStorage.setItem("storedData", JSON.stringify(appliancesWithCosts));
+
+      const saved = await saveToSupabase(appliancesWithCosts);
       if (!saved) {
         console.error("Failed to save appliances to Supabase");
         alert(
@@ -287,9 +342,22 @@ const AddAppliancePage: React.FC = () => {
 
     try {
       dispatch({ type: "SET_SAVING", payload: true });
-      console.log("Current appliances state:", state.appliances);
 
-      const saved = await saveToSupabase(state.appliances);
+      // Calculate total costs for all appliances
+      const appliancesWithCosts = calculateTotalCosts(state.appliances);
+
+      // Update state with new costs
+      dispatch({
+        type: "SET_APPLIANCES",
+        payload: appliancesWithCosts,
+      });
+
+      // Update localStorage with the latest data including costs
+      localStorage.setItem("storedData", JSON.stringify(appliancesWithCosts));
+
+      console.log("Current appliances state:", appliancesWithCosts);
+
+      const saved = await saveToSupabase(appliancesWithCosts);
 
       if (saved) {
         const savedAppliances = await getAppliances();
