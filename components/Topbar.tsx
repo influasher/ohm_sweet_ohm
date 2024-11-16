@@ -67,7 +67,7 @@ const Topbar: React.FC = () => {
               height={200}
               alt="OSO logo"
               onClick={() => {
-                router.push("/home/");
+                router.push("/");
               }}
             ></Image>
           </div>

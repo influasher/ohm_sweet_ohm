@@ -44,21 +44,18 @@ const ApplianceCardComponent: FC<ApplianceCardProps> = ({
     initialNumberOfAppliance
   );
 
-  // Calculate cost using useMemo to prevent unnecessary recalculations
   const costPerMonth = useMemo(
     () => calcCost(frequencyOfUse, powerUsage, numberOfAppliances),
     [frequencyOfUse, powerUsage, numberOfAppliances]
   );
 
-  // Separate useEffect for updates to parent
   useEffect(() => {
     const updatedValues = {
       frequencyOfUse,
       numberOfAppliance: numberOfAppliances,
-      totalCost: costPerMonth, // Include the calculated cost in the update
+      totalCost: costPerMonth,
     };
 
-    // Only update if values are different from initial values or if there's a new cost
     if (
       frequencyOfUse !== initialFrequencyOfUse ||
       numberOfAppliances !== initialNumberOfAppliance
@@ -71,7 +68,7 @@ const ApplianceCardComponent: FC<ApplianceCardProps> = ({
     initialFrequencyOfUse,
     initialNumberOfAppliance,
     costPerMonth,
-    onUpdate, // Include onUpdate in dependencies
+    onUpdate,
   ]);
 
   const handleDelete = () => {
@@ -89,9 +86,10 @@ const ApplianceCardComponent: FC<ApplianceCardProps> = ({
   };
 
   const handleNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = parseInt(event.target.value);
-    if (!isNaN(newValue) && newValue >= 0) {
-      setNumberOfAppliances(newValue);
+    const value = event.target.value;
+    // Allow empty string (while typing) or valid numbers
+    if (value === "" || (!isNaN(Number(value)) && Number(value) >= 0)) {
+      setNumberOfAppliances(value === "" ? 0 : Number(value));
     }
   };
 
@@ -149,7 +147,7 @@ const ApplianceCardComponent: FC<ApplianceCardProps> = ({
         <input
           type="number"
           min="1"
-          value={numberOfAppliances}
+          value={numberOfAppliances || ""}
           onChange={handleNumberChange}
           className="w-full mt-1 p-2 border rounded-md text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
