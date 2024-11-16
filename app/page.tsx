@@ -84,7 +84,12 @@ const Home: React.FC = () => {
             <div className="flex flex-col md:flex-row items-stretch justify-evenly gap-6">
               {/*three columns here*/}
               <div className="col1 bg-white md:w-1/3 items-center rounded-xl p-6 flex flex-col text-center">
-                <div className="bg-gray-500 size-40 "> image here</div>
+                <Image
+                  src={"/how-it-works-1.png"}
+                  height={300}
+                  width={300}
+                  alt="How it works first picture"
+                ></Image>
                 <div className="font-Arvo text-xl font-semibold m-3">
                   <h1>Simple Setup</h1>
                 </div>
@@ -96,7 +101,12 @@ const Home: React.FC = () => {
                 {/*2nd columns here*/}
               </div>
               <div className="col2 bg-white md:w-1/3 items-center rounded-xl p-6 flex flex-col text-center">
-                <div className="bg-gray-500 size-40 "> image here</div>
+                <Image
+                  src={"/how-it-works-2.png"}
+                  height={300}
+                  width={300}
+                  alt="How it works second picture"
+                ></Image>
                 <div className="font-Arvo text-xl font-semibold m-3">
                   <h1>Personalised Insights</h1>
                 </div>
@@ -108,7 +118,13 @@ const Home: React.FC = () => {
               </div>
               {/*third columns here*/}
               <div className="col3 bg-white md:w-1/3 items-center rounded-xl p-6 flex flex-col text-center">
-                <div className="bg-gray-500 size-40 "> image here</div>
+                <Image
+                  src={"/how-it-works-3.png"}
+                  height={300}
+                  width={300}
+                  alt="How it works third picture"
+                ></Image>
+
                 <div className="font-Arvo text-xl font-semibold m-3">
                   <h1>Actionable Recommendations</h1>
                 </div>
