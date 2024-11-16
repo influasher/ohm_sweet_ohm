@@ -1,7 +1,7 @@
-import { useState, FC, useEffect } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, FC, useEffect, useMemo } from "react";
 import { X } from "lucide-react";
 
-// Define the props interface
 interface ApplianceCardProps {
   applianceName: string;
   modelNumber: string;
@@ -14,16 +14,6 @@ interface ApplianceCardProps {
     numberOfAppliance?: number;
   }) => void;
 }
-
-type Appliance = {
-  appliance: string;
-  powerUsage: number;
-  brandName: string;
-  model: string;
-  frequencyOfUse: number;
-  numberOfAppliance: number;
-  totalCost: number;
-};
 
 const tariff: number = 0.3257;
 
@@ -46,34 +36,46 @@ const ApplianceCardComponent: FC<ApplianceCardProps> = ({
   onDelete,
   onUpdate,
 }) => {
-  // const getInitialValue = (key: string, defaultValue: number): number => {
-  //   const storedData = localStorage.getItem("storedData");
-  //   if (storedData) {
-  //     const parsedData = JSON.parse(storedData);
-  //     const appliance = parsedData.find(
-  //       (item: Appliance) => item.appliance === applianceName
-  //     );
-  //     if (appliance && appliance[key] !== undefined) {
-  //       return appliance[key];
-  //     }
-  //   }
-  //   return defaultValue;
-  // };
-
   const [frequencyOfUse, setFrequencyOfUse] = useState<number>(
     initialFrequencyOfUse
   );
   const [numberOfAppliances, setNumberOfAppliances] = useState<number>(
     initialNumberOfAppliance
   );
-  const [costPerMonth, setCostPerMonth] = useState<number>(0);
+
+  // Calculate cost using useMemo to prevent unnecessary recalculations
+  const costPerMonth = useMemo(
+    () => calcCost(frequencyOfUse, powerUsage, numberOfAppliances),
+    [frequencyOfUse, powerUsage, numberOfAppliances]
+  );
+
+  // Separate useEffect for updates to parent
+  useEffect(() => {
+    const updatedValues = {
+      frequencyOfUse,
+      numberOfAppliance: numberOfAppliances,
+    };
+
+    // Only update if values are different from initial values
+    if (
+      frequencyOfUse !== initialFrequencyOfUse ||
+      numberOfAppliances !== initialNumberOfAppliance
+    ) {
+      onUpdate(updatedValues);
+    }
+  }, [
+    frequencyOfUse,
+    numberOfAppliances,
+    initialFrequencyOfUse,
+    initialNumberOfAppliance,
+  ]);
 
   const handleDelete = () => {
     const storedData = localStorage.getItem("storedData");
     if (storedData) {
       const parsedData = JSON.parse(storedData);
       const updatedData = parsedData.filter(
-        (item: Appliance) => item.appliance !== applianceName
+        (item: any) => item.appliance !== applianceName
       );
       localStorage.setItem("storedData", JSON.stringify(updatedData));
       if (onDelete) {
@@ -82,18 +84,17 @@ const ApplianceCardComponent: FC<ApplianceCardProps> = ({
     }
   };
 
-  useEffect(() => {
-    const newCost = calcCost(frequencyOfUse, powerUsage, numberOfAppliances);
-    setCostPerMonth(newCost);
-
-    onUpdate({
-      frequencyOfUse,
-      numberOfAppliance: numberOfAppliances,
-    });
-  }, [frequencyOfUse, numberOfAppliances, powerUsage, onUpdate]);
-
   const handleNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNumberOfAppliances(parseInt(event.target.value));
+    const newValue = parseInt(event.target.value);
+    if (!isNaN(newValue) && newValue >= 0) {
+      setNumberOfAppliances(newValue);
+    }
+  };
+
+  const handleFrequencyChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setFrequencyOfUse(Number(event.target.value));
   };
 
   return (
@@ -124,9 +125,7 @@ const ApplianceCardComponent: FC<ApplianceCardProps> = ({
         <label className="text-sm text-gray-500">Frequency of use</label>
         <select
           value={frequencyOfUse}
-          onChange={(e) => {
-            setFrequencyOfUse(Number(e.target.value));
-          }}
+          onChange={handleFrequencyChange}
           className="w-full mt-1 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value={24}>Always on (24hrs/day)</option>

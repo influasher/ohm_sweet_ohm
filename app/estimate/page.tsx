@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useCallback } from "react";
 import { ArrowLeft, MoreVertical, Save, CirclePlus } from "lucide-react";
 import Topbar from "@/components/Topbar";
 import ApplianceCardComponent from "@/components/ApplianceCardComponent";
@@ -79,13 +79,11 @@ async function saveToSupabase(appliances: Appliance[]) {
       return false;
     }
 
-    // Log the appliances data before saving
     console.log("Saving appliances data:", appliances);
 
     const fileName = `appliances_${Date.now()}.json`;
     const filePath = `${userId}/${fileName}`;
 
-    // Ensure all numeric fields are properly typed
     const processedAppliances = appliances.map((appliance) => ({
       ...appliance,
       frequencyOfUse: Number(appliance.frequencyOfUse),
@@ -94,18 +92,13 @@ async function saveToSupabase(appliances: Appliance[]) {
       totalCost: Number(appliance.totalCost),
     }));
 
-    // Log the processed data
     console.log("Processed appliances data:", processedAppliances);
 
-    // Convert appliances array to JSON string with explicit typing
     const jsonString = JSON.stringify(processedAppliances, null, 2);
-
-    // Log the final JSON string
     console.log("JSON string to save:", jsonString);
 
     const blob = new Blob([jsonString], { type: "application/json" });
 
-    // Upload to Supabase Storage
     const { error } = await supabase.storage
       .from("oso_appliances")
       .upload(filePath, blob);
@@ -137,7 +130,6 @@ async function getAppliances(): Promise<Appliance[]> {
       return [];
     }
 
-    // Get the most recent JSON file
     const jsonFiles = fileList
       .filter((file) => file.name.endsWith(".json"))
       .sort((a, b) => {
@@ -148,7 +140,6 @@ async function getAppliances(): Promise<Appliance[]> {
 
     if (jsonFiles.length === 0) return [];
 
-    // Download the most recent file
     const mostRecentFile = jsonFiles[0];
     const { data, error } = await supabase.storage
       .from("oso_appliances")
@@ -163,16 +154,13 @@ async function getAppliances(): Promise<Appliance[]> {
     const jsonString = new TextDecoder("utf-8").decode(arrayBuffer);
     const parsed = JSON.parse(jsonString);
 
-    // Validate and return the appliances with proper type coercion
     const appliances = Array.isArray(parsed) ? parsed : [parsed];
     return appliances.filter((item): item is Appliance => {
-      // First check if the item exists and is an object
       if (!item || typeof item !== "object") {
         console.error("Invalid appliance data: not an object", item);
         return false;
       }
 
-      // Coerce numeric values while maintaining their original values
       const validatedItem = {
         ...item,
         powerUsage: Number(item.powerUsage) || 0,
@@ -181,7 +169,6 @@ async function getAppliances(): Promise<Appliance[]> {
         totalCost: Number(item.totalCost) || 0,
       };
 
-      // Validate all required fields
       const isValid =
         typeof validatedItem.appliance === "string" &&
         !isNaN(validatedItem.powerUsage) &&
@@ -196,7 +183,6 @@ async function getAppliances(): Promise<Appliance[]> {
         return false;
       }
 
-      // Update the original item with the validated values
       Object.assign(item, validatedItem);
       return true;
     });
@@ -210,19 +196,40 @@ const AddAppliancePage: React.FC = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const router = useRouter();
 
+  // Memoized update handler
+  const handleApplianceUpdate = useCallback(
+    (applianceName: string, updates: Partial<Appliance>) => {
+      dispatch({
+        type: "UPDATE_APPLIANCE",
+        payload: {
+          applianceName,
+          updates,
+        },
+      });
+
+      // Update localStorage
+      const storedData = localStorage.getItem("storedData");
+      if (storedData) {
+        const parsedData = JSON.parse(storedData);
+        const updatedData = parsedData.map((item: Appliance) =>
+          item.appliance === applianceName ? { ...item, ...updates } : item
+        );
+        localStorage.setItem("storedData", JSON.stringify(updatedData));
+      }
+    },
+    []
+  );
+
   useEffect(() => {
     const loadData = async () => {
       try {
-        // First try to get data from Supabase
         const appliancesData = await getAppliances();
 
         if (appliancesData.length > 0) {
-          // Update local storage with the Supabase data
           localStorage.setItem("storedData", JSON.stringify(appliancesData));
           dispatch({ type: "SET_NEW_USER", payload: false });
           dispatch({ type: "SET_APPLIANCES", payload: appliancesData });
         } else {
-          // If no Supabase data, try local storage as fallback
           const storedData = localStorage.getItem("storedData");
           if (storedData) {
             const parsedData: Appliance[] = JSON.parse(storedData);
@@ -243,28 +250,11 @@ const AddAppliancePage: React.FC = () => {
     router.push("create/");
   };
 
-  const handleCalculateBills = async () => {
-    if (state.appliances.length === 0) {
-      alert("Please add at least one appliance before calculating bills.");
-      return;
-    }
-
-    try {
-      dispatch({ type: "SET_SAVING", payload: true });
-      const saved = await saveToSupabase(state.appliances);
-      if (!saved) {
-        console.error("Failed to save appliances to Supabase");
-        alert(
-          "Warning: Failed to save appliances, but proceeding with calculation."
-        );
-      }
-      router.push("estimate/results/");
-    } catch (error) {
-      console.error("Error in handleCalculateBills:", error);
-      alert("Error occurred while saving. Please try again.");
-    } finally {
-      dispatch({ type: "SET_SAVING", payload: false });
-    }
+  const handleCalculateBills = () => {
+    console.log("Calculate Bills button clicked");
+    console.log("Is saving:", state.isSaving);
+    console.log("Current appliances:", state.appliances);
+    router.push("/estimate/results/");
   };
 
   const handleSave = async (e: React.MouseEvent<HTMLDivElement>) => {
@@ -276,22 +266,18 @@ const AddAppliancePage: React.FC = () => {
     }
 
     if (state.isSaving) {
-      return; // Prevent multiple simultaneous saves
+      return;
     }
 
     try {
       dispatch({ type: "SET_SAVING", payload: true });
-
-      // Log the current state before saving
       console.log("Current appliances state:", state.appliances);
 
       const saved = await saveToSupabase(state.appliances);
 
       if (saved) {
-        // Verify the saved data immediately after saving
         const savedAppliances = await getAppliances();
         console.log("Verified saved appliances:", savedAppliances);
-
         alert("Saved Appliances!");
       } else {
         alert("Failed to save appliances, please try again");
@@ -307,7 +293,6 @@ const AddAppliancePage: React.FC = () => {
   const handleDeleteAppliance = async (applianceName: string) => {
     dispatch({ type: "DELETE_APPLIANCE", payload: applianceName });
 
-    // Update localStorage
     const storedData = localStorage.getItem("storedData");
     if (storedData) {
       const parsedData = JSON.parse(storedData);
@@ -316,7 +301,6 @@ const AddAppliancePage: React.FC = () => {
       );
       localStorage.setItem("storedData", JSON.stringify(updatedData));
 
-      // Also save the updated data to Supabase
       try {
         await saveToSupabase(updatedData);
       } catch (error) {
@@ -372,30 +356,9 @@ const AddAppliancePage: React.FC = () => {
                 frequencyOfUse={appliance.frequencyOfUse}
                 numberOfAppliance={appliance.numberOfAppliance}
                 onDelete={() => handleDeleteAppliance(appliance.appliance)}
-                onUpdate={(updates) => {
-                  dispatch({
-                    type: "UPDATE_APPLIANCE",
-                    payload: {
-                      applianceName: appliance.appliance,
-                      updates,
-                    },
-                  });
-
-                  // Update localStorage
-                  const storedData = localStorage.getItem("storedData");
-                  if (storedData) {
-                    const parsedData = JSON.parse(storedData);
-                    const updatedData = parsedData.map((item: Appliance) =>
-                      item.appliance === appliance.appliance
-                        ? { ...item, ...updates }
-                        : item
-                    );
-                    localStorage.setItem(
-                      "storedData",
-                      JSON.stringify(updatedData)
-                    );
-                  }
-                }}
+                onUpdate={(updates) =>
+                  handleApplianceUpdate(appliance.appliance, updates)
+                }
               />
             </div>
           ))}
