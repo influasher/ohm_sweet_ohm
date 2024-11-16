@@ -331,10 +331,10 @@ const AddAppliancePage: React.FC = () => {
   const handleSave = async (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
 
-    if (state.appliances.length === 0) {
-      alert("No appliances to save");
-      return;
-    }
+    // if (state.appliances.length === 0) {
+    //   alert("No appliances to save");
+    //   return;
+    // }
 
     if (state.isSaving) {
       return;
@@ -449,9 +449,9 @@ const AddAppliancePage: React.FC = () => {
       </div>
 
       <div className="text-dark-purple font-normal text-sm mx-4">
-        Calculation is based on 30days/month and tariff rates of 31.72 cents/kWh,
-        based on rates in Oct – Dec 2024. Tariff rates are updated every
-        quarter.
+        Calculation is based on 30days/month and tariff rates of 31.72
+        cents/kWh, based on rates in Oct – Dec 2024. Tariff rates are updated
+        every quarter.
       </div>
 
       <div className="pt-5 pb-3 justify-center flex items-center">
