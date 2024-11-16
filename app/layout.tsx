@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Montserrat, Arvo, Karla } from "next/font/google";
 import "./globals.css";
+import Metrics from './metrics'
 
 // Local fonts
 const geistSans = localFont({
@@ -58,6 +59,7 @@ export default function RootLayout({
         `}
       >
         {children}
+      <Metrics/>
       </body>
     </html>
   );
