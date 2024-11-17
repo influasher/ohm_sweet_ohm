@@ -118,9 +118,8 @@ const Home: React.FC = () => {
                   <h1>Personalised Insights</h1>
                 </div>
                 <p className="text-black">
-                  Input appliance details or snap a picture of a household
-                  appliance or its specifications label—no additional hardware
-                  needed.
+                  Get an estimated monthly cost breakdown for each appliance,
+                  tailored to your usage habits.
                 </p>
               </div>
               {/*third columns here*/}
@@ -136,9 +135,8 @@ const Home: React.FC = () => {
                   <h1>Actionable Recommendations</h1>
                 </div>
                 <p className="text-black">
-                  Input appliance details or snap a picture of a household
-                  appliance or its specifications label—no additional hardware
-                  needed.
+                  Get tips and recommendations to help reduce electricity
+                  consumption and lower your bills.
                 </p>
               </div>
             </div>
