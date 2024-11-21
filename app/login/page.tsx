@@ -313,7 +313,7 @@ export default function LoginPage() {
                             }`}
                           >
                             I consent to receive emails and notifications
-                            regarding OhmSweetOhm's energy saving challenge,
+                            regarding OhmSweetOhm&apos;s energy saving challenge,
                             products and announcements. I agree to the
                             collection, use, disclosure, and processing of my
                             personal data by OhmSweetOhm for subscription to
