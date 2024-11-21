@@ -2,43 +2,44 @@
 
 import { login, signup } from "./actions";
 import { useState } from "react";
-import Image from "next/image"; // Or 'react' if not using Next.js
+import Image from "next/image";
 import styles from "./login.module.css";
 import Topbar from "@/components/Topbar";
+import Link from "next/link";
 
 export default function LoginPage() {
   const [activeTab, setActiveTab] = useState("login");
+  const [marketingConsent, setMarketingConsent] = useState(false);
+  const [showConsentError, setShowConsentError] = useState(false);
 
   async function setLogin(formData: FormData) {
     try {
-      // Call the login function with formData
       await login(formData);
     } catch (error) {
-      // Display an alert with the error message
       if (error instanceof Error) {
         alert(error.message);
       } else {
-        // Handle other types of errors (if any)
         alert("An unexpected error occurred. Please try again.");
       }
-      // Refresh the page after the user clicks OK
       window.location.reload();
     }
   }
 
   async function setSignup(formData: FormData) {
     try {
-      // Call the login function with formData
+      if (!marketingConsent) {
+        setShowConsentError(true);
+        return;
+      }
+      setShowConsentError(false);
+      formData.append("marketing_consent", marketingConsent.toString());
       await signup(formData);
     } catch (error) {
-      // Display an alert with the error message
       if (error instanceof Error) {
         alert(error.message);
       } else {
-        // Handle other types of errors (if any)
         alert("An unexpected error occurred. Please try again.");
       }
-      // Refresh the page after the user clicks OK
       window.location.reload();
     }
   }
@@ -49,10 +50,9 @@ export default function LoginPage() {
       <section className="login-section flex items-center justify-center min-h-screen">
         <div className="container mx-auto wrapper flex items-center justify-center">
           <div className="row-wrapper w-full flex flex-col items-center">
-            {/* Optional Image */}
             <div className="flex flex-col items-center">
               <Image
-                src="/sustainable.png" // Adjust the path to your local image file
+                src="/sustainable.png"
                 alt="OhmSweetOhm Energy Challenge"
                 className="img-fluid max-w-full h-auto"
                 width={400}
@@ -60,19 +60,17 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* Login and Register Forms */}
             <div className="login-register flex flex-col items-center text-center">
               <div className={styles.imageContainer}>
                 <Image
-                  src="/logo-mailchimp.png" // Local path to the uploaded image
+                  src="/logo-mailchimp.png"
                   alt="OhmSweetOhm Energy Challenge"
                   width={200}
                   height={200}
                   className={styles.mainImage}
                 />
-              </div>{" "}
+              </div>
               <div className="card shadow py-4 px-6 w-full max-w-md flex flex-col items-center">
-                {/* Tabs for Login and Register */}
                 <div className="my-4 w-full flex" role="tablist">
                   <button
                     className={`flex-1 text-center py-2 ${
@@ -80,7 +78,10 @@ export default function LoginPage() {
                         ? "bg-dark-purple text-white"
                         : "text-dark-purple"
                     }`}
-                    onClick={() => setActiveTab("login")}
+                    onClick={() => {
+                      setActiveTab("login");
+                      setShowConsentError(false);
+                    }}
                     role="tab"
                     aria-selected={activeTab === "login"}
                   >
@@ -92,29 +93,27 @@ export default function LoginPage() {
                         ? "bg-dark-purple text-white"
                         : "text-dark-purple"
                     }`}
-                    onClick={() => setActiveTab("register")}
+                    onClick={() => {
+                      setActiveTab("register");
+                      setShowConsentError(false);
+                    }}
                     role="tab"
                     aria-selected={activeTab === "register"}
                   >
                     Register
                   </button>
                 </div>
-                {/* End of Tabs */}
 
-                {/* Tab Content */}
                 <div className="tab-content w-full">
-                  {/* Login Form */}
                   {activeTab === "login" && (
                     <form
                       onSubmit={(e) => {
-                        e.preventDefault(); // Prevent the default form submission
+                        e.preventDefault();
                         const formData = new FormData(e.currentTarget);
-                        setLogin(formData); // Call setLogin with the form data
+                        setLogin(formData);
                       }}
                       className="w-full"
                     >
-                      {" "}
-                      {/* Email input */}
                       <div className="mb-4">
                         <label
                           htmlFor="loginEmail"
@@ -131,7 +130,6 @@ export default function LoginPage() {
                           required
                         />
                       </div>
-                      {/* Password input */}
                       <div className="mb-4">
                         <label
                           htmlFor="loginPassword"
@@ -148,25 +146,21 @@ export default function LoginPage() {
                           required
                         />
                       </div>
-                      {/* Submit button */}
                       <button type="submit" className={styles.loginButton}>
                         Sign in
                       </button>
                     </form>
                   )}
 
-                  {/* Register Form */}
                   {activeTab === "register" && (
                     <form
                       onSubmit={(e) => {
-                        e.preventDefault(); // Prevent the default form submission
+                        e.preventDefault();
                         const formData = new FormData(e.currentTarget);
-                        setSignup(formData); // Call setSignup with the form data
+                        setSignup(formData);
                       }}
                       className="w-full"
                     >
-                      {" "}
-                      {/* First Name input */}
                       <div className="mb-4">
                         <label
                           htmlFor="firstName"
@@ -183,7 +177,6 @@ export default function LoginPage() {
                           required
                         />
                       </div>
-                      {/* Last Name input */}
                       <div className="mb-4">
                         <label
                           htmlFor="lastName"
@@ -200,7 +193,6 @@ export default function LoginPage() {
                           required
                         />
                       </div>
-                      {/* Email input */}
                       <div className="mb-4">
                         <label
                           htmlFor="registerEmail"
@@ -217,7 +209,6 @@ export default function LoginPage() {
                           required
                         />
                       </div>
-                      {/* Address input */}
                       <div className="mb-4">
                         <label
                           htmlFor="address"
@@ -234,7 +225,6 @@ export default function LoginPage() {
                           required
                         />
                       </div>
-                      {/* Postcode input */}
                       <div className="mb-4">
                         <label
                           htmlFor="postcode"
@@ -251,7 +241,6 @@ export default function LoginPage() {
                           required
                         />
                       </div>
-                      {/* Unit input */}
                       <div className="mb-4">
                         <label
                           htmlFor="unit"
@@ -268,7 +257,6 @@ export default function LoginPage() {
                           required
                         />
                       </div>
-                      {/* Password input */}
                       <div className="mb-4">
                         <label
                           htmlFor="registerPassword"
@@ -285,7 +273,6 @@ export default function LoginPage() {
                           required
                         />
                       </div>
-                      {/* Repeat Password input */}
                       <div className="mb-4">
                         <label
                           htmlFor="registerRepeatPassword"
@@ -302,16 +289,88 @@ export default function LoginPage() {
                           required
                         />
                       </div>
-                      {/* Submit button */}
+
+                      <div className="mb-6">
+                        <div className="flex items-start space-x-3">
+                          <input
+                            type="checkbox"
+                            id="marketing-consent"
+                            checked={marketingConsent}
+                            onChange={(e) => {
+                              setMarketingConsent(e.target.checked);
+                              if (e.target.checked) {
+                                setShowConsentError(false);
+                              }
+                            }}
+                            className={`mt-1 h-4 w-4 rounded border-gray-300 text-dark-purple focus:ring-dark-purple cursor-pointer ${
+                              showConsentError ? "border-red-500" : ""
+                            }`}
+                          />
+                          <label
+                            htmlFor="marketing-consent"
+                            className={`text-sm font-Karla cursor-pointer text-left ${
+                              showConsentError ? "text-red-500" : ""
+                            }`}
+                          >
+                            I consent to receive emails and notifications
+                            regarding OhmSweetOhm&apos;s energy saving challenge,
+                            products and announcements. I agree to the
+                            collection, use, disclosure, and processing of my
+                            personal data by OhmSweetOhm for subscription to
+                            this mailing list and acknowledge the terms in our{" "}
+                            <Link
+                              href="/privacy-policy"
+                              className={`text-dark-purple hover:text-purple-900 hover:underline ${
+                                showConsentError ? "text-red-500" : ""
+                              }`}
+                            >
+                              Privacy Policy
+                            </Link>{" "}
+                            and confirm that all information provided is
+                            accurate and complete.
+                          </label>
+                        </div>
+                        {showConsentError && (
+                          <p className="text-red-500 text-sm mt-2 text-left">
+                            Please accept the terms and conditions to continue.
+                          </p>
+                        )}
+                      </div>
+
                       <button type="submit" className={styles.loginButton}>
                         Sign up
                       </button>
                     </form>
                   )}
                 </div>
-                {/* End of Tab Content */}
               </div>
-              {/* End of Card */}
+
+              <div className="border-2 rounded-xl border-dark-purple text-center text-sm mx-auto mt-20">
+                <div className="font-Karla p-3 m-3">
+                  This product was developed by citizen participants of{" "}
+                  <a
+                    href="https://build.gov.sg"
+                    className="font-semibold text-purple-700 hover:text-purple-900 hover:underline"
+                  >
+                    Build For Good 2024
+                  </a>{" "}
+                  – a hackathon organised by{" "}
+                  <a
+                    href="https://open.gov.sg"
+                    className="font-semibold text-purple-700 hover:text-purple-900 hover:underline"
+                  >
+                    Open Government Products
+                  </a>
+                  , in collaboration with{" "}
+                  <a
+                    href="https://www.sgpo.gov.sg"
+                    className="font-semibold text-purple-700 hover:text-purple-900 hover:underline"
+                  >
+                    Singapore Government Partnerships Office
+                  </a>
+                  .
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -319,17 +378,3 @@ export default function LoginPage() {
     </>
   );
 }
-// import { login, signup } from './actions'
-
-// export default function LoginPage() {
-//   return (
-//     <form>
-//       <label htmlFor="email">Email:</label>
-//       <input id="email" name="email" type="email" required />
-//       <label htmlFor="password">Password:</label>
-//       <input id="password" name="password" type="password" required />
-//       <button formAction={login}>Log in</button>
-//       <button formAction={signup}>Sign up</button>
-//     </form>
-//   )
-// }
