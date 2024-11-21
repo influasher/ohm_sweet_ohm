@@ -59,7 +59,12 @@ const EnergySavingChallenge: React.FC = () => {
                 sustainability while saving on your bills! Terms & Conditions
                 apply.
               </p>
-              <button className="rounded-full bg-dark-purple text-white text-sm font-semibold px-9 w-80 py-2 font-Karla">
+              <button
+                className="rounded-full bg-dark-purple text-white text-sm font-semibold px-9 w-80 py-2 font-Karla"
+                onClick={() => {
+                  router.push("/home/");
+                }}
+              >
                 Join now
               </button>
             </div>
