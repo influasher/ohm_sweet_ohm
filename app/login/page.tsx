@@ -10,6 +10,7 @@ import Link from "next/link";
 export default function LoginPage() {
   const [activeTab, setActiveTab] = useState("login");
   const [marketingConsent, setMarketingConsent] = useState(false);
+  const [showConsentError, setShowConsentError] = useState(false);
 
   async function setLogin(formData: FormData) {
     try {
@@ -26,6 +27,11 @@ export default function LoginPage() {
 
   async function setSignup(formData: FormData) {
     try {
+      if (!marketingConsent) {
+        setShowConsentError(true);
+        return;
+      }
+      setShowConsentError(false);
       formData.append("marketing_consent", marketingConsent.toString());
       await signup(formData);
     } catch (error) {
@@ -72,7 +78,10 @@ export default function LoginPage() {
                         ? "bg-dark-purple text-white"
                         : "text-dark-purple"
                     }`}
-                    onClick={() => setActiveTab("login")}
+                    onClick={() => {
+                      setActiveTab("login");
+                      setShowConsentError(false);
+                    }}
                     role="tab"
                     aria-selected={activeTab === "login"}
                   >
@@ -84,7 +93,10 @@ export default function LoginPage() {
                         ? "bg-dark-purple text-white"
                         : "text-dark-purple"
                     }`}
-                    onClick={() => setActiveTab("register")}
+                    onClick={() => {
+                      setActiveTab("register");
+                      setShowConsentError(false);
+                    }}
                     role="tab"
                     aria-selected={activeTab === "register"}
                   >
@@ -278,31 +290,39 @@ export default function LoginPage() {
                         />
                       </div>
 
-                      {/* Marketing Consent Checkbox */}
                       <div className="mb-6">
                         <div className="flex items-start space-x-3">
                           <input
                             type="checkbox"
                             id="marketing-consent"
                             checked={marketingConsent}
-                            onChange={(e) =>
-                              setMarketingConsent(e.target.checked)
-                            }
-                            className="mt-1 h-4 w-4 rounded border-gray-300 text-dark-purple focus:ring-dark-purple cursor-pointer"
+                            onChange={(e) => {
+                              setMarketingConsent(e.target.checked);
+                              if (e.target.checked) {
+                                setShowConsentError(false);
+                              }
+                            }}
+                            className={`mt-1 h-4 w-4 rounded border-gray-300 text-dark-purple focus:ring-dark-purple cursor-pointer ${
+                              showConsentError ? "border-red-500" : ""
+                            }`}
                           />
                           <label
                             htmlFor="marketing-consent"
-                            className="text-sm font-Karla cursor-pointer text-left"
+                            className={`text-sm font-Karla cursor-pointer text-left ${
+                              showConsentError ? "text-red-500" : ""
+                            }`}
                           >
                             I consent to receive emails and notifications
-                            regarding OhmSweetOhm&apos;s energy saving challenge,
+                            regarding OhmSweetOhm's energy saving challenge,
                             products and announcements. I agree to the
                             collection, use, disclosure, and processing of my
                             personal data by OhmSweetOhm for subscription to
                             this mailing list and acknowledge the terms in our{" "}
                             <Link
                               href="/privacy-policy"
-                              className="text-dark-purple hover:text-purple-900 hover:underline"
+                              className={`text-dark-purple hover:text-purple-900 hover:underline ${
+                                showConsentError ? "text-red-500" : ""
+                              }`}
                             >
                               Privacy Policy
                             </Link>{" "}
@@ -310,6 +330,11 @@ export default function LoginPage() {
                             accurate and complete.
                           </label>
                         </div>
+                        {showConsentError && (
+                          <p className="text-red-500 text-sm mt-2 text-left">
+                            Please accept the terms and conditions to continue.
+                          </p>
+                        )}
                       </div>
 
                       <button type="submit" className={styles.loginButton}>
@@ -317,6 +342,33 @@ export default function LoginPage() {
                       </button>
                     </form>
                   )}
+                </div>
+              </div>
+
+              <div className="border-2 rounded-xl border-dark-purple text-center text-sm mx-auto mt-20">
+                <div className="font-Karla p-3 m-3">
+                  This product was developed by citizen participants of{" "}
+                  <a
+                    href="https://build.gov.sg"
+                    className="font-semibold text-purple-700 hover:text-purple-900 hover:underline"
+                  >
+                    Build For Good 2024
+                  </a>{" "}
+                  – a hackathon organised by{" "}
+                  <a
+                    href="https://open.gov.sg"
+                    className="font-semibold text-purple-700 hover:text-purple-900 hover:underline"
+                  >
+                    Open Government Products
+                  </a>
+                  , in collaboration with{" "}
+                  <a
+                    href="https://www.sgpo.gov.sg"
+                    className="font-semibold text-purple-700 hover:text-purple-900 hover:underline"
+                  >
+                    Singapore Government Partnerships Office
+                  </a>
+                  .
                 </div>
               </div>
             </div>
