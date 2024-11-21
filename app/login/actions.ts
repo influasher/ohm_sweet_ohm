@@ -41,6 +41,7 @@ export async function signup(formData: FormData) {
         address: formData.get("address") as string,
         postcode: formData.get("postcode") as string,
         unit: formData.get("unit") as string,
+        marketing_consent: formData.get("marketing_consent") === "true",
       },
     },
   };
