@@ -69,6 +69,7 @@ const Topbar: React.FC = () => {
               onClick={() => {
                 router.push("/");
               }}
+              className="cursor-pointer"
             ></Image>
           </div>
 
