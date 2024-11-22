@@ -7,9 +7,9 @@ type Props = {
 
 const PromoBanner = ({ onClose }: Props) => {
   return (
-    <div className="bg-dark-purple px-2 py-2 relative">
-      <div className=" mx-auto">
-        <div className="flex items-start">
+    <div className="bg-dark-purple px-2 py-2 ">
+      <div className=" mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
+        <div className="flex items-start mx-auto">
           <div className="flex items-start space-x-2 font-Montserrat pr-8">
             <div className="w-3 h-3 bg-white rounded-full flex-shrink-0 flex items-center justify-center mt-1">
               <div className="w-1.5 h-1.5 bg-dark-purple rounded-full" />
@@ -30,14 +30,15 @@ const PromoBanner = ({ onClose }: Props) => {
                 </a>
               </div>
             </div>
+
+            <button
+              onClick={onClose}
+              className="text-white hover:text-purple-200 p-1 absolute right-2 top-2"
+              aria-label="Close banner"
+            >
+              <X size={14} />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="text-white hover:text-purple-200 p-1 absolute right-2 top-2"
-            aria-label="Close banner"
-          >
-            <X size={14} />
-          </button>
         </div>
       </div>
     </div>

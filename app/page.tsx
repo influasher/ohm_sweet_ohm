@@ -20,9 +20,9 @@ const Home: React.FC = () => {
       </div>
       <Topbar />
       <main className="min-h-screen bg-gradient-to-b from-white to-gray-100 pb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-16">
           <div className="max-w-2xl mx-auto px-4 text-center">
-            <h1 className="text-4xl font-extrabold mb-8 font-Arvo ">
+            <h1 className="text-4xl font-extrabold my-8 font-Arvo ">
               Powering Smart Savings For Every Home!
             </h1>
 
@@ -31,14 +31,14 @@ const Home: React.FC = () => {
               save-with ease.
             </p>
             <button
-              className="rounded-full bg-dark-purple text-white text-sm font-semibold px-8 py-2 font-Karla"
+              className="rounded-full bg-dark-purple text-white text-sm font-semibold w-96 h-14 font-Karla"
               onClick={() => {
                 router.push("/estimate/");
               }}
             >
               Get started for free
             </button>
-            <p className="p-3 font-Karla font-xs">See how it works</p>
+            <p className=" py-3 font-Karla font-xs">See how it works</p>
             <div className="grid place-items-center">
               <ArrowDown
                 className="text-black"
@@ -161,8 +161,10 @@ const Home: React.FC = () => {
                   <h1 className="font-black">NTUC Vouchers!</h1>
                 </div>
                 <p className="font-Karla font-semibold">
-                  From 15 Nov till 31 Dec 2024  Registration closes on 29 Nov,
-                  12pm.
+                  From 15 Nov till 31 Dec 2024
+                </p>
+                <p className="font-Karla font-semibold">
+                  Registration closes on 29 Nov, 12pm.
                 </p>
                 <p className="font-Karla font-thin pb-3">
                   Join us in making Singapore a greener, more resilient place!
@@ -170,7 +172,7 @@ const Home: React.FC = () => {
                   feedback to help us make an even greater impact.
                 </p>
                 <button
-                  className="rounded-full bg-dark-purple text-white text-sm font-semibold px-9 w-80 py-2 font-Karla"
+                  className="rounded-full bg-dark-purple text-white text-sm font-semibold h-14 w-96 font-Karla"
                   onClick={() => {
                     router.push("/energySavingChallenge");
                   }}
@@ -183,11 +185,11 @@ const Home: React.FC = () => {
 
           <div className="mx-auto my-3 px-4 p-8 md:p-12 max-w-5xl">
             <div className="max-w-2xl mx-auto px-4 text-center">
-              <h1 className="text-5xl font-extrabold mb-8 font-Arvo ">
+              <h1 className="text-5xl font-extrabold my-8 font-Arvo ">
                 Ready To Start Saving?
               </h1>
               <button
-                className="rounded-full bg-dark-purple text-white text-sm font-semibold px-8 py-2 font-Karla"
+                className="rounded-full bg-dark-purple text-white text-sm font-semibold h-14 w-96 font-Karla"
                 onClick={() => {
                   router.push("/estimate/");
                 }}

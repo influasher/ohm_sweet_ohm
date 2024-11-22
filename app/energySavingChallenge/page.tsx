@@ -60,10 +60,8 @@ const EnergySavingChallenge: React.FC = () => {
                 apply.
               </p>
               <button
-                className="rounded-full bg-dark-purple text-white text-sm font-semibold px-9 w-80 py-2 font-Karla"
-                onClick={() => {
-                  router.push("/home/");
-                }}
+                className="rounded-full bg-dark-purple text-white text-sm font-semibold w-96 h-14 font-Karla"
+                onClick={() => router.push("/home/")}
               >
                 Join now
               </button>
@@ -93,103 +91,103 @@ const EnergySavingChallenge: React.FC = () => {
         {/* steps */}
 
         <div className="mx-auto my-2 px-4 p-8 md:p-12 rounded-3xl max-w-5xl">
-          <div className="font-Arvo text-3xl px-0 pb-8 md:pb-10">
-            <h1 className="font-bold text-black">How does it work?</h1>
-          </div>
           <div>
-            <div className="flex items-center gap-8">
-              {/* Left side - Illustration */}
-              <div className="w-1/3 flex justify-end">
-                {/* Replace path with your actual illustration */}
-                <Image
-                  src="/account-purple.png"
-                  alt="Person interacting with electronic devices"
-                  height={200}
-                  width={200}
-                />
+            {/* steps */}
+            <div className="mx-auto my-2 px-4 p-8 md:p-12 rounded-3xl max-w-5xl">
+              <div className="font-Arvo text-3xl px-0 pb-8 md:pb-10">
+                <h1 className="font-bold text-black">How does it work?</h1>
               </div>
-
-              {/* Right side - Content */}
-              <div className="w-2/3">
-                <div className="flex items-start gap-4">
-                  <span className="text-2xl font-bold">01</span>
-                  <div>
-                    <p className=" mb-4">
-                      Sign up and log in to your account between 17-29 Nov 2024
-                      and use the cost estimator to get estimates for at least 3
-                      appliances.
-                    </p>
-                    <p className="text-sm text-gray-500 italic">
-                      Note: Each household may only participate in this
-                      challenge once.
-                    </p>
+              <div className="space-y-12">
+                {/* Step 1 */}
+                <div className="flex flex-col md:flex-row items-center gap-8">
+                  <div className="w-full md:w-1/3 flex justify-center md:justify-end">
+                    <Image
+                      src="/account-purple.png"
+                      alt="Person interacting with electronic devices"
+                      height={200}
+                      width={200}
+                      className="max-w-[200px]"
+                    />
+                  </div>
+                  <div className="w-full md:w-2/3">
+                    <div className="flex items-start gap-4">
+                      <span className="text-2xl font-bold">01</span>
+                      <div>
+                        <p className="mb-4">
+                          Sign up and log in to your account between 17-29 Nov
+                          2024 and use the cost estimator to get estimates for
+                          at least 3 appliances.
+                        </p>
+                        <p className="text-sm text-gray-500 italic">
+                          Note: Each household may only participate in this
+                          challenge once.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            {/* second */}
-            <div className="flex items-center gap-8">
-              {/* Left side - Illustration */}
-              <div className="w-1/3 flex justify-end">
-                {/* Replace path with your actual illustration */}
-                <Image
-                  src="/track-purple.png"
-                  alt="Person interacting with electronic devices"
-                  height={200}
-                  width={200}
-                />
-              </div>
-
-              {/* Right side - Content */}
-              <div className="w-2/3">
-                <div className="flex items-start gap-4">
-                  <span className="text-2xl font-bold">02</span>
-                  <div>
-                    <p className="mb-4">
-                      Take action to reduce your total energy consumption by the
-                      next billing cycle.
-                    </p>
-                    <p className="text-sm text-gray-500 italic">
-                      OhmSweetOhm&apos;s calculator will provide you with some
-                      tips and recommendations to help you in your energy-saving
-                      journey.
-                    </p>
+                {/* Step 2 */}
+                <div className="flex flex-col md:flex-row items-center gap-8">
+                  <div className="w-full md:w-1/3 flex justify-center md:justify-end">
+                    <Image
+                      src="/track-purple.png"
+                      alt="Person interacting with electronic devices"
+                      height={200}
+                      width={200}
+                      className="max-w-[200px]"
+                    />
+                  </div>
+                  <div className="w-full md:w-2/3">
+                    <div className="flex items-start gap-4">
+                      <span className="text-2xl font-bold">02</span>
+                      <div>
+                        <p className="mb-4">
+                          Take action to reduce your total energy consumption by
+                          the next billing cycle.
+                        </p>
+                        <p className="text-sm text-gray-500 italic">
+                          OhmSweetOhm&apos;s calculator will provide you with
+                          some tips and recommendations to help you in your
+                          energy-saving journey.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            {/*third*/}
-            <div className="flex items-center gap-8">
-              {/* Left side - Illustration */}
-              <div className="w-1/3 flex justify-end">
-                {/* Replace path with your actual illustration */}
-                <Image
-                  src="/bills-purple.png"
-                  alt="Person interacting with electronic devices"
-                  height={200}
-                  width={200}
-                />
-              </div>
 
-              {/* Right side - Content */}
-              <div className="w-2/3">
-                <div className="flex items-start gap-4">
-                  <span className="text-2xl font-bold">03</span>
-                  <div>
-                    <p className="">
-                      Complete these tasks to qualify for NTUC Vouchers:
-                    </p>
-                    <ol className="list-decimal list-inside pl-2">
-                      <li>A short mid-point survey</li>
-                      <li>A final feedback survey by 12 Jan 2025, 11.59pm</li>
-                      <li>
-                        Submit your two most recent electricity bills (for the
-                        month that has just been billed and previous month) at
-                        the end of the challenge to validate your energy-saving
-                        success.
-                      </li>
-                    </ol>
+                {/* Step 3 */}
+                <div className="flex flex-col md:flex-row items-center gap-8">
+                  <div className="w-full md:w-1/3 flex justify-center md:justify-end">
+                    <Image
+                      src="/bills-purple.png"
+                      alt="Person interacting with electronic devices"
+                      height={200}
+                      width={200}
+                      className="max-w-[200px]"
+                    />
+                  </div>
+                  <div className="w-full md:w-2/3">
+                    <div className="flex items-start gap-4">
+                      <span className="text-2xl font-bold">03</span>
+                      <div className="font-Karla ">
+                        <p className="">
+                          Complete these tasks to qualify for NTUC Vouchers:
+                        </p>
+                        <ol className="list-decimal list-inside pl-2 text-gray-500">
+                          <li>A short mid-point survey</li>
+                          <li>
+                            A final feedback survey by 12 Jan 2025, 11.59pm
+                          </li>
+                          <li>
+                            Submit your two most recent electricity bills (for
+                            the month that has just been billed and previous
+                            month) at the end of the challenge to validate your
+                            energy-saving success.
+                          </li>
+                        </ol>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -238,7 +236,7 @@ const EnergySavingChallenge: React.FC = () => {
                 Ready To Start Saving?
               </h1>
               <button
-                className="rounded-full bg-dark-purple text-white text-sm font-semibold px-8 py-2 font-Karla"
+                className="rounded-full bg-dark-purple text-white text-sm font-semibold w-96 h-14 font-Karla"
                 onClick={() => {
                   router.push("/home/");
                 }}
