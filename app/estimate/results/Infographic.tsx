@@ -26,9 +26,9 @@ const Infographic: React.FC<InfographicProps> = ({
       appliances.reduce(
         (sum, appliance) =>
           sum + appliance.powerUsage * appliance.frequencyOfUse,
-        0,
+        0
       ),
-    [appliances],
+    [appliances]
   );
 
   const changeView = () => {
@@ -50,29 +50,33 @@ const Infographic: React.FC<InfographicProps> = ({
   };
 
   return (
-    <div className="border rounded-lg shadow-lg p-4 bg-white w-full md:w-96 max-w-md mx-auto text-center">
-      <h2 className="text-2xl font-bold text-dark-purple mb-2">
-        You will spend
+    <div className="border rounded-lg shadow-lg p-4 bg-white w-full md:w-96 max-w-md mx-auto text-left">
+      <h2 className="text-2xl font-bold text-dark mb-2">
+        Monthly Cost Estimates
       </h2>
-      <p className="text-4xl font-bold text-dark-purple mb-2">
-        ~${totalCost.toFixed(2)}
+      <p>Bill Estimate</p>
+      <p className="text-2xl text-dark-purple mb-2">${totalCost.toFixed(2)}</p>
+      <p>Energy Expenditure</p>
+      <p className="text-dark-purple mb-2 text-2xl">
+        {totalkWh.toFixed(2)} kWh
       </p>
-      <p className="text-dark-purple mb-2">({totalkWh.toFixed(2)} kWh)</p>
       <div
         className={`transition-opacity duration-300 ease-in-out ${
           isAnimating ? "opacity-0" : "opacity-100"
         }`}
       >
+        <p>Energy Saving Tips</p>
+
         <p className="text-lg text-dark-purple mb-4 font-bold">
           {views[currentView]?.[0] || "Loading..."}
         </p>
         <p className="text-lg text-dark-purple mb-4">
-          {views[currentView]?.[1] || "Give me a moment, i'm thinking"}
+          {views[currentView]?.[1] || ""}
         </p>
       </div>
-      <p className="text-dark-purple mb-2">See More Protips?</p>
+      <p className="text-dark-purple mb-2 text-center">See More Protips?</p>
       <button
-        className="bg-dark-purple text-white px-6 py-2 rounded-full transition duration-300"
+        className="block bg-dark-purple text-white px-6 py-2 rounded-full transition duration-300 text-center mx-auto"
         onClick={changeView}
         disabled={Object.keys(views).length === 0}
       >
@@ -83,4 +87,3 @@ const Infographic: React.FC<InfographicProps> = ({
 };
 
 export default Infographic;
-

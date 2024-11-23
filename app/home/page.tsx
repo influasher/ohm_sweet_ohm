@@ -42,13 +42,26 @@ const EnergyUsageCard: React.FC = () => {
             Flip the switch and light up the details on your appliances&#39;
             energy usage and likely bills!
           </p>
-          <button
-            className="bg-dark-purple text-white font-semibold text-base sm:text-base px-6 py-2.5 rounded-full inline-block mb-5 sm:mb-6 hover:bg-indigo-700 transition-colors min-h-11"
-            type="button"
-            onClick={handleEstimateBills}
-          >
-            Estimate bills now →
-          </button>
+          <div className="px-1">
+            <button
+              className="bg-dark-purple text-white font-semibold text-base sm:text-base h-14 w-96 rounded-full inline-block mb-5 sm:mb-6 hover:bg-indigo-700 transition-colors min-h-11"
+              type="button"
+              onClick={handleEstimateBills}
+            >
+              Estimate bills now →
+            </button>
+          </div>
+          <div className="px-1">
+            <button
+              className=" h-14 w-96 font-Karla font-semibold  rounded-full bg-red-400 hover:bg-indigo-700"
+              onClick={() => {
+                router.push("https://forms.gle/q7LsGqKDJuU22un19");
+              }}
+            >
+              {" "}
+              Fill Up Survey
+            </button>
+          </div>
         </div>
       </div>
     </div>
