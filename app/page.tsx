@@ -33,7 +33,7 @@ const Home: React.FC = () => {
             <button
               className="rounded-full bg-dark-purple text-white text-sm font-semibold w-96 h-14 font-Karla"
               onClick={() => {
-                router.push("/estimate/");
+                router.push("/home/");
               }}
             >
               Get started for free
