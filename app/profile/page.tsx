@@ -3,8 +3,10 @@ import Topbar from "@/components/Topbar";
 import { createClient } from "@/utils/supabase/client";
 import { useState, useEffect } from "react";
 import styles from "./profile.module.css";
+import { useRouter } from "next/navigation";
 
 const ProfilePage = () => {
+  const router = useRouter();
   const client = createClient();
   // const [userProfile, setUserProfile] = useState({
   //   first_name: "",
@@ -65,7 +67,7 @@ const ProfilePage = () => {
   }, [client]);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -134,6 +136,15 @@ const ProfilePage = () => {
                     className={styles.editButton}
                   >
                     Edit Profile
+                  </button>
+                  <button
+                    className={styles.surveyButton}
+                    onClick={() => {
+                      router.push("https://forms.gle/q7LsGqKDJuU22un19");
+                    }}
+                  >
+                    {" "}
+                    Fill Up Survey
                   </button>
                 </div>
               ) : (
