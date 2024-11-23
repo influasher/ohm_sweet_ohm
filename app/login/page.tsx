@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { login, signup } from "./actions";
@@ -11,37 +12,67 @@ export default function LoginPage() {
   const [activeTab, setActiveTab] = useState("login");
   const [marketingConsent, setMarketingConsent] = useState(false);
   const [showConsentError, setShowConsentError] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  async function setLogin(formData: FormData) {
+  async function handleLogin(formData: FormData) {
     try {
+      setIsLoading(true);
+      setAuthError(null);
       await login(formData);
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message);
-      } else {
-        alert("An unexpected error occurred. Please try again.");
-      }
-      window.location.reload();
+    } catch (error: any) {
+      // Server action errors come through as objects with message property
+      setAuthError(
+        getAuthErrorMessage(error?.message || "An unexpected error occurred")
+      );
+    } finally {
+      setIsLoading(false);
     }
   }
 
-  async function setSignup(formData: FormData) {
+  async function handleSignup(formData: FormData) {
     try {
+      setIsLoading(true);
+      setAuthError(null);
+
       if (!marketingConsent) {
         setShowConsentError(true);
+        setIsLoading(false);
         return;
       }
+
       setShowConsentError(false);
       formData.append("marketing_consent", marketingConsent.toString());
       await signup(formData);
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message);
-      } else {
-        alert("An unexpected error occurred. Please try again.");
-      }
-      window.location.reload();
+    } catch (error: any) {
+      setAuthError(
+        getAuthErrorMessage(error?.message || "An unexpected error occurred")
+      );
+    } finally {
+      setIsLoading(false);
     }
+  }
+
+  function getAuthErrorMessage(errorMessage: string): string {
+    const errorMap: Record<string, string> = {
+      "Invalid login credentials":
+        "Invalid email or password. Please try again.",
+      "Email not confirmed":
+        "Please verify your email address before logging in.",
+      "User already registered": "An account with this email already exists.",
+      "Password should be at least 6 characters":
+        "Password must be at least 6 characters long.",
+      "Rate limit exceeded": "Too many attempts. Please try again later.",
+      "Passwords do not match": "Passwords do not match. Please try again.",
+    };
+
+    for (const [key, value] of Object.entries(errorMap)) {
+      if (errorMessage.toLowerCase().includes(key.toLowerCase())) {
+        return value;
+      }
+    }
+
+    return errorMessage;
   }
 
   return (
@@ -71,6 +102,12 @@ export default function LoginPage() {
                 />
               </div>
               <div className="card shadow py-4 px-6 w-full max-w-md flex flex-col items-center">
+                {authError && (
+                  <div className="w-full mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm">
+                    {authError}
+                  </div>
+                )}
+
                 <div className="my-4 w-full flex" role="tablist">
                   <button
                     className={`flex-1 text-center py-2 ${
@@ -81,9 +118,11 @@ export default function LoginPage() {
                     onClick={() => {
                       setActiveTab("login");
                       setShowConsentError(false);
+                      setAuthError(null);
                     }}
                     role="tab"
                     aria-selected={activeTab === "login"}
+                    disabled={isLoading}
                   >
                     Login
                   </button>
@@ -96,9 +135,11 @@ export default function LoginPage() {
                     onClick={() => {
                       setActiveTab("register");
                       setShowConsentError(false);
+                      setAuthError(null);
                     }}
                     role="tab"
                     aria-selected={activeTab === "register"}
+                    disabled={isLoading}
                   >
                     Register
                   </button>
@@ -110,7 +151,7 @@ export default function LoginPage() {
                       onSubmit={(e) => {
                         e.preventDefault();
                         const formData = new FormData(e.currentTarget);
-                        setLogin(formData);
+                        handleLogin(formData);
                       }}
                       className="w-full"
                     >
@@ -128,6 +169,7 @@ export default function LoginPage() {
                           className="form-control w-full border border-gray-300 p-2"
                           placeholder="Enter your email"
                           required
+                          disabled={isLoading}
                         />
                       </div>
                       <div className="mb-4">
@@ -144,10 +186,17 @@ export default function LoginPage() {
                           className="form-control w-full border border-gray-300 p-2"
                           placeholder="Enter your password"
                           required
+                          disabled={isLoading}
                         />
                       </div>
-                      <button type="submit" className={styles.loginButton}>
-                        Sign in
+                      <button
+                        type="submit"
+                        className={`${styles.loginButton} ${
+                          isLoading ? "opacity-50 cursor-not-allowed" : ""
+                        }`}
+                        disabled={isLoading}
+                      >
+                        {isLoading ? "Signing in..." : "Sign in"}
                       </button>
                     </form>
                   )}
@@ -157,7 +206,7 @@ export default function LoginPage() {
                       onSubmit={(e) => {
                         e.preventDefault();
                         const formData = new FormData(e.currentTarget);
-                        setSignup(formData);
+                        handleSignup(formData);
                       }}
                       className="w-full"
                     >
@@ -175,6 +224,7 @@ export default function LoginPage() {
                           className="form-control w-full border border-gray-300 p-2"
                           placeholder="Enter your first name"
                           required
+                          disabled={isLoading}
                         />
                       </div>
                       <div className="mb-4">
@@ -191,6 +241,7 @@ export default function LoginPage() {
                           className="form-control w-full border border-gray-300 p-2"
                           placeholder="Enter your last name"
                           required
+                          disabled={isLoading}
                         />
                       </div>
                       <div className="mb-4">
@@ -207,6 +258,7 @@ export default function LoginPage() {
                           className="form-control w-full border border-gray-300 p-2"
                           placeholder="Enter your email"
                           required
+                          disabled={isLoading}
                         />
                       </div>
                       <div className="mb-4">
@@ -223,6 +275,7 @@ export default function LoginPage() {
                           className="form-control w-full border border-gray-300 p-2"
                           placeholder="Enter your address"
                           required
+                          disabled={isLoading}
                         />
                       </div>
                       <div className="mb-4">
@@ -239,6 +292,7 @@ export default function LoginPage() {
                           className="form-control w-full border border-gray-300 p-2"
                           placeholder="Enter your Postal Code"
                           required
+                          disabled={isLoading}
                         />
                       </div>
                       <div className="mb-4">
@@ -255,6 +309,7 @@ export default function LoginPage() {
                           className="form-control w-full border border-gray-300 p-2"
                           placeholder="Enter your Unit Number"
                           required
+                          disabled={isLoading}
                         />
                       </div>
                       <div className="mb-4">
@@ -271,6 +326,7 @@ export default function LoginPage() {
                           className="form-control w-full border border-gray-300 p-2"
                           placeholder="Enter your password"
                           required
+                          disabled={isLoading}
                         />
                       </div>
                       <div className="mb-4">
@@ -287,6 +343,7 @@ export default function LoginPage() {
                           className="form-control w-full border border-gray-300 p-2"
                           placeholder="Repeat your password"
                           required
+                          disabled={isLoading}
                         />
                       </div>
 
@@ -302,6 +359,7 @@ export default function LoginPage() {
                                 setShowConsentError(false);
                               }
                             }}
+                            disabled={isLoading}
                             className={`mt-1 h-4 w-4 rounded border-gray-300 text-dark-purple focus:ring-dark-purple cursor-pointer ${
                               showConsentError ? "border-red-500" : ""
                             }`}
@@ -313,10 +371,10 @@ export default function LoginPage() {
                             }`}
                           >
                             I consent to receive emails and notifications
-                            regarding OhmSweetOhm&apos;s energy saving challenge,
-                            products and announcements. I agree to the
-                            collection, use, disclosure, and processing of my
-                            personal data by OhmSweetOhm for subscription to
+                            regarding OhmSweetOhm&apos;s energy saving
+                            challenge, products and announcements. I agree to
+                            the collection, use, disclosure, and processing of
+                            my personal data by OhmSweetOhm for subscription to
                             this mailing list and acknowledge the terms in our{" "}
                             <Link
                               href="/privacy-policy"
@@ -337,8 +395,14 @@ export default function LoginPage() {
                         )}
                       </div>
 
-                      <button type="submit" className={styles.loginButton}>
-                        Sign up
+                      <button
+                        type="submit"
+                        className={`${styles.loginButton} ${
+                          isLoading ? "opacity-50 cursor-not-allowed" : ""
+                        }`}
+                        disabled={isLoading}
+                      >
+                        {isLoading ? "Signing up..." : "Sign up"}
                       </button>
                     </form>
                   )}
