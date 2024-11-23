@@ -71,7 +71,7 @@ const Infographic: React.FC<InfographicProps> = ({
           {views[currentView]?.[0] || "Loading..."}
         </p>
         <p className="text-lg text-dark-purple mb-4">
-          {views[currentView]?.[1]}
+          {views[currentView]?.[1] || ""}
         </p>
       </div>
       <p className="text-dark-purple mb-2 text-center">See More Protips?</p>
