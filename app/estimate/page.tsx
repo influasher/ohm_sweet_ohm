@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useReducer, useCallback } from "react";
-import { ArrowLeft, MoreVertical, Save, CirclePlus } from "lucide-react";
+import { ArrowLeft, Save, CirclePlus } from "lucide-react";
 import Topbar from "@/components/Topbar";
 import ApplianceCardComponent from "@/components/ApplianceCardComponent";
 import { useRouter } from "next/navigation";
