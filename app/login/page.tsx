@@ -19,12 +19,15 @@ export default function LoginPage() {
     try {
       setIsLoading(true);
       setAuthError(null);
-      await login(formData);
+      const result = await login(formData);
+
+      // Check if result contains an error
+      if (result && "error" in result) {
+        setAuthError(getAuthErrorMessage(result.error.message));
+        return;
+      }
     } catch (error: any) {
-      // Server action errors come through as objects with message property
-      setAuthError(
-        getAuthErrorMessage(error?.message || "An unexpected error occurred")
-      );
+      setAuthError("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -43,11 +46,16 @@ export default function LoginPage() {
 
       setShowConsentError(false);
       formData.append("marketing_consent", marketingConsent.toString());
-      await signup(formData);
+
+      const result = await signup(formData);
+
+      // Check if result contains an error
+      if (result && "error" in result) {
+        setAuthError(getAuthErrorMessage(result.error.message));
+        return;
+      }
     } catch (error: any) {
-      setAuthError(
-        getAuthErrorMessage(error?.message || "An unexpected error occurred")
-      );
+      setAuthError("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -409,7 +417,7 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <div className="border-2 rounded-xl border-dark-purple text-center text-sm mx-auto mt-20">
+              <div className="border-2 rounded-xl border-dark-purple text-center text-sm mx-auto my-20 mx-5">
                 <div className="font-Karla p-3 m-3">
                   This product was developed by citizen participants of{" "}
                   <a
