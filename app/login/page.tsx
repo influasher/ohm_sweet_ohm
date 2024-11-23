@@ -417,7 +417,7 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <div className="border-2 rounded-xl border-dark-purple text-center text-sm mx-auto my-20 mx-5">
+              {/* <div className="border-2 rounded-xl border-dark-purple text-center text-sm mx-auto my-20 mx-5">
                 <div className="font-Karla p-3 m-3">
                   This product was developed by citizen participants of{" "}
                   <a
@@ -442,7 +442,7 @@ export default function LoginPage() {
                   </a>
                   .
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
