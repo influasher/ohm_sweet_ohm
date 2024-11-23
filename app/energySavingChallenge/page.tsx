@@ -60,7 +60,7 @@ const EnergySavingChallenge: React.FC = () => {
                 apply.
               </p>
               <button
-                className="rounded-full bg-dark-purple text-white text-sm font-semibold w-96 h-14 font-Karla"
+                className="rounded-full bg-dark-purple text-white text-sm font-semibold h-14 w-44 md:h-14 md:w-96 font-Karla"
                 onClick={() => router.push("/home/")}
               >
                 Join now
@@ -236,7 +236,7 @@ const EnergySavingChallenge: React.FC = () => {
                 Ready To Start Saving?
               </h1>
               <button
-                className="rounded-full bg-dark-purple text-white text-sm font-semibold w-96 h-14 font-Karla"
+                className="rounded-full bg-dark-purple text-white text-sm font-semibold h-14 w-44 md:h-14 md:w-96 font-Karla"
                 onClick={() => {
                   router.push("/home/");
                 }}
