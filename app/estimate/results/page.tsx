@@ -108,7 +108,7 @@ const EstimateResults: React.FC = () => {
           <MoreVertical />
         </div> */}
       </div>
-      <div className="m-2 p-2 float-left items-center justify-center">
+      <div className="m-2 p-2 items-center justify-center">
         <Infographic
           totalCost={totalCost}
           appliances={appliances}
