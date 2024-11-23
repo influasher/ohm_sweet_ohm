@@ -103,10 +103,10 @@ const EstimateResults: React.FC = () => {
         <h1 className="text-lg font-montserrat flex-grow">
           Estimate bills - Results
         </h1>
-        <div className="flex">
+        {/* <div className="flex">
           <Share2 className="mr-3" />
           <MoreVertical />
-        </div>
+        </div> */}
       </div>
       <div className="m-2 p-2 float-left items-center justify-center">
         <Infographic
